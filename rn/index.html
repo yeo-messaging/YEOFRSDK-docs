@@ -66,6 +66,7 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 <li><a href="#quick-start--from-an-empty-folder">Quick start — from an empty folder</a></li>
 <li><a href="#quick-start--the-example-app">Quick start — the example app</a></li>
 <li><a href="#install">Install</a></li>
+<li><a href="#upgrading-from-0-3-x">Upgrading from 0.3.x</a></li>
 <li><a href="#verify-the-install">Verify the install</a></li>
 <li><a href="#licensing-and-pilot-codes">Licensing and pilot codes</a></li>
 <li><a href="#using-the-sdk">Using the SDK</a></li>
@@ -330,6 +331,45 @@ repeats. Commit <code>ios/&lt;App&gt;.xcodeproj/project.pbxproj</code>,
 CI — just builds.</p>
 <p><strong>Expo:</strong> the managed workflow has no <code>ios/</code> directory to open, so run
 <code>expo prebuild</code> (or use a bare project) first. There is no config plugin yet.</p>
+<h2>Upgrading from 0.3.x</h2>
+<p>Three things changed for iOS hosts, all of which need action:</p>
+<ul>
+<li><strong>The engine is no longer vendored.</strong> <code>ios/YEOFR.xcframework</code> is gone from the
+package; add the <a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a> Swift Package to your app
+target (see <a href="#install">Install</a>) or the bridge will not compile.</li>
+<li><strong>Minimum iOS is now 17.0</strong>, up from 15.1 — raise <code>platform :ios</code> in your
+<code>Podfile</code> and <code>IPHONEOS_DEPLOYMENT_TARGET</code> on your app target.</li>
+<li><strong>Simulator builds need <code>EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64</code></strong>.
+Apple-silicon Macs only; there is no Intel simulator slice.</li>
+</ul>
+<p>The JS API also changed, on both platforms:</p>
+<ul>
+<li><strong><code>createTracker()</code> / <code>freeTracker()</code> are gone.</strong> The SDK owns the tracker&#39;s
+lifetime since activation was introduced; there is nothing to create or free.
+Delete both calls. If your <code>freeTracker()</code> was there to re-enroll from scratch,
+use <code>clearTracker()</code> instead; to persist and restore tracker state, use
+<code>getTrackerData()</code> / <code>loadTracker()</code>.</li>
+<li><strong>Return codes are strings, and failures resolve instead of rejecting.</strong>
+<code>enroll</code> / <code>loadTracker</code> / <code>clearTracker</code> resolve <code>&quot;OK&quot;</code> on success and a
+platform failure string otherwise — they no longer resolve numbers, and no
+longer reject on an SDK failure. Old <code>catch</code>-based handling (iOS) and
+<code>=== 0</code> checks (Android) silently invert: migrate them to
+<code>isOK(await enroll(...))</code>.</li>
+<li><strong>Every SDK call now requires <code>activate()</code> first</strong> and rejects
+<code>not_activated</code> until it resolves.</li>
+</ul>
+<p>The shortest migration diff:</p>
+<pre><code class="language-ts">// before (0.3.x)
+await createTracker();
+try { await enroll(faceID, name); } catch (e) { /* handle */ }
+await freeTracker();
+
+// after (0.4.x) — activate once, at startup, with either credential:
+await activate({pilotUnlockCode: PILOT_CODE});   // pilot code, both platforms
+await activate({license: LICENSE});              // or a signed licence token (iOS only)
+if (!isOK(await enroll(faceID, name))) { /* handle */ }
+// nothing to free
+</code></pre>
 <h2>Verify the install</h2>
 <p><code>getVersion()</code> is the smoke test. It is the only call that works before
 <code>activate()</code> on both platforms, so it proves the native module actually linked.</p>
