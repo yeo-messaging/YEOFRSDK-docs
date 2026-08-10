@@ -184,7 +184,8 @@ directory. Add it to the wrong target and the bridge fails to compile with
 <code>no such module &#39;YEOFR&#39;</code>.</li>
 <li>In <code>ios/Podfile</code>, set <code>platform :ios, &#39;17.0&#39;</code> and paste the block below into
 your existing <code>post_install</code>, <strong>after</strong> the <code>react_native_post_install</code> call.</li>
-<li><code>cd ios &amp;&amp; bundle exec pod install</code></li>
+<li><code>cd ios &amp;&amp; pod install</code> (or <code>bundle exec pod install</code> if your project pins
+CocoaPods via a Gemfile)</li>
 </ol>
 <pre><code class="language-ruby">    # No Intel simulator slice in the xcframework.
     installer.pods_project.targets.each do |t|
