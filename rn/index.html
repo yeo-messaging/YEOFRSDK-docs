@@ -63,6 +63,8 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 <h2>Contents</h2>
 <ul>
 <li><a href="#what-you-are-integrating">What you are integrating</a></li>
+<li><a href="#quick-start--from-an-empty-folder">Quick start — from an empty folder</a></li>
+<li><a href="#quick-start--the-example-app">Quick start — the example app</a></li>
 <li><a href="#install">Install</a></li>
 <li><a href="#verify-the-install">Verify the install</a></li>
 <li><a href="#licensing-and-pilot-codes">Licensing and pilot codes</a></li>
@@ -117,6 +119,75 @@ Let the bridge resolve its own engine version rather than forcing one.</p>
 <p><code>getVersion()</code> returns the <strong>engine</strong> version — <code>0.7.6</code> on iOS, <code>0.1.24</code> on
 Android — not the bridge version. That is intentional: it is the number that
 determines recognition behaviour.</p>
+<h2>Quick start — from an empty folder</h2>
+<p>The condensed path from nothing to recognition running on phones. Each step
+links to the section with the full detail.</p>
+<p><strong>Machine setup, once</strong> — React Native&#39;s Android tooling needs these in your
+shell (<code>~/.zshrc</code>), or you get <code>adb: command not found</code> and
+<code>Unable to locate a Java Runtime</code>:</p>
+<pre><code class="language-bash">export ANDROID_HOME=&quot;$HOME/Library/Android/sdk&quot;
+export PATH=&quot;$ANDROID_HOME/platform-tools:$PATH&quot;
+export JAVA_HOME=&quot;/Applications/Android Studio.app/Contents/jbr/Contents/Home&quot;
+</code></pre>
+<p><strong>Project:</strong></p>
+<pre><code class="language-bash">npx @react-native-community/cli@latest init MyApp --version 0.81.0   # CocoaPods prompt: No
+cd MyApp                       # install INSIDE the project — the parent folder is a classic miss
+npm i @yeomessagingcom/react-native-yeofr
+npx yeofr-setup                # the whole native install, then pod install
+npx yeofr-setup doctor         # every line should read &quot;ok&quot;
+</code></pre>
+<blockquote>
+<p><strong>Do not run <code>npm audit fix --force</code></strong>, however hard npm suggests it. The
+advisories are all in React Native&#39;s build-time tooling and never ship in
+your app; <code>--force</code> &quot;fixes&quot; them by downgrading <code>react-native</code> and this
+package to broken versions. Recovery if it happened:
+<code>git checkout -- package.json package-lock.json &amp;&amp; rm -rf node_modules &amp;&amp; npm install</code>.</p>
+</blockquote>
+<p><strong>iOS signing, once per project</strong> — a fresh app has no team and the CLI fails
+with the unhelpful <code>xcodebuild exited with error code &#39;70&#39;</code>:
+open <code>ios/MyApp.xcworkspace</code>, MyApp target → Signing &amp; Capabilities → tick
+<em>Automatically manage signing</em>, pick your Team. First device build also wants
+the phone unlocked, &quot;Trust This Computer&quot; accepted, and Developer Mode enabled
+(Settings → Privacy &amp; Security).</p>
+<p><strong>Smoke test</strong> — replace <code>App.tsx</code> with a screen that calls <code>getVersion()</code> and
+<code>activate({pilotUnlockCode})</code> and renders the result (see
+<a href="#verify-the-install">Verify the install</a>). Get a pilot code first —
+<a href="#licensing-and-pilot-codes">an invalid or expired one terminates the iOS app at launch</a>.</p>
+<p><strong>Run</strong> — two terminals, both in the project:</p>
+<pre><code class="language-bash">npm start                      # 1: Metro, leave running
+npm run ios -- --device        # 2: iPhone plugged in and unlocked
+npm run android                # 2: Android
+</code></pre>
+<p>With several iPhones attached <code>--device</code> grabs the first — pin yours with
+<code>npm run ios -- --udid &lt;UDID&gt;</code> (<code>xcrun xctrace list devices</code>). Expected on
+screen: engine <code>0.7.6</code> (iOS) / <code>0.1.24</code> (Android), activated. After that,
+saving a JS file reloads the app via Metro; rebuild only when something native
+changes.</p>
+<h2>Quick start — the example app</h2>
+<p>The repo&#39;s demo (YeofrDemo: activate → enrol → recognise → inspect the
+encrypted tracker) from clone to phone. Same machine setup as above, plus
+Homebrew Ruby for the repo&#39;s pinned bundler (see
+<a href="#running-it">Running it</a> for the one-time <code>gem install</code>).</p>
+<pre><code class="language-bash">git clone git@github.com:yeo-messaging/react-native-yeofr.git
+cd react-native-yeofr
+npm install                         # root install — the example is an npm workspace
+cd example                          # everything after this runs from example/
+npx yeofr-setup                     # validates the config, runs pod install
+</code></pre>
+<p>Put a real pilot code in <code>example/App.tsx</code> (the <code>XXXX-…</code> placeholder kills the
+iOS app at activation; Android just shows <em>Unlicensed</em>). iOS signing is
+pre-configured with the YEO team — pick your own in Signing &amp; Capabilities
+only if you are not on it. Do not rename the bundle ids: the SDK entitlement
+is keyed to <code>com.youreyeonly.*</code>.</p>
+<pre><code class="language-bash">npm start                           # terminal 1 — Metro
+npm run ios -- --device             # terminal 2 — iPhone
+npm run android                     # terminal 2 — Android
+</code></pre>
+<p>Expected: the Hub shows <strong>YEOFR Pilot · Activated</strong>, footer <code>YEOFR SDK 0.7.6</code>
+/ <code>0.1.24</code>. Type a name → <strong>Enrol Face</strong> (grant the camera permission; hold
+the phone up normally — flat on a desk it films the ceiling and reads as badly
+framed or spoof) → <strong>Live Recognition</strong> shows the green trusted badge. Details,
+screen by screen: <a href="#the-example-app">The example app</a>.</p>
 <h2>Install</h2>
 <pre><code class="language-bash">npm i @yeomessagingcom/react-native-yeofr
 </code></pre>
@@ -808,8 +879,11 @@ frames: iOS holds ~1.5 s at 10 fps, this pipeline runs ~2 fps, so 3 frames is
 roughly equivalent. Retune it if your frame rate moves.</p>
 <h3>Running it</h3>
 <p>Clone the repo — the demo&#39;s host projects (<code>example/ios</code>, <code>example/android</code>) are
-repo-only — then from <code>example/</code>:</p>
-<pre><code class="language-sh">npm install
+repo-only — then work from <strong><code>example/</code></strong> (every command below; <code>yeofr-setup</code>
+fails with &quot;no ios/*.xcodeproj&quot; if run from the repo root):</p>
+<pre><code class="language-sh">npm install                      # at the repo root — the example is an npm workspace
+cd example
+npx yeofr-setup                  # validates the config, runs pod install
 npm start                        # Metro
 
 npm run android                  # Android
@@ -817,9 +891,23 @@ npm run ios -- --device          # iOS: use a device, recognition is inert in th
 </code></pre>
 <p>Note the <code>--</code> before <code>--device</code>: without it npm consumes the flag instead of
 passing it to the CLI. The iOS workspace is <code>example/ios/YeofrDemo.xcworkspace</code>
-and already references YEOFR-SPM at an exact version; Xcode resolves it on first
-open. <code>PILOT_CODE</code> in <code>App.tsx</code> is a placeholder — replace it with a real code
-before running on iOS, where an invalid one kills the process.</p>
+and already references YEOFR-SPM at an exact version; Xcode resolves it on
+first open. Signing is pre-configured with the YEO team — pick your own in
+Signing &amp; Capabilities only if you are not on it. <code>PILOT_CODE</code> in <code>App.tsx</code> is
+a placeholder — replace it with a real code before running on iOS, where an
+invalid one kills the process.</p>
+<p><strong>Ruby:</strong> the repo pins bundler via <code>Gemfile.lock</code>, and <code>run-ios</code> insists on
+running <code>bundle install</code> itself — macOS&#39;s system Ruby is too old for it. Use
+Homebrew Ruby and install the pinned version once:</p>
+<pre><code class="language-sh">echo &#39;export PATH=&quot;/opt/homebrew/opt/ruby/bin:$(/opt/homebrew/opt/ruby/bin/gem environment gemdir)/bin:$PATH&quot;&#39; &gt;&gt; ~/.zshrc
+source ~/.zshrc
+gem install bundler:2.6.3   # match the BUNDLED WITH version at the bottom of example/Gemfile.lock (2.6.3 at the time of writing)
+</code></pre>
+<p>The example installs as an npm workspace, so npm hoists most packages to the
+repo root; the Android gradle files resolve the RN plugin and codegen through
+Node, which finds them in either layout. If a clone from before that fix
+reports <code>Included build …/@react-native/gradle-plugin does not exist</code>, pull —
+or symlink the hoisted package into <code>example/node_modules</code> as a stopgap.</p>
 <h3>Copying the demo into your own app</h3>
 <p>Three things break if you copy the files without the host projects:</p>
 <ol>
