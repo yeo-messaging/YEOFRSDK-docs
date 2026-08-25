@@ -574,13 +574,6 @@ if ((await loadTracker(blob)).startsWith(&#39;legacyTrackerRejected&#39;)) { /* 
 to write or nothing stored — one pair, both platforms. Android writes
 app-private <code>filesDir/tracker.bin</code>; iOS writes the tracker into Application
 Support.</p>
-<blockquote>
-<p><strong>The tracker is stored unencrypted on both platforms.</strong> If at-rest
-protection matters, hold the tracker yourself via <code>getTrackerData()</code> and
-encrypt it before storing. An enrolment saved encrypted by 0.4.2&#39;s
-since-removed encryption API restores as no enrolment (<code>loadTrackerFromDisk</code>
-resolves <code>false</code>; the file is left in place) — re-enrol once to migrate.</p>
-</blockquote>
 <h3>Anti-spoof signals</h3>
 <p>Both anti-spoof signals — the liveness CNN and, on iPhone, the TrueDepth 3D
 check — are always on. The package exposes no toggle for them, matching the
