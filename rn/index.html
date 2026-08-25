@@ -66,7 +66,7 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 <li><a href="#quick-start--from-an-empty-folder">Quick start — from an empty folder</a></li>
 <li><a href="#quick-start--the-example-app">Quick start — the example app</a></li>
 <li><a href="#install">Install</a></li>
-<li><a href="#upgrading-from-0-3-x">Upgrading from 0.3.x</a></li>
+<li><a href="#upgrading-from-03x">Upgrading from 0.3.x</a></li>
 <li><a href="#verify-the-install">Verify the install</a></li>
 <li><a href="#licensing-and-pilot-codes">Licensing and pilot codes</a></li>
 <li><a href="#using-the-sdk">Using the SDK</a></li>
@@ -92,7 +92,7 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 </tr>
 <tr>
 <td>iOS engine</td>
-<td>YEOFR <strong>0.7.6</strong></td>
+<td>YEOFR <strong>0.7.8</strong></td>
 <td>Swift Package — <a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a>, added to <strong>your app target</strong></td>
 </tr>
 <tr>
@@ -117,7 +117,7 @@ integration on one.</p>
 exists on Maven, which splits CameraX out of the engine into a separate module;
 the bridge does not use it, because the bridge already owns capture on Android.
 Let the bridge resolve its own engine version rather than forcing one.</p>
-<p><code>getVersion()</code> returns the <strong>engine</strong> version — <code>0.7.6</code> on iOS, <code>0.1.24</code> on
+<p><code>getVersion()</code> returns the <strong>engine</strong> version — <code>0.7.8</code> on iOS, <code>0.1.24</code> on
 Android — not the bridge version. That is intentional: it is the number that
 determines recognition behaviour.</p>
 <h2>Quick start — from an empty folder</h2>
@@ -161,12 +161,12 @@ npm run android                # 2: Android
 </code></pre>
 <p>With several iPhones attached <code>--device</code> grabs the first — pin yours with
 <code>npm run ios -- --udid &lt;UDID&gt;</code> (<code>xcrun xctrace list devices</code>). Expected on
-screen: engine <code>0.7.6</code> (iOS) / <code>0.1.24</code> (Android), activated. After that,
+screen: engine <code>0.7.8</code> (iOS) / <code>0.1.24</code> (Android), activated. After that,
 saving a JS file reloads the app via Metro; rebuild only when something native
 changes.</p>
 <h2>Quick start — the example app</h2>
-<p>The repo&#39;s demo (YeofrDemo: activate → enrol → recognise → inspect the
-encrypted tracker) from clone to phone. Same machine setup as above, plus
+<p>The repo&#39;s demo (YeofrDemo: activate → enrol → recognise) from clone to
+phone. Same machine setup as above, plus
 Homebrew Ruby for the repo&#39;s pinned bundler (see
 <a href="#running-it">Running it</a> for the one-time <code>gem install</code>).</p>
 <pre><code class="language-bash">git clone git@github.com:yeo-messaging/react-native-yeofr.git
@@ -184,7 +184,7 @@ is keyed to <code>com.youreyeonly.*</code>.</p>
 npm run ios -- --device             # terminal 2 — iPhone
 npm run android                     # terminal 2 — Android
 </code></pre>
-<p>Expected: the Hub shows <strong>YEOFR Pilot · Activated</strong>, footer <code>YEOFR SDK 0.7.6</code>
+<p>Expected: the Hub shows <strong>YEOFR Pilot · Activated</strong>, footer <code>YEOFR SDK 0.7.8</code>
 / <code>0.1.24</code>. Type a name → <strong>Enrol Face</strong> (grant the camera permission; hold
 the phone up normally — flat on a desk it films the ceiling and reads as badly
 framed or spoof) → <strong>Live Recognition</strong> shows the green trusted badge. Details,
@@ -247,7 +247,7 @@ CocoaPods, so any project that can run <code>pod install</code> already has it.<
 the <code>.xcodeproj</code>.</li>
 <li><strong>File ▸ Add Package Dependencies…</strong>, enter
 <code>https://github.com/yeo-messaging/YEOFR-SPM.git</code>, dependency rule <strong>Exact
-Version</strong> <code>0.7.6</code>.</li>
+Version</strong> <code>0.7.8</code>.</li>
 <li>When Xcode asks where to add the <code>YEOFR</code> library, choose your <strong>app</strong>
 target — not a Pods target. The bridge is a CocoaPods target and Pods cannot
 declare a Swift Package dependency, so your app target links and embeds the
@@ -335,8 +335,9 @@ CI — just builds.</p>
 <p>Three things changed for iOS hosts, all of which need action:</p>
 <ul>
 <li><strong>The engine is no longer vendored.</strong> <code>ios/YEOFR.xcframework</code> is gone from the
-package; add the <a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a> Swift Package to your app
-target (see <a href="#install">Install</a>) or the bridge will not compile.</li>
+package; add the <a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a> Swift
+Package to your app target (see <a href="#install">Install</a>) or the bridge will not
+compile.</li>
 <li><strong>Minimum iOS is now 17.0</strong>, up from 15.1 — raise <code>platform :ios</code> in your
 <code>Podfile</code> and <code>IPHONEOS_DEPLOYMENT_TARGET</code> on your app target.</li>
 <li><strong>Simulator builds need <code>EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64</code></strong>.
@@ -346,15 +347,18 @@ Apple-silicon Macs only; there is no Intel simulator slice.</li>
 <ul>
 <li><strong><code>createTracker()</code> / <code>freeTracker()</code> are gone.</strong> The SDK owns the tracker&#39;s
 lifetime since activation was introduced; there is nothing to create or free.
-Delete both calls. If your <code>freeTracker()</code> was there to re-enroll from scratch,
-use <code>clearTracker()</code> instead; to persist and restore tracker state, use
-<code>getTrackerData()</code> / <code>loadTracker()</code>.</li>
+Delete both calls. If your <code>freeTracker()</code> was there to re-enroll from
+scratch, use <code>clearTracker()</code> instead; to persist and restore tracker state,
+use <code>getTrackerData()</code> / <code>loadTracker()</code>.</li>
 <li><strong>Return codes are strings, and failures resolve instead of rejecting.</strong>
-<code>enroll</code> / <code>loadTracker</code> / <code>clearTracker</code> resolve <code>&quot;OK&quot;</code> on success and a
-platform failure string otherwise — they no longer resolve numbers, and no
+<code>loadTracker</code> / <code>clearTracker</code> / <code>enrollImage</code> resolve <code>&quot;OK&quot;</code> on success and
+a platform failure string otherwise — they no longer resolve numbers, and no
 longer reject on an SDK failure. Old <code>catch</code>-based handling (iOS) and
 <code>=== 0</code> checks (Android) silently invert: migrate them to
-<code>isOK(await enroll(...))</code>.</li>
+<code>isOK(await loadTracker(...))</code>.</li>
+<li><strong><code>enroll(faceID, name)</code> is gone.</strong> Camera enrolment runs behind the bridge:
+set <code>enrolName</code> on <code>&lt;YeofrCamera&gt;</code> and wait for <code>registered</code>. Still-image
+enrolment stays as <code>enrollImage</code>.</li>
 <li><strong>Every SDK call now requires <code>activate()</code> first</strong> and rejects
 <code>not_activated</code> until it resolves.</li>
 </ul>
@@ -364,20 +368,20 @@ await createTracker();
 try { await enroll(faceID, name); } catch (e) { /* handle */ }
 await freeTracker();
 
-// after (0.4.x) — activate once, at startup, with either credential:
+// now — activate once at startup, then enrol through the camera view:
 await activate({pilotUnlockCode: PILOT_CODE});   // pilot code, both platforms
 await activate({license: LICENSE});              // or a signed licence token (iOS only)
-if (!isOK(await enroll(faceID, name))) { /* handle */ }
+&lt;YeofrCamera enrolName={name} onEvent={…} /&gt;     // &#39;registered&#39; arrives when done
 // nothing to free
 </code></pre>
 <h2>Verify the install</h2>
 <p><code>getVersion()</code> is the smoke test. It is the only call that works before
 <code>activate()</code> on both platforms, so it proves the native module actually linked.</p>
-<pre><code class="language-ts">import {activate, getVersion, isOK, enroll} from &#39;@yeomessagingcom/react-native-yeofr&#39;;
+<pre><code class="language-ts">import {activate, getVersion, isOK, clearTracker} from &#39;@yeomessagingcom/react-native-yeofr&#39;;
 
-console.log(await getVersion());                       // &quot;0.7.6&quot; iOS / &quot;0.1.24&quot; Android
+console.log(await getVersion());                       // &quot;0.7.8&quot; iOS / &quot;0.1.24&quot; Android
 await activate({pilotUnlockCode: &#39;XXXX-XXXX-XXXX-XXXX&#39;});
-console.log(isOK(await enroll(1, &#39;test&#39;)));
+console.log(isOK(await clearTracker()));
 </code></pre>
 <table>
 <thead>
@@ -447,14 +451,12 @@ try {
   }
 }
 </code></pre>
-<p><strong>2. Restore any previous enrolment</strong>, which is platform-specific:</p>
-<pre><code class="language-ts">const enrolled = Platform.OS === &#39;ios&#39;
-  ? (await getTrackerBlobInfo()) !== null
-  : await loadTrackerFromDisk();
+<p><strong>2. Restore any previous enrolment</strong> — the same call on both platforms:</p>
+<pre><code class="language-ts">const enrolled = await loadTrackerFromDisk();
 </code></pre>
-<p><strong>3. Enrol a face.</strong> On iOS, set <code>enrolName</code> on the camera and let the SDK run
-its guided pose walk. On Android, watch frames until the face is good enough,
-then call <code>enroll(faceID, name)</code> and <code>saveTrackerToDisk()</code> yourself. See
+<p><strong>3. Enrol a face.</strong> Set <code>enrolName</code> on the camera — on both platforms the
+native view captures the face in view and emits <code>registered</code> when done. Then
+persist with <code>saveTrackerToDisk()</code> — the same call on both platforms. See
 <a href="#platform-differences">Platform differences</a>.</p>
 <p><strong>4. Recognise.</strong> There is no recognise <em>call</em> — mount <code>&lt;YeofrCamera&gt;</code> and read
 <code>result</code> events as they arrive.</p>
@@ -475,13 +477,9 @@ immediately with <code>activate requires a license or pilotUnlockCode</code> if 
 neither. On the iOS simulator it rejects with code <code>E_UNAVAILABLE_SIMULATOR</code>.</p>
 <h3><code>getVersion(): Promise&lt;string&gt;</code></h3>
 <p>The engine version. Works before <code>activate</code> on both platforms.</p>
-<h3><code>enroll(faceID: number, name: string): Promise&lt;FRReturnCode&gt;</code></h3>
-<p>Enrol the face currently in view under <code>faceID</code> and <code>name</code>. On iOS the camera&#39;s
-<code>enrolName</code> prop is the normal path; this call is how Android enrols.</p>
 <h3><code>clearTracker(): Promise&lt;FRReturnCode&gt;</code></h3>
 <p>Drop every enrolled face from the in-memory tracker. Does not touch anything
-persisted — pair with <code>deleteTrackerBlob()</code> (iOS) or a fresh
-<code>saveTrackerToDisk()</code> (Android).</p>
+persisted — pair with a fresh <code>saveTrackerToDisk()</code>.</p>
 <h3><code>getTrackerData(): Promise&lt;string&gt;</code></h3>
 <p>The serialized tracker as base64, for your own storage or transport. Never
 rejects for an empty tracker once activated: iOS resolves the serialized empty
@@ -492,12 +490,41 @@ form, Android resolves <code>&quot;&quot;</code> until something has been enroll
 <p>For hosts that capture their own images — an existing camera pipeline, a photo
 library, video stills — instead of mounting <code>&lt;YeofrCamera&gt;</code>. Both platforms,
 same signatures.</p>
+<h4><code>detectFaces(base64Frame: string, options?: DetectFrameOptions): Promise&lt;FaceResult&gt;</code></h4>
+<p>Detect + recognise + anti-spoof on one caller-supplied frame — the BYO camera
+tier. Resolves the same unified <a href="#faceresult"><code>FaceResult</code></a> the camera view
+emits, on both platforms.</p>
+<pre><code class="language-ts">interface DetectFrameOptions {
+  rotationDegrees?: number; // quarter-turn rotation applied first, default 0
+  mirror?: boolean;         // horizontal mirror applied after, default false
+}
+
+const result = await detectFaces(base64Jpeg);
+if (result.status === &#39;trusted&#39;) console.log(`hello ${result.matchedName}`);
+</code></pre>
+<p>The contract:</p>
+<ul>
+<li><strong>After <code>options</code> apply, the frame must be upright and unmirrored</strong> (sensor
+space) — the space enrolled templates live in on both platforms. Set
+<code>mirror: true</code> only when your source is a preview-mirrored capture.</li>
+<li><strong>One frame source at a time.</strong> Never call this while <code>&lt;YeofrCamera&gt;</code> is
+mounted — both drive the same stateful engine tracker.</li>
+<li><strong>A few frames per second, not video-rate.</strong> Frames cross the bridge as
+base64-encoded images (JPEG/PNG); the first call also pays a one-off engine
+warm-up.</li>
+<li><strong>Liveness runs, depth never does</strong> — <code>depthIsThreeD</code> is always <code>null</code> on a
+fed frame (there is no sensor behind it). And because the <em>caller</em> controls
+the frames, a replayed stored frame defeats liveness by construction.
+<code>&lt;YeofrCamera&gt;</code> remains the surface for access-control decisions.</li>
+</ul>
+<p>The engine keeps short-lived state across calls (a liveness hold bridges the
+odd unscoreable frame), so treat consecutive calls as one stream, not
+independent verdicts.</p>
 <blockquote>
-<p><strong>Recognition only.</strong> Neither call runs liveness or depth, so neither can tell
-a live face from a photograph of one. Use them for offline accuracy work and
-reference enrolment, never as a standalone unlock decision. Anything that
-gates access should go through <code>&lt;YeofrCamera&gt;</code>, where the anti-spoof signals
-run.</p>
+<p><strong>The two calls below are recognition only.</strong> Neither runs liveness or depth,
+so neither can tell a live face from a photograph of one. Use them for
+offline accuracy work and reference enrolment, never as a standalone unlock
+decision.</p>
 </blockquote>
 <h4><code>matchImage(base64Image: string): Promise&lt;ImageMatch&gt;</code></h4>
 <p>Grade a probe image against the enrolled gallery.</p>
@@ -521,94 +548,43 @@ graded, so a group photo containing the enrolled user still matches.</p>
 <pre><code class="language-ts">if (isOK(await enrollImage(base64Jpeg, &#39;ada&#39;))) { /* reference added */ }
 </code></pre>
 <p>Resolves <code>imageNoFaceDetected</code> when the image carries no usable face — the same
-spelling on both platforms, so one check covers you. This feeds the match bank
-only; live <em>named</em> recognition still expects a camera enrolment. Persist the
-result like any other enrolment: <code>saveTrackerBlob</code> on iOS, <code>saveTrackerToDisk</code>
-on Android.</p>
+spelling on both platforms, so one check covers you. The template lands in the
+recognition gallery, so <code>matchImage</code>, <code>detectFaces</code>, and <code>&lt;YeofrCamera&gt;</code> all
+recognise the identity. Persist the result like any other enrolment:
+<code>saveTrackerToDisk</code> on both platforms.</p>
 <h3>Return codes — <code>FRReturnCode</code> and <code>isOK</code></h3>
 <pre><code class="language-ts">type FRReturnCode = string;
 const isOK = (code: FRReturnCode): boolean =&gt; code === &#39;OK&#39;;
 </code></pre>
-<p>Deliberately a bare <code>string</code>, because the platforms do not share an error
-vocabulary: iOS resolves Swift case names (<code>&quot;OK&quot;</code>, <code>&quot;trackerIsNull&quot;</code>,
-<code>&quot;legacyTrackerRejected(3)&quot;</code>), Android maps raw engine codes (<code>&quot;error(-5)&quot;</code>).
-<strong>Only <code>&quot;OK&quot;</code> means the same thing on both.</strong></p>
-<pre><code class="language-ts">if (isOK(await enroll(1, &#39;ada&#39;))) { /* enrolled */ }        // correct
-if (await enroll(1, &#39;ada&#39;) === &#39;trackerIsNull&#39;) { /* … */ } // never true on Android
+<p>The spellings that genuinely coincide on both platforms are <code>&quot;OK&quot;</code>,
+<code>&quot;imageNoFaceDetected&quot;</code>, <code>&quot;cannotCreateFile&quot;</code>, <code>&quot;incompatibleTrackerData&quot;</code> and
+<code>&quot;legacyTrackerRejected&quot;</code> — the engines share that numbering. Outside it the
+platforms diverge: iOS collapses unrecognised engine codes onto its own cases
+(<code>&quot;trackerIsNull&quot;</code>, <code>&quot;nativeException&quot;</code>, or a catch-all), Android reports them
+as <code>&quot;error(N)&quot;</code>. iOS appends the rejected envelope version to
+<code>legacyTrackerRejected</code> (<code>&quot;legacyTrackerRejected(version: 3)&quot;</code>). So: test
+success with <code>isOK</code>, and match failure families with <code>startsWith(...)</code> rather
+than exact comparison.</p>
+<pre><code class="language-ts">if (isOK(await loadTracker(blob))) { /* restored */ }
+if ((await loadTracker(blob)).startsWith(&#39;legacyTrackerRejected&#39;)) { /* re-enrol */ }
 </code></pre>
-<h3>Persistence — Android</h3>
+<h3>Persistence — both platforms</h3>
 <p><code>saveTrackerToDisk(): Promise&lt;boolean&gt;</code> and
 <code>loadTrackerFromDisk(): Promise&lt;boolean&gt;</code> resolve <code>false</code> when there was nothing
-to write or nothing stored. They write to app-private storage
-(<code>filesDir/tracker.bin</code>).</p>
+to write or nothing stored — one pair, both platforms. Android writes
+app-private <code>filesDir/tracker.bin</code>; iOS writes the tracker into Application
+Support.</p>
 <blockquote>
-<p><strong>Android stores the tracker unencrypted.</strong> There is no at-rest encryption
-yet, so a rooted device or forensic extraction can read the biometric
-templates. If that matters, hold the tracker yourself via <code>getTrackerData()</code>
-and encrypt it before storing.</p>
+<p><strong>The tracker is stored unencrypted on both platforms.</strong> If at-rest
+protection matters, hold the tracker yourself via <code>getTrackerData()</code> and
+encrypt it before storing. An enrolment saved encrypted by 0.4.2&#39;s
+since-removed encryption API restores as no enrolment (<code>loadTrackerFromDisk</code>
+resolves <code>false</code>; the file is left in place) — re-enrol once to migrate.</p>
 </blockquote>
-<p>Calling either on iOS rejects with an explanatory error rather than crashing.</p>
-<h3>Persistence — iOS</h3>
-<p>The blob at rest is a self-describing envelope whose algorithm-ID byte records
-how it was stored: <code>0x00</code> passthrough (the <code>&quot;YLXE&quot;</code> tracker in the clear) or
-<code>0x80</code> ChaChaPoly (authenticated ciphertext keyed from the Keychain).</p>
-<table>
-<thead>
-<tr>
-<th>Call</th>
-<th>Returns</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>saveTrackerBlob(encrypted: boolean)</code></td>
-<td><code>Promise&lt;boolean&gt;</code></td>
-<td>Mode chosen per save, not at activation. <code>false</code> when nothing is enrolled; rejects <code>encryption_unavailable</code> if the Keychain key could not be created.</td>
-</tr>
-<tr>
-<td><code>loadTrackerBlob()</code></td>
-<td><code>Promise&lt;FRReturnCode | null&gt;</code></td>
-<td>Decrypts first when stored encrypted. <code>null</code> when nothing is persisted, so a launch-restore is one call.</td>
-</tr>
-<tr>
-<td><code>getTrackerBlobInfo()</code></td>
-<td><code>Promise&lt;TrackerBlobInfo | null&gt;</code></td>
-<td>Inspect without loading. <code>null</code> doubles as the exists-check. Works without activation.</td>
-</tr>
-<tr>
-<td><code>deleteTrackerBlob()</code></td>
-<td><code>Promise&lt;boolean&gt;</code></td>
-<td>Forget the envelope. Pair with <code>clearTracker()</code>. Works without activation.</td>
-</tr>
-</tbody></table>
-<pre><code class="language-ts">interface TrackerBlobInfo {
-  algorithmID: number;        // 0x00 plaintext, 0x80 ChaChaPoly
-  persistedSize: number;      // envelope size on disk
-  recoveredSize: number;      // recovered payload size
-  roundTripVerified: boolean; // decrypts back to a valid &quot;YLXE&quot; envelope
-  blobBase64: string;         // exact at-rest bytes, for previews only
-}
-</code></pre>
-<p>Calling any of them on Android rejects with an explanatory error.</p>
 <h3>Anti-spoof signals</h3>
-<pre><code class="language-ts">interface SignalConfig {
-  liveness: boolean;   // the anti-spoof CNN. Default true.
-  trueDepth: boolean;  // TrueDepth 3D check. Default true; inert on Android.
-}
-
-setSignalConfig(config: SignalConfig): Promise&lt;boolean&gt;
-getSignalConfig(): Promise&lt;SignalConfig&gt;
-</code></pre>
-<p>Chooses which signals may <strong>veto trust</strong>. Identity matching is unaffected — you
-never lower recognition accuracy with these. Takes effect on a running camera
-screen.</p>
-<p>iOS reconfigures the SDK&#39;s own fusion, so a disabled signal stops being computed
-and reads &quot;Off&quot;. <strong>On Android this is advisory only</strong> — the engine scores every
-frame regardless, and the value is simply recorded for your screen to read. Do
-not expect <code>setSignalConfig({liveness: false})</code> to change engine behaviour on
-Android.</p>
-<p>During enrolment iOS <strong>forces both signals on in native code</strong>, so a printed
-photo can never be enrolled. No JS call can relax that.</p>
+<p>Both anti-spoof signals — the liveness CNN and, on iPhone, the TrueDepth 3D
+check — are always on. The package exposes no toggle for them, matching the
+Flutter plugin&#39;s surface; a spoofed frame simply reports <code>notTrusted</code>.</p>
 <h2>Camera component</h2>
 <pre><code class="language-tsx">import {YeofrCamera} from &#39;@yeomessagingcom/react-native-yeofr&#39;;
 
@@ -634,19 +610,19 @@ preview and reports one event per analysed frame.</p>
 <td><code>onEvent</code></td>
 <td><code>(e: NativeSyntheticEvent&lt;CameraEvent&gt;) =&gt; void</code></td>
 <td>both</td>
-<td>Every frame result, progress update and error</td>
+<td>Every frame result, enrolment completion and error</td>
 </tr>
 <tr>
 <td><code>enrolName</code></td>
 <td><code>string</code></td>
-<td><strong>iOS</strong></td>
-<td>Non-empty starts the SDK enrolment walk under that name; clearing it cancels</td>
+<td>both</td>
+<td>Non-empty captures the face in view and enrols it under that name; clearing it cancels. Anti-spoof is pinned on natively while it runs. Persist afterwards with <code>saveTrackerToDisk</code></td>
 </tr>
 <tr>
-<td><code>enrolEncrypted</code></td>
-<td><code>boolean</code></td>
-<td><strong>iOS</strong></td>
-<td>Persist the resulting tracker encrypted. Only with <code>enrolName</code></td>
+<td><code>enrolPoses</code></td>
+<td><code>EnrolPose[]</code></td>
+<td>both</td>
+<td>The pose walk a capture runs, in order (<code>&#39;front&#39;</code>, <code>&#39;yawLeft&#39;</code>, <code>&#39;yawRight&#39;</code>, <code>&#39;pitchUp&#39;</code>, <code>&#39;pitchDown&#39;</code>); read when a capture (re)starts. Omit for the plain single front capture. Progress arrives as <code>enrolProgress</code> events</td>
 </tr>
 <tr>
 <td><code>lensFacing</code></td>
@@ -671,44 +647,39 @@ preview and reports one event per analysed frame.</p>
 <h3>Events</h3>
 <pre><code class="language-ts">type CameraEvent =
   | ({ type: &#39;result&#39; } &amp; FaceResult)
-  | ({ type: &#39;enrolProgress&#39; } &amp; EnrolProgress)   // iOS only
-  | { type: &#39;registered&#39;; name: string }          // iOS only
+  | ({ type: &#39;enrolProgress&#39; } &amp; EnrolProgress)
+  | { type: &#39;registered&#39;; name: string }
   | { type: &#39;error&#39;; failure: CameraFailure };
 </code></pre>
-<pre><code class="language-ts">interface FaceResult {
-  faceState: &#39;notDetected&#39; | &#39;detected&#39; | &#39;multipleDetected&#39;;  // both
-  detectedCount: number;                                        // both
-  status?: &#39;noFace&#39; | &#39;badFraming&#39; | &#39;notTrusted&#39; | &#39;trusted&#39;;  // iOS
-  matchedName?: string | null;                                  // iOS
-  bestSimilarity?: number | null;                               // iOS
-  livenessGenuine?: boolean | null;                             // iOS
-  depthIsThreeD?: boolean | null;                               // iOS
-  confidence?: number;                                          // Android
-  isConfident?: boolean;                                        // Android
-  frameWidth?: number;                                          // Android
-  frameHeight?: number;                                         // Android
-  faces?: DetectedFace[];                                       // Android
-}
-
-interface DetectedFace {
-  faceId: number;   // tracker-assigned, stable while the face stays in view
-  name: string;     // enrolled name, or &#39;&#39; if unrecognised
-  x: number; y: number; width: number; height: number;  // frame pixel space
-}
-
-interface EnrolProgress {          // iOS only
+<pre><code class="language-ts">interface EnrolProgress {
   phase: &#39;capturing&#39; | &#39;completed&#39; | &#39;failed&#39;;
-  prompt: string;                  // what to ask the user to do next
-  isTargetMatched: boolean;
-  poseProgress: number;            // 0…1 across the pose sequence
+  pose: EnrolPose;          // what the user should be doing right now
+  posesAccepted: number;    // fills a progress ring: accepted / planned
+  posesPlanned: number;
+  isTargetMatched: boolean; // iOS: the user is holding the pose; Android: the frame passed the capture gate
 }
 </code></pre>
+<p><code>enrolProgress</code> steps arrive once per analysed frame while a capture runs; a
+final <code>completed</code> step precedes <code>registered</code>, and <code>failed</code> precedes the
+<code>enrolFailed</code> error. The app owns the prompt wording for each <code>pose</code>.</p>
+<pre><code class="language-ts">interface FaceResult {
+  faceState: FaceState;
+  detectedCount: number;
+  status: &#39;noFace&#39; | &#39;badFraming&#39; | &#39;notTrusted&#39; | &#39;trusted&#39;;
+  matchedName: string | null;
+  livenessGenuine: boolean | null;  // iOS: SDK-thresholded; Android: LivenessHold over isConfident
+  depthIsThreeD: boolean | null;    // Android: always null — no sensor. The one honest residue.
+}
+</code></pre>
+<p>The same shape on both platforms: iOS computes the verdict inside the SDK&#39;s
+frame loop, Android computes it in the bridge (framing gate, liveness hold,
+recognition), and JS never sees rects, raw scores or thresholds on either.</p>
 <blockquote>
-<p><strong><code>CameraFailure</code> under-types iOS.</strong> It is declared as
-<code>&#39;permissionDenied&#39; | &#39;noCameraForLens&#39; | &#39;bindFailed&#39; | &#39;noLifecycleOwner&#39;</code>,
-but those are the Android strings. iOS can also emit <code>&#39;notActivated&#39;</code>,
-<code>&#39;persistFailed: …&#39;</code> and a free-form capture-session error. Branch on
-<code>failure</code> as a string and always include a default case.</p>
+<p><strong>One <code>CameraFailure</code> vocabulary on both platforms:</strong> <code>&#39;permissionDenied&#39;</code>,
+<code>&#39;noCameraForLens&#39;</code>, <code>&#39;bindFailed&#39;</code>, <code>&#39;noLifecycleOwner&#39;</code>, <code>&#39;notActivated&#39;</code>,
+<code>&#39;enrolFailed&#39;</code>. <code>permissionDenied</code>, <code>bindFailed</code>, <code>notActivated</code> and
+<code>enrolFailed</code> can occur on either platform; <code>noCameraForLens</code> and
+<code>noLifecycleOwner</code> only arise on Android&#39;s capture stack.</p>
 </blockquote>
 <h2>Platform differences</h2>
 <p>The JavaScript API is one surface, but it is not uniformly implemented. This is
@@ -720,7 +691,7 @@ every camera difference below.</p>
 <thead>
 <tr>
 <th></th>
-<th>iOS engine 0.7.6</th>
+<th>iOS engine 0.7.8</th>
 <th>Android engine 0.1.24</th>
 </tr>
 </thead>
@@ -740,10 +711,11 @@ only.</strong> Because the Android engine has no camera, the React Native bridge
 supplies one itself — it runs a CameraX pipeline, converts each frame, and calls
 the engine&#39;s frame API. That is why <code>&lt;YeofrCamera&gt;</code> renders on both platforms
 despite only one engine owning a camera.</p>
-<p><strong>Frame input from JavaScript works on both platforms.</strong> <code>matchImage</code> /
-<code>enrollImage</code> grade or enrol from any image your own pipeline produced. See
-<a href="#frame-input">Frame input</a>. The JavaScript contract is identical on both; the
-bridge does whatever each engine needs underneath.</p>
+<p><strong>Frame input from JavaScript works on both platforms.</strong> <code>detectFaces</code> runs
+the full per-frame verdict on a frame your own pipeline produced; <code>matchImage</code> /
+<code>enrollImage</code> grade or enrol from stills. See <a href="#frame-input">Frame input</a>. The
+JavaScript contract is identical on both; the bridge does whatever each engine
+needs underneath.</p>
 <p>Who owns capture leaks into the props:</p>
 <table>
 <thead>
@@ -755,7 +727,7 @@ bridge does whatever each engine needs underneath.</p>
 </thead>
 <tbody><tr>
 <td>Owns capture</td>
-<td>The <strong>SDK</strong>, via its own <code>AVCaptureSession</code>; the bridge attaches a preview layer</td>
+<td>The <strong>SDK</strong>, via its own <code>AVCaptureSession</code> — required for the TrueDepth signal; the bridge attaches a preview layer</td>
 <td>The <strong>bridge</strong>, via CameraX, standing in for a camera the engine does not have</td>
 </tr>
 <tr>
@@ -787,25 +759,42 @@ bridge does whatever each engine needs underneath.</p>
 <p>The only prop both platforms share is <code>onEvent</code>. Passing an iOS prop on Android,
 or the reverse, is silently ignored.</p>
 <h3>Enrolment</h3>
-<p>The largest split, and it changes how you write the screen.</p>
-<p><strong>iOS</strong> has an SDK-driven enrolment walk. Set <code>enrolName</code> and the SDK coaches
-the user through poses, emitting <code>enrolProgress</code> events and finally <code>registered</code>.
-Clearing <code>enrolName</code> cancels. <code>enrolEncrypted</code> persists the result encrypted, in
-native code.</p>
-<p><strong>Android has no enrolment path in the camera view.</strong> <code>enrolName</code> does nothing.
-You drive it: watch <code>result</code> events, decide when the face is good enough, call
-<code>enroll(faceID, name)</code> once, then <code>saveTrackerToDisk()</code>. The example app counts
-20 consecutive acceptable frames before declaring success.</p>
+<p>Both platforms follow the same shape — capture, then <code>registered</code>, then the app
+persists — but the capture runs in different places, because only Android
+surfaces per-face ids to JavaScript.</p>
+<p>Set <code>enrolName</code> and the native view captures the face in view (anti-spoof
+signals are forced on in native code while it does — no JS config can relax
+them), then emits <code>registered</code>; a new name restarts the capture. Persist
+afterwards with <code>saveTrackerToDisk()</code> on both platforms. On
+iOS the SDK&#39;s own enrolment machinery runs the capture; on Android the bridge
+collects 20 frames that pass framing and liveness and enrols from the first.</p>
+<p>Add <code>enrolPoses</code> and the capture becomes a guided walk through those prompts,
+reported step by step over <code>enrolProgress</code>. The walk is <strong>verified on iOS</strong> —
+the engine measures head angles, a pose only accepts while it is genuinely
+held, and a pose the user cannot hit self-resolves after a few seconds so the
+walk never wedges. Android&#39;s engine exposes no head pose, so there the same
+prompts <strong>pace</strong> the capture instead: the frame budget is split evenly across
+the poses and each advances after its share of good frames, banking whatever
+varied appearance the user actually shows. On iOS a sequence that ends with a
+second <code>&#39;front&#39;</code> additionally runs the engine&#39;s lighting pass during that
+final step.</p>
+<p>Clearing <code>enrolName</code> cancels the capture&#39;s <em>events</em> on both platforms — not
+the capture itself. Android commits the identity to the gallery on that first
+good frame and the engine has no un-enrol call; the iOS walk has no cancel
+either and, with a face still in view, can run to completion headless. Treat
+cancel as &quot;stop listening&quot;, not &quot;undo&quot; — an app that must undo an abandoned
+capture restores its persisted tracker (<code>loadTrackerFromDisk</code>) or clears it.</p>
 <h3>Reading a frame result</h3>
-<p>Only <code>faceState</code> and <code>detectedCount</code> are common. The practical consequence:
-<strong>iOS hands you a decision (<code>status === &#39;trusted&#39;</code>), Android hands you a score
-(<code>isConfident</code>) and expects you to decide.</strong> Write that policy once, per
-platform, and keep it out of the render path.</p>
-<p>Android also gives you no framing verdict, so a screen must judge framing itself
-from <code>faces</code> and <code>frameWidth</code>/<code>frameHeight</code>. The example app&#39;s <code>trustPolicy.ts</code>
-mirrors the engine&#39;s own rule: a face must be at least <strong>20% of frame width</strong>
-and sit at least <strong>2% inside each edge</strong>.</p>
+<p><strong>Both platforms hand you a decision</strong>: read <code>status === &#39;trusted&#39;</code> and
+<code>matchedName</code>, and keep any extra display logic out of the render path. Under
+the hood iOS&#39;s SDK computes the verdict itself, while the Android bridge
+derives it from the engine&#39;s raw signals — including the engine&#39;s own framing
+rule (a face at least <strong>20% of frame width</strong>, at least <strong>2% inside each edge</strong>)
+and a short liveness hold across frames the engine declines to score. Neither
+platform surfaces rects, scores or thresholds to JS.</p>
 <h3>Capability summary</h3>
+<p>Everything not listed here is identical on both platforms. These are the only
+differences:</p>
 <table>
 <thead>
 <tr>
@@ -816,38 +805,8 @@ and sit at least <strong>2% inside each edge</strong>.</p>
 </thead>
 <tbody><tr>
 <td>Engine owns a camera</td>
-<td>yes</td>
-<td><strong>no</strong> — the bridge supplies CameraX</td>
-</tr>
-<tr>
-<td>Engine accepts frame input</td>
-<td>yes</td>
-<td>yes — and it is the only entry point</td>
-</tr>
-<tr>
-<td>Camera view in React Native</td>
-<td>yes</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>Frame input from JavaScript</td>
-<td>yes — <code>matchImage</code>, <code>enrollImage</code></td>
-<td>yes — same two calls</td>
-</tr>
-<tr>
-<td>SDK-driven enrolment walk</td>
-<td>yes</td>
-<td>no — call <code>enroll</code> yourself</td>
-</tr>
-<tr>
-<td><code>status</code> trust verdict</td>
-<td>yes</td>
-<td>no — derive from <code>isConfident</code></td>
-</tr>
-<tr>
-<td>Per-face rects</td>
-<td>no</td>
-<td>yes</td>
+<td>yes — and it also accepts fed frames, the path Android uses</td>
+<td><strong>no</strong> — the bridge supplies CameraX and feeds the engine&#39;s frame API</td>
 </tr>
 <tr>
 <td>TrueDepth signal</td>
@@ -855,29 +814,24 @@ and sit at least <strong>2% inside each edge</strong>.</p>
 <td>no depth source</td>
 </tr>
 <tr>
-<td>At-rest encryption</td>
-<td>ChaChaPoly via Keychain</td>
-<td><strong>plaintext</strong></td>
-</tr>
-<tr>
 <td>Signed <code>.yeolicense</code></td>
 <td>yes</td>
 <td>not supported</td>
-</tr>
-<tr>
-<td><code>setSignalConfig</code> changes engine behaviour</td>
-<td>yes</td>
-<td>no, advisory only</td>
 </tr>
 <tr>
 <td>Without a valid pilot code</td>
 <td>the app terminates at activation</td>
 <td><code>activate</code> rejects</td>
 </tr>
+<tr>
+<td>Pose verification during enrolment</td>
+<td>yes — measured head angles gate each <code>enrolPoses</code> step</td>
+<td><strong>no head-pose signal</strong> — the same prompts pace the capture without gating it</td>
+</tr>
 </tbody></table>
 <h2>The example app</h2>
-<p>The demo is FRPilot rebuilt in React Native: activate → enrol → recognise →
-inspect the encrypted tracker, with trust signals on screen.</p>
+<p>The demo is FRPilot rebuilt in React Native: activate → enrol → recognise,
+with trust signals on screen.</p>
 <p>The camera ships <strong>inside the package</strong>, so the demo&#39;s JavaScript
 runs from the published tarball — there is no missing native component to
 register. <code>example/App.tsx</code> and <code>example/src/</code> are already in your
@@ -889,21 +843,16 @@ is no frame-API screen — <a href="#frame-input">frame input</a> is for images 
 pipeline produced, and the demo&#39;s camera flows exercise the camera path.</p>
 <h3>What it does, screen by screen</h3>
 <p><strong>Hub.</strong> On mount it calls <code>activate({pilotUnlockCode: PILOT_CODE})</code> and
-<code>getVersion()</code>, then restores any prior enrolment — <code>getTrackerBlobInfo() !== null</code> on iOS, <code>loadTrackerFromDisk()</code> on Android. It shows one of three states:
+<code>getVersion()</code>, then restores any prior enrolment with <code>loadTrackerFromDisk()</code>
+— the same call on both platforms. It shows one of three states:
 <em>Unavailable</em> (simulator), <em>Unlicensed</em> (activation error), or <em>Activated</em> with
-a name field and four buttons. The two iOS-only buttons are filtered out on
-Android.</p>
+a name field and two buttons — the same on both platforms.</p>
 <p><strong>Camera screen</strong> (enrol or recognise). On Android it requests
 <code>PermissionsAndroid.PERMISSIONS.CAMERA</code> on mount and renders nothing until
-granted. It reads <code>getSignalConfig()</code> to populate the liveness and TrueDepth
-switches — the depth switch appears on iOS only. In recognition mode a bottom
+granted. In recognition mode a bottom
 badge shows the headline in green when trusted, red otherwise. In enrol mode it
-shows a prompt, a progress bar, and an <em>Enrol</em> button enabled only when the
+shows a prompt and an <em>Enrol</em> button enabled only when the
 current frame is good enough.</p>
-<p><strong>Encryption screen</strong> (iOS). No camera. Reads <code>getTrackerBlobInfo()</code> and shows
-the tracker size, whether it is <code>plaintext (0x00)</code> or <code>encrypted (0x80)</code>,
-whether the round-trip verified, and a hex + ASCII preview of the first 32
-bytes. A destructive button runs <code>clearTracker()</code> then <code>deleteTrackerBlob()</code>.</p>
 <h3>The two logic files worth copying</h3>
 <p><code>trustPolicy.ts</code> turns a frame into a verdict, in strict order: no face →
 multiple faces → bad framing → liveness (unverified vs spoof) → unrecognised →
@@ -912,11 +861,13 @@ frame is never reported as a spoof. <code>canEnrol</code> allows enrolment only 
 verdict is <code>trusted</code> or specifically <code>unrecognised</code> — never on a spoof,
 unverified or badly framed face — and enrolment always evaluates with liveness
 forced on, whatever the switch says.</p>
-<p><code>livenessHold.ts</code> debounces the decision. When a frame cannot be scored it holds
-the previous liveness answer for up to <strong>3 frames</strong>, then falls back to
-<em>unverified</em> rather than <em>spoof</em>. The constant is calibrated to wall-clock, not
-frames: iOS holds ~1.5 s at 10 fps, this pipeline runs ~2 fps, so 3 frames is
-roughly equivalent. Retune it if your frame rate moves.</p>
+<p>The liveness debounce that used to live beside it (<code>livenessHold.ts</code>) moved
+below the bridge with the verdict itself: <code>LivenessHold</code> in the Android
+bridge&#39;s <code>TrustPolicy.kt</code> and <code>FrameLivenessHold</code> in the iOS bridge&#39;s
+<code>FramePolicy.swift</code>. When a frame cannot be scored they hold the previous
+liveness answer for up to <strong>3 frames</strong>, then fall back to <em>unverified</em> rather
+than <em>spoof</em>. The Android policy is pinned by JVM tests in
+<code>android/src/test/java/com/yeofr/TrustPolicyTest.kt</code>.</p>
 <h3>Running it</h3>
 <p>Clone the repo — the demo&#39;s host projects (<code>example/ios</code>, <code>example/android</code>) are
 repo-only — then work from <strong><code>example/</code></strong> (every command below; <code>yeofr-setup</code>
@@ -951,8 +902,8 @@ or symlink the hoisted package into <code>example/node_modules</code> as a stopg
 <h3>Copying the demo into your own app</h3>
 <p>Three things break if you copy the files without the host projects:</p>
 <ol>
-<li><code>trustPolicy.ts</code> imports <code>DetectedFace</code> from <code>&#39;../../index&#39;</code> — rewrite that
-to <code>&#39;@yeomessagingcom/react-native-yeofr&#39;</code>.</li>
+<li><code>faceEvents.ts</code> imports <code>FaceResult</code> from <code>&#39;@yeomessagingcom/react-native-yeofr&#39;</code>
+— already the published name, so this one now copies cleanly.</li>
 <li>iOS needs <code>NSCameraUsageDescription</code> in your own <code>Info.plist</code>, or the camera
 never prompts and the session fails.</li>
 <li>iOS needs the Podfile <code>post_install</code> block from <a href="#install">Install</a> — that is
@@ -1007,20 +958,14 @@ what <code>npx yeofr-setup</code> writes for you.</li>
 <td>Your app must declare <code>CAMERA</code> in its manifest and request the runtime grant; the package never prompts.</td>
 </tr>
 <tr>
-<td><code>enrolName</code> does nothing on Android</td>
-<td>Expected — Android has no SDK enrolment walk. Call <code>enroll()</code> yourself.</td>
-</tr>
-<tr>
-<td><code>setSignalConfig</code> has no effect on Android</td>
-<td>Expected — advisory only there.</td>
+<td><code>enrolName</code> never emits <code>registered</code></td>
+<td>The capture only counts frames that pass framing and liveness — fill the frame, hold still, good light.</td>
 </tr>
 </tbody></table>
 <h2>Support</h2>
 <p>Include the output of <code>npx yeofr-setup doctor</code>, your React Native and Xcode
 versions, and whether it is a device or simulator build. Licensing and pilot
 codes: <strong><a href="mailto:christo@yeomessaging.com">christo@yeomessaging.com</a></strong>.</p>
-
-
 </main></div>
 <script>
 const doc = document.getElementById('doc');
