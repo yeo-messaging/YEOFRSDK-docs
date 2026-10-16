@@ -184,8 +184,7 @@ npx yeofr-setup                     # validates the config, runs pod install
 <p>Put a real pilot code in <code>example/App.tsx</code> (the <code>XXXX-…</code> placeholder kills the
 iOS app at activation; Android just shows <em>Unlicensed</em>). iOS signing is
 pre-configured with the YEO team — pick your own in Signing &amp; Capabilities
-only if you are not on it. Do not rename the bundle ids: the SDK entitlement
-is keyed to <code>com.youreyeonly.*</code>.</p>
+only if you are not on it.</p>
 <pre><code class="language-bash">npm start                           # terminal 1 — Metro
 npm run ios -- --device             # terminal 2 — iPhone
 npm run android                     # terminal 2 — Android
@@ -393,9 +392,9 @@ bridge forces no threshold; <code>matchImage</code> still reports <code>similari
 on Android.</li>
 <li><strong>Google Play services is required on Android.</strong> Face detection is ML Kit&#39;s
 unbundled model, downloaded on first use.</li>
-<li><strong>A pilot code is required</strong> for any application id outside the YEO prefix
-(the engine&#39;s no-code period ended on 2026-10-01): <code>activate</code> rejects with
-<code>E_ACTIVATION_FAILED</code> / &quot;Invalid licence code&quot; without a valid one.</li>
+<li><strong>A valid pilot code from YEO is required</strong>; contact YEO support. On Android
+a missing, unknown or expired code makes <code>activate</code> reject with
+<code>E_ACTIVATION_FAILED</code> / &quot;Invalid licence code&quot;.</li>
 </ul>
 <h2 id="upgrading-from-03x">Upgrading from 0.3.x</h2>
 <p>Three things changed for iOS hosts, all of which need action:</p>
