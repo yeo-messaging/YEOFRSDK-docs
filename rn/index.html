@@ -371,9 +371,9 @@ was 0.71); there is no threshold to port. Expect a short run of
 <code>notTrusted</code> / <code>isLive: false</code> frames when a face first appears, while the
 engine gathers evidence — the demo reads those as &quot;Spoof detected&quot; until
 the verdict lands.</li>
-<li><strong>Galleries are per platform</strong>: an enrolment made on one platform does not
-verify on the other; every user enrols once per platform. Galleries
-written by the 0.1.x (Android) and 0.9.x (iOS) engines are refused.</li>
+<li><strong>Galleries saved by earlier engine versions are refused</strong>: galleries
+written by the 0.1.x (Android) and 0.9.x (iOS) engines do not load, so every
+user re-enrols once after upgrading.</li>
 <li><strong>Live only while <code>faceState == Detected</code>.</strong> With a second face in view the
 engine keeps its last verdict for up to 1.5 s; <code>isLive</code> is <code>false</code> for
 those frames and <code>status</code> is <code>notTrusted</code>. Show &quot;one face at a time&quot; and
