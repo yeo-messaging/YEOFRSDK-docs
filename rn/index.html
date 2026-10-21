@@ -47,7 +47,7 @@ hr{border:0;border-top:1px solid var(--line);margin:2.5rem 0}
 <div id="wrap"><nav id="toc"><p class="t">On this page</p><div id="toclinks"></div></nav>
 <main id="doc">
 <h1 id="yeofr-for-react-native">YEOFR for React Native</h1>
-<p><em>This guide is for bridge 0.5.0 (iOS engine 0.11.0, Android engine 0.2.28). Older version: <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.4.4/">0.4.4</a>.</em></p>
+<p><em>This guide is for bridge 0.5.2 (iOS engine 0.11.0, Android engine 0.2.29). Older versions: <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.5.0/">0.5.0</a>, <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.4.4/">0.4.4</a>.</em></p>
 <p>On-device face recognition with anti-spoof liveness, for iOS and Android, from
 one JavaScript API.</p>
 <p>This is the complete integration reference: install, licensing, the full API,
@@ -67,6 +67,7 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 <li><a href="#quick-start--from-an-empty-folder">Quick start — from an empty folder</a></li>
 <li><a href="#quick-start--the-example-app">Quick start — the example app</a></li>
 <li><a href="#install">Install</a></li>
+<li><a href="#upgrading-to-052-android-engine-0229">Upgrading to 0.5.2 (Android engine 0.2.29)</a></li>
 <li><a href="#upgrading-to-050-android-engine-0228">Upgrading to 0.5.0 (Android engine 0.2.28)</a></li>
 <li><a href="#upgrading-from-03x">Upgrading from 0.3.x</a></li>
 <li><a href="#verify-the-install">Verify the install</a></li>
@@ -99,7 +100,7 @@ there rejects with <code>E_UNAVAILABLE_SIMULATOR</code>. That is expected, not a
 </tr>
 <tr>
 <td>Android engine</td>
-<td><code>com.yeomessaging:yeofr-android</code> <strong>0.2.28</strong></td>
+<td><code>com.yeomessaging:yeofr-android</code> <strong>0.2.29</strong></td>
 <td>Maven, from the private YEO repository with credentials you supply, pulled in transitively</td>
 </tr>
 </tbody></table>
@@ -110,20 +111,23 @@ installed.</p>
 Apple-silicon Mac (the xcframework has no Intel simulator slice), Android
 minSdk 24.</p>
 <blockquote>
-<p><strong>Start new integrations on 0.5.0.</strong> It is the first release with the
-<code>isLive</code> rule, the framing hint and the 0.11.0 / 0.2.28 engines. Earlier
-releases are deprecated: 0.4.x runs the previous engines and liveness
+<p><strong>Start new integrations on 0.5.2.</strong> The 0.5.x line is the first with the
+<code>isLive</code> rule, the framing hint and the 0.11.0 / 0.2.x engines, and 0.5.2
+pins the Android engine whose native libraries meet Google Play&#39;s 16 KB
+page size requirement. Earlier releases are deprecated: 0.4.x runs the previous engines and liveness
 semantics, and anything before 0.4.1 predates the frame API, the setup
 script and the Android capture pipeline moving into the bridge.</p>
 </blockquote>
-<p>The Android engine is pinned to <strong>0.2.28</strong> (a new on-device face recognition
+<p>The Android engine is pinned to <strong>0.2.29</strong> (a new on-device face recognition
 model and a new on-device passive liveness check, judged over consecutive
-frames; no native libraries in the AAR). The engine owns no camera — the bridge supplies one —
+frames; the engine&#39;s own AAR has no native libraries, and its TensorFlow Lite
+runtime ships 16 KB page aligned ones — see
+<a href="#16-kb-page-size-google-play">16 KB page size</a>). The engine owns no camera — the bridge supplies one —
 and its liveness bar and gallery format differ from the 0.1.x line, so let the
 bridge resolve its own engine version rather than forcing one, and see
 <a href="#upgrading-to-050-android-engine-0228">Upgrading to 0.5.0</a> before moving an
 app that has enrolments on disk.</p>
-<p><code>getVersion()</code> returns the <strong>engine</strong> version — <code>0.11.0</code> on iOS, <code>0.2.28</code> on
+<p><code>getVersion()</code> returns the <strong>engine</strong> version — <code>0.11.0</code> on iOS, <code>0.2.29</code> on
 Android — not the bridge version. That is intentional: it is the number that
 determines recognition behaviour.</p>
 <h2 id="quick-start--from-an-empty-folder">Quick start — from an empty folder</h2>
@@ -167,7 +171,7 @@ npm run android                # 2: Android
 </code></pre>
 <p>With several iPhones attached <code>--device</code> grabs the first — pin yours with
 <code>npm run ios -- --udid &lt;UDID&gt;</code> (<code>xcrun xctrace list devices</code>). Expected on
-screen: engine <code>0.11.0</code> (iOS) / <code>0.2.28</code> (Android), activated. After that,
+screen: engine <code>0.11.0</code> (iOS) / <code>0.2.29</code> (Android), activated. After that,
 saving a JS file reloads the app via Metro; rebuild only when something native
 changes.</p>
 <h2 id="quick-start--the-example-app">Quick start — the example app</h2>
@@ -190,7 +194,7 @@ npm run ios -- --device             # terminal 2 — iPhone
 npm run android                     # terminal 2 — Android
 </code></pre>
 <p>Expected: the Hub shows <strong>YEOFR Pilot · Activated</strong>, footer <code>YEOFR SDK 0.11.0</code>
-/ <code>0.2.28</code>. Type a name → <strong>Enrol Face</strong> (grant the camera permission; hold
+/ <code>0.2.29</code>. Type a name → <strong>Enrol Face</strong> (grant the camera permission; hold
 the phone up normally — flat on a desk it films the ceiling and reads as badly
 framed or spoof) → <strong>Live Recognition</strong> shows the green trusted badge. Details,
 screen by screen: <a href="#the-example-app">The example app</a>.</p>
@@ -332,7 +336,7 @@ repositories, so the block inside the package&#39;s own <code>android/build.grad
 applies to your <code>:app</code>. Putting it in the root project&#39;s
 <code>buildscript.repositories</code> does not work either — that only feeds the Gradle
 classpath. Without it the build fails with
-<code>Could not find com.yeomessaging:yeofr-android:0.2.28</code>.</p>
+<code>Could not find com.yeomessaging:yeofr-android:0.2.29</code>.</p>
 <p><strong>Declare the camera permission yourself.</strong> The package&#39;s manifest declares no
 permissions — the frame API works with no camera at all, so whether your app
 carries the <em>dangerous</em> <code>CAMERA</code> permission on its Play listing is your call,
@@ -344,6 +348,29 @@ Mount <code>YeofrCamera</code> without the grant and it reports
 <p>If your app is nothing but a recognition screen, also mark
 <code>android.hardware.camera</code> as a required feature in your manifest so the app
 cannot install on a camera-less device.</p>
+<h5 id="16-kb-page-size-google-play">16 KB page size (Google Play)</h5>
+<p>Google Play requires apps targeting Android 15 or later to support 16 KB memory
+pages: every native library in the APK or App Bundle must be 16 KB aligned.
+From bridge 0.5.2 the engine is <code>yeofr-android</code> 0.2.29, whose TensorFlow Lite
+runtime (the LiteRT artifacts, <code>com.google.ai.edge.litert</code>) ships 16 KB aligned
+libraries. To keep your build compliant:</p>
+<ul>
+<li>Let the bridge bring in the engine. If your app declares
+<code>com.yeomessaging:yeofr-android</code> itself, declare <code>0.2.29</code>.</li>
+<li>Do not add <code>org.tensorflow:tensorflow-lite</code> 2.14 (or its <code>-gpu</code>, <code>-gpu-api</code>
+and <code>-support</code> artifacts) to your app: their native libraries are 4 KB
+aligned and bring the rejection back. If your app uses TensorFlow Lite
+directly, use the LiteRT artifacts (<code>com.google.ai.edge.litert:litert</code>,
+<code>litert-gpu</code>, <code>litert-gpu-api</code>) instead.</li>
+<li>Build with Android Gradle Plugin 8.5.1 or later, which packages native
+libraries 16 KB aligned.</li>
+<li>Check the APK you upload with Android Studio&#39;s APK Analyzer, or with
+<code>zipalign</code> from the Android build tools:
+<code>zipalign -c -P 16 -v 4 app-release.apk</code> ends with <code>Verification successful</code>.
+The check covers every native library in the app, including those of React
+Native and your other packages; the requirement applies to the 64-bit ABIs
+(<code>arm64-v8a</code>, <code>x86_64</code>).</li>
+</ul>
 <h3 id="commit-these-once-per-repository">Commit these, once per repository</h3>
 <p>Steps 2–4 are a one-time change to the repo, not something each developer
 repeats. Commit <code>ios/&lt;App&gt;.xcodeproj/project.pbxproj</code>,
@@ -352,9 +379,30 @@ repeats. Commit <code>ios/&lt;App&gt;.xcodeproj/project.pbxproj</code>,
 CI — just builds.</p>
 <p><strong>Expo:</strong> the managed workflow has no <code>ios/</code> directory to open, so run
 <code>expo prebuild</code> (or use a bare project) first. There is no config plugin yet.</p>
+<h2 id="upgrading-to-052-android-engine-0229">Upgrading to 0.5.2 (Android engine 0.2.29)</h2>
+<p>From 0.5.0 or 0.5.1 there is nothing to change in JavaScript: update the
+package and rebuild.</p>
+<ul>
+<li><strong>Android engine 0.2.29</strong> is 0.2.28 with its TensorFlow Lite runtime on 16 KB
+page aligned native libraries, for Google Play&#39;s 16 KB page size requirement
+(see <a href="#16-kb-page-size-google-play">16 KB page size</a>). No API or behaviour
+change; galleries saved by 0.2.28 load unchanged, so users do not re-enrol.
+If your app declares <code>com.yeomessaging:yeofr-android</code> itself, move it to
+<code>0.2.29</code>, and do not add <code>org.tensorflow:tensorflow-lite</code> 2.14. On Android
+Gradle Plugin 9, <code>android.uniquePackageNames=false</code> is no longer needed for
+this engine; remove it if you set it only for YEOFR.</li>
+<li><strong>Android camera events go through the UIManager event dispatcher.</strong> React
+Native 0.87+ with the New Architecture no longer logs a
+<code>getJSModule(RCTEventEmitter)</code> warning for every analysed frame, and the
+camera view keeps working once React Native removes that interop path. Same
+<code>onEvent</code> prop, same payloads.</li>
+<li>The iOS engine stays at 0.11.0.</li>
+</ul>
+<p>From 0.4.x, follow <a href="#upgrading-to-050-android-engine-0228">Upgrading to 0.5.0</a>
+below; the engine you get is 0.2.29, and everything there applies unchanged.</p>
 <h2 id="upgrading-to-050-android-engine-0228">Upgrading to 0.5.0 (Android engine 0.2.28)</h2>
-<p>The Android engine moves from the 0.1.x line to 0.2.28 and both platforms gain
-one liveness rule. Existing JavaScript keeps working; what changes:</p>
+<p>The Android engine moves from the 0.1.x line to 0.2.28 (0.2.29 since 0.5.2) and
+both platforms gain one liveness rule. Existing JavaScript keeps working; what changes:</p>
 <ul>
 <li><strong>Enrolments saved by 0.4.x on Android do not load.</strong> The recogniser is a
 different model, so <code>loadTracker</code> / <code>loadTrackerFromDisk</code> refuse a gallery
@@ -444,7 +492,7 @@ await activate({license: LICENSE});              // or a signed licence token (i
 <code>activate()</code> on both platforms, so it proves the native module actually linked.</p>
 <pre><code class="language-ts">import {activate, getVersion, isOK, clearTracker} from &#39;@yeomessagingcom/react-native-yeofr&#39;;
 
-console.log(await getVersion());                       // &quot;0.11.0&quot; iOS / &quot;0.2.28&quot; Android
+console.log(await getVersion());                       // &quot;0.11.0&quot; iOS / &quot;0.2.29&quot; Android
 await activate({pilotUnlockCode: &#39;XXXX-XXXX-XXXX-XXXX&#39;});
 console.log(isOK(await clearTracker()));
 </code></pre>
@@ -772,7 +820,7 @@ every camera difference below.</p>
 <tr>
 <th></th>
 <th>iOS engine 0.11.0</th>
-<th>Android engine 0.2.28</th>
+<th>Android engine 0.2.29</th>
 </tr>
 </thead>
 <tbody><tr>
