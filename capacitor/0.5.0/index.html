@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YEOFR for Capacitor — integration guide</title>
+<style>
+:root{
+  --bg:#fff;--fg:#1d1d1f;--muted:#6e6e73;--line:#d2d2d7;--accent:#0071e3;
+  --code-bg:#f5f5f7;--card:#fbfbfd;--warn-bg:#fff8e6;--warn-line:#e5a50a;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#161618;--fg:#f5f5f7;--muted:#a1a1a6;--line:#3a3a3c;--accent:#4aa3ff;
+  --code-bg:#1f1f22;--card:#1c1c1f;--warn-bg:#2a2413;--warn-line:#b8860b;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.62 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased}
+#wrap{display:grid;grid-template-columns:270px minmax(0,1fr);gap:3rem;max-width:1180px;margin:0 auto;padding:0 1.5rem}
+#toc{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:2.5rem 0 3rem;
+  border-right:1px solid var(--line);font-size:.86rem}
+#toc .t{font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .9rem}
+#toc a{display:block;padding:.22rem 0;color:var(--muted);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem}
+#toc a:hover{color:var(--fg)}
+#toc a.h3{padding-left:1.6rem;font-size:.8rem}
+#toc a.on{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+main{padding:2.5rem 0 6rem;min-width:0}
+h1{font-size:2.6rem;line-height:1.1;letter-spacing:-.02em;margin:0 0 .6rem}
+h2{font-size:1.65rem;letter-spacing:-.01em;margin:3.2rem 0 1rem;padding-bottom:.45rem;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+h3{font-size:1.18rem;margin:2.2rem 0 .7rem;scroll-margin-top:1rem}
+h4{font-size:1rem;margin:1.6rem 0 .5rem;color:var(--muted)}
+p,li{max-width:74ch}
+a{color:var(--accent)}
+code{background:var(--code-bg);padding:.16em .38em;border-radius:4px;font-size:.86em;
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto}
+pre code{background:none;padding:0;font-size:.855em;line-height:1.55}
+table{border-collapse:collapse;width:100%;margin:1.1rem 0;font-size:.92rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:.55rem .75rem;text-align:left;vertical-align:top}
+th{background:var(--card);font-weight:600}
+td code{white-space:nowrap}
+blockquote{margin:1.2rem 0;padding:.85rem 1.1rem;background:var(--warn-bg);
+  border-left:3px solid var(--warn-line);border-radius:0 8px 8px 0}
+blockquote p{margin:.3rem 0}
+hr{border:0;border-top:1px solid var(--line);margin:2.5rem 0}
+@media (max-width:900px){#wrap{grid-template-columns:1fr;gap:0}#toc{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line)}}
+</style></head><body>
+<div id="wrap"><nav id="toc"><p class="t">On this page</p><div id="toclinks"></div></nav>
+<main id="doc">
+<h1 id="yeofr-for-capacitor">YEOFR for Capacitor</h1>
+<p><em>This guide is for plugin 0.5.0 (iOS engine 0.11.2, Android engine 0.2.29).</em></p>
+<p>On-device face recognition with liveness for Capacitor apps on iOS and Android,
+from one TypeScript API.</p>
+<p>This guide takes an Ionic Angular app from install to a working face screen:
+install, the transparent page, a small Angular service, what each status means,
+enrolment, licensing, hardened builds and troubleshooting. The plugin itself has
+no Angular dependency; the Angular code here is one way to use it.</p>
+<blockquote>
+<p><strong>Recognition needs a real phone.</strong> The app builds and runs in the iOS
+simulator and the Android emulator, but neither gives the engine a real face,
+so results stay at <code>noFace</code>. That is expected, not a fault.</p>
+</blockquote>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#what-you-get">What you get</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#make-the-page-transparent">Make the page transparent</a></li>
+<li><a href="#ionic-angular-quick-start">Ionic Angular quick start</a></li>
+<li><a href="#what-the-statuses-mean">What the statuses mean</a></li>
+<li><a href="#enrolment-and-the-pose-walk">Enrolment and the pose walk</a></li>
+<li><a href="#licence-handling">Licence handling</a></li>
+<li><a href="#app-shielding-and-hardening-products">App shielding and hardening products</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#versions">Versions</a></li>
+<li><a href="#changelog">Changelog</a></li>
+</ul>
+<h2 id="what-you-get">What you get</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Version</th>
+<th>Where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capacitor plugin</td>
+<td><code>@yeomessagingcom/capacitor-yeofr</code> <strong>0.5.0</strong></td>
+<td>npm</td>
+</tr>
+<tr>
+<td>iOS engine</td>
+<td>YEOFR <strong>0.11.2</strong></td>
+<td>Swift Package Manager, from <a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a>, resolved for you</td>
+</tr>
+<tr>
+<td>Android engine</td>
+<td><code>com.yeomessaging:yeofr-android</code> <strong>0.2.29</strong></td>
+<td>Maven, from the private YEO repository, with credentials YEO gives you</td>
+</tr>
+</tbody>
+</table>
+<p>The plugin pins both engine versions. <code>getVersion()</code> returns the <strong>engine</strong>
+version (<code>0.11.2</code> on iOS, <code>0.2.29</code> on Android), not the plugin version.</p>
+<p>How it works:</p>
+<ul>
+<li>The native layer owns the camera. It draws the preview in a native view
+<strong>behind</strong> the WebView.</li>
+<li>Your page is transparent where the camera should show, and draws its own
+overlay: prompts, buttons, progress.</li>
+<li>Only small JSON events reach JavaScript. Frames never do.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result</code></td>
+<td>Every analysed frame while the camera runs: the trust status for the face in view.</td>
+</tr>
+<tr>
+<td><code>enrolProgress</code></td>
+<td>Every analysed frame while an enrolment capture is running.</td>
+</tr>
+<tr>
+<td><code>registered</code></td>
+<td>An enrolment capture finished and the face is stored.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Something failed after <code>start()</code> resolved.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Frameworks.</strong> The plugin is framework-agnostic: any web framework running in a
+Capacitor shell uses the same TypeScript API, whether Angular, React, Vue, Svelte or
+plain JavaScript, with or without Ionic. The examples are Angular because the first
+client is; React Native and Flutter apps keep using their own bridges.</p>
+<p><strong>Shells.</strong> This release supports Capacitor apps. The native layer is built
+independently of the shell, so Cordova apps, and native iOS or Android apps that
+host your web app in their own web view, are supported by the same design and
+delivered on request. The Angular code in this guide does not change for them;
+only the small transport class does.</p>
+<p><strong>Limits of this release:</strong></p>
+<ul>
+<li>One camera session per app at a time.</li>
+<li>Continuous status only. There is no one-shot check call yet.</li>
+<li>Portrait only. The preview does not follow device rotation, so lock the face
+page (or the app) to portrait.</li>
+<li>No browser build. In a browser every engine call rejects with <code>UNAVAILABLE</code>
+and <code>getVersion()</code> resolves <code>'web'</code>, so your web build and unit tests still
+run.</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>iOS</th>
+<th>Android</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Capacitor</td>
+<td>7.x or 8.x</td>
+<td>7.x or 8.x</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>iOS 17.0 or later, iPhone</td>
+<td>Android 7.0 (API 24) or later</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>A real iPhone</td>
+<td>A real phone with Google Play services</td>
+</tr>
+<tr>
+<td>iOS project</td>
+<td>Swift Package Manager (recommended), or CocoaPods on Capacitor 7</td>
+<td></td>
+</tr>
+<tr>
+<td>Build machine</td>
+<td>Xcode 26 or later</td>
+<td>JDK 21 for Gradle, or any JDK 17 or later with the provisioning step under Install; Android Gradle Plugin 8.9.1 or later; compileSdk 36</td>
+</tr>
+<tr>
+<td>Credential</td>
+<td>Licence file (preferred) or pilot code</td>
+<td>Pilot code</td>
+</tr>
+</tbody>
+</table>
+<p>Google Play services is required on Android because the face detector the
+engine uses is delivered through it.</p>
+<h2 id="install">Install</h2>
+<pre><code class="language-bash">npm install @yeomessagingcom/capacitor-yeofr
+npx cap sync
+</code></pre>
+<h3 id="ios">iOS</h3>
+<p>The plugin is a Swift package. Swift Package Manager is the recommended way to
+consume it on both Capacitor 7 and 8. A podspec is included for Capacitor 7
+projects that still build with CocoaPods; see &quot;Capacitor 7 on CocoaPods&quot; below.</p>
+<ul>
+<li>New iOS project: <code>npx cap add ios --packagemanager SPM</code>.</li>
+<li>Existing project on CocoaPods: migrate it with <code>npx cap spm-migration-assistant</code>,
+or stay on CocoaPods and follow the Capacitor 7 steps below.</li>
+</ul>
+<p>Then:</p>
+<ol>
+<li>
+<p>Set the iOS deployment target of the App target to <strong>17.0</strong> in Xcode, then
+run <code>npx cap sync</code> again. The Capacitor CLI reads the deployment target from
+the Xcode project when it writes <code>CapApp-SPM/Package.swift</code>, and the plugin
+needs 17.0.</p>
+</li>
+<li>
+<p>Add the camera usage string to <code>ios/App/App/Info.plist</code>. Word it for your
+users:</p>
+<pre><code class="language-xml">&lt;key&gt;NSCameraUsageDescription&lt;/key&gt;
+&lt;string&gt;The camera is used to recognise your face and check that you are present.&lt;/string&gt;
+</code></pre>
+</li>
+<li>
+<p>Build once in Xcode. Swift Package Manager fetches YEOFR 0.11.2 from GitHub;
+no login is needed.</p>
+</li>
+</ol>
+<h3 id="capacitor-7-on-cocoapods">Capacitor 7 on CocoaPods</h3>
+<p>The plugin's podspec compiles the same Swift sources. The engine itself is a
+binary Swift package and cannot be a pod dependency, so the app adds it directly:</p>
+<ol>
+<li>In Xcode, add the package <code>https://github.com/yeo-messaging/YEOFR-SPM</code> at
+exact version <code>0.11.2</code> to the App target.</li>
+<li>Set the iOS deployment target to <strong>17.0</strong> in both the Xcode project and the
+<code>platform :ios</code> line of the Podfile.</li>
+<li>On Xcode 27, raise the Capacitor pods' deployment target in a <code>post_install</code>
+block, as the Capacitor 7 template's Podfile shows for older targets.</li>
+<li>Add the camera usage string as above, then <code>npx cap sync</code> and build the
+workspace.</li>
+</ol>
+<h3 id="android">Android</h3>
+<p>Android needs three changes, once per app. Capacitor 7 projects also need their
+template raised, because the engine depends on <code>androidx.core</code> 1.17: Android
+Gradle Plugin <strong>8.9.1</strong> or newer in <code>android/build.gradle</code>, and <code>compileSdkVersion</code>
+<strong>36</strong> and <code>minSdkVersion</code> <strong>24</strong> in <code>android/variables.gradle</code> (the template has
+8.7.2, 35 and 23). Capacitor 8 projects already meet all three.</p>
+<p><strong>1. The YEO repository.</strong> The Android engine is in a private Maven repository.
+Gradle resolves an app's dependencies against the app's own repositories, so
+your app must declare it, even though the plugin declares it too. Add this to
+<code>android/build.gradle</code> (the root project):</p>
+<pre><code class="language-groovy">def yeoSetting = { String property, String variable -&gt;
+    providers.gradleProperty(property).orElse(providers.environmentVariable(variable)).getOrElse(&quot;&quot;)
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            name = &quot;YEO&quot;
+            url = uri(yeoSetting(&quot;yeoRepositoryUrl&quot;, &quot;YEO_REPOSITORY_URL&quot;))
+            credentials {
+                username = yeoSetting(&quot;yeoUser&quot;, &quot;YEO_USER&quot;)
+                password = yeoSetting(&quot;yeoPassword&quot;, &quot;YEO_PASSWORD&quot;)
+            }
+        }
+    }
+}
+</code></pre>
+<p>This is the same block the plugin applies to its own modules from
+<code>android/gradle/yeo-repository.gradle.kts</code> in the package, written for a Groovy
+build file.</p>
+<p>Put the URL and login YEO gave you in <code>~/.gradle/gradle.properties</code> on each
+developer machine:</p>
+<pre><code class="language-properties">yeoRepositoryUrl=&lt;the repository URL YEO gave you&gt;
+yeoUser=&lt;your user&gt;
+yeoPassword=&lt;your password&gt;
+</code></pre>
+<p>On CI, set <code>YEO_REPOSITORY_URL</code>, <code>YEO_USER</code> and <code>YEO_PASSWORD</code> as secret
+environment variables instead. <strong>Never commit any of them.</strong> The build stops
+with a message naming these settings when the URL is missing.</p>
+<p><strong>2. Include the plugin's core module.</strong> The plugin has two Android modules: a
+thin Capacitor adapter, which <code>npx cap sync</code> adds for you, and a core module,
+which it does not. Add these two lines to <code>android/settings.gradle</code>, <strong>before</strong>
+<code>apply from: 'capacitor.settings.gradle'</code>:</p>
+<pre><code class="language-groovy">include ':yeofr-core'
+project(':yeofr-core').projectDir = new File('../node_modules/@yeomessagingcom/capacitor-yeofr/android/core')
+</code></pre>
+<p>The path is relative to the <code>android/</code> folder. These lines go away in a later
+release, when the core is published as a Maven artifact.</p>
+<p><strong>3. JDK 21.</strong> Capacitor 8 compiles its Android runtime for Java 21. Either run
+Gradle with a JDK 21, or let Gradle provision one: copy
+<code>android/gradle/gradle-daemon-jvm.properties</code> from the package into your app's
+<code>android/gradle/</code> folder, and add the Foojay resolver at the top of
+<code>android/settings.gradle</code>:</p>
+<pre><code class="language-groovy">plugins {
+    id &quot;org.gradle.toolchains.foojay-resolver-convention&quot; version &quot;1.0.0&quot;
+}
+</code></pre>
+<p>Gradle then downloads a JDK 21 into <code>~/.gradle/jdks</code> on the first build. Any
+JDK 17 or later can start the wrapper.</p>
+<p>The camera permission is already declared in the plugin's manifest. <code>start()</code>
+asks the user for it when it has not been decided yet.</p>
+<h2 id="make-the-page-transparent">Make the page transparent</h2>
+<p>The preview is a native view behind the WebView. Anything on the page with a
+solid background covers it. While the camera runs, the plugin makes the
+WebView itself transparent; your page must be transparent too.</p>
+<p>Make the page transparent only while the face page is showing, so the rest of
+your app keeps its theme. Add this to your global styles (<code>src/global.scss</code> or
+<code>src/styles.scss</code>):</p>
+<pre><code class="language-scss">body.yeofr-camera {
+  --ion-background-color: transparent;
+  background: transparent;
+
+  ion-app {
+    background: transparent;
+  }
+}
+</code></pre>
+<p>The face page adds the <code>yeofr-camera</code> class to <code>&lt;body&gt;</code> when it enters and
+removes it when it leaves (see <a href="#5-the-page">The page</a>). Give your overlays a
+translucent background, not a solid one. On <code>stop()</code> the plugin puts the
+WebView's own background back.</p>
+<h2 id="ionic-angular-quick-start">Ionic Angular quick start</h2>
+<p>The code below is a standalone Angular page with signals, split into three
+parts:</p>
+<ul>
+<li><strong><code>FaceTransport</code></strong>: a small interface over the plugin. The service depends
+only on it.</li>
+<li><strong><code>FaceService</code></strong>: owns the session and turns events into signals and plain
+words.</li>
+<li><strong><code>FacePage</code></strong>: starts the camera when the page enters and stops it when the
+page leaves.</li>
+</ul>
+<p>The code below is written for Angular 22 and Ionic 9. On Angular 18 with
+Ionic 8, add <code>standalone: true</code> to each component decorator and import the
+Ionic components from <code>@ionic/angular/standalone</code> instead of <code>@ionic/angular</code>;
+nothing else changes.</p>
+<p>The split keeps the plugin at one edge. Unit tests inject a fake transport, and
+another shell (Cordova, a native host) supplies its own transport while the
+service and the page stay the same.</p>
+<p>The files go in <code>src/app/face/</code>.</p>
+<h3 id="1-the-transport">1. The transport</h3>
+<p><code>face-transport.ts</code>:</p>
+<pre><code class="language-ts">import { InjectionToken } from '@angular/core';
+import type {
+  ActivateOptions,
+  EnrolOptions,
+  StartOptions,
+  YeofrEventMap,
+  YeofrEventName,
+} from '@yeomessagingcom/capacitor-yeofr';
+
+export type Unsubscribe = () =&gt; Promise&lt;void&gt;;
+
+export interface FaceTransport {
+  activate(options: ActivateOptions): Promise&lt;void&gt;;
+  start(options?: StartOptions): Promise&lt;void&gt;;
+  stop(): Promise&lt;void&gt;;
+  enrol(options: EnrolOptions): Promise&lt;void&gt;;
+  clearTracker(): Promise&lt;void&gt;;
+  isEnrolled(): Promise&lt;boolean&gt;;
+  on&lt;E extends YeofrEventName&gt;(
+    event: E,
+    listener: (event: YeofrEventMap[E]) =&gt; void,
+  ): Promise&lt;Unsubscribe&gt;;
+}
+
+export const FACE_TRANSPORT = new InjectionToken&lt;FaceTransport&gt;('FACE_TRANSPORT');
+</code></pre>
+<p>The types come from the plugin with <code>import type</code>, so this file has no runtime
+dependency on Capacitor.</p>
+<h3 id="2-the-capacitor-transport">2. The Capacitor transport</h3>
+<p><code>capacitor-face-transport.ts</code>:</p>
+<pre><code class="language-ts">import { Injectable } from '@angular/core';
+import type { PluginListenerHandle } from '@capacitor/core';
+import {
+  Yeofr,
+  type ActivateOptions,
+  type EnrolOptions,
+  type StartOptions,
+  type YeofrEventMap,
+  type YeofrEventName,
+} from '@yeomessagingcom/capacitor-yeofr';
+
+import type { FaceTransport, Unsubscribe } from './face-transport';
+
+@Injectable()
+export class CapacitorFaceTransport implements FaceTransport {
+  activate(options: ActivateOptions): Promise&lt;void&gt; {
+    return Yeofr.activate(options);
+  }
+
+  start(options?: StartOptions): Promise&lt;void&gt; {
+    return Yeofr.start(options);
+  }
+
+  stop(): Promise&lt;void&gt; {
+    return Yeofr.stop();
+  }
+
+  enrol(options: EnrolOptions): Promise&lt;void&gt; {
+    return Yeofr.enrol(options);
+  }
+
+  clearTracker(): Promise&lt;void&gt; {
+    return Yeofr.clearTracker();
+  }
+
+  async isEnrolled(): Promise&lt;boolean&gt; {
+    const { tracker } = await Yeofr.getTrackerData();
+    return tracker !== '';
+  }
+
+  async on&lt;E extends YeofrEventName&gt;(
+    event: E,
+    listener: (event: YeofrEventMap[E]) =&gt; void,
+  ): Promise&lt;Unsubscribe&gt; {
+    const handle: PluginListenerHandle = await Yeofr.addListener(event, listener);
+    return () =&gt; handle.remove();
+  }
+}
+</code></pre>
+<h3 id="3-credentials-and-providers">3. Credentials and providers</h3>
+<p>The service asks for its credentials through a loader, so they can come from
+build configuration or from your backend. Pass both the licence and the pilot
+code: iOS uses the licence when one is given, Android uses the pilot code. See
+<a href="#licence-handling">Licence handling</a>.</p>
+<p><code>src/environments/environment.ts</code> (create it with <code>ng generate environments</code> if
+your app has none):</p>
+<pre><code class="language-ts">export const environment = {
+  yeoLicence: '',
+  yeoPilotCode: '',
+};
+</code></pre>
+<p><code>yeoLicence</code> is the base64 text of the <code>.yeolicense</code> file
+(<code>base64 -i App.yeolicense</code> on macOS). <code>yeoPilotCode</code> is the pilot code.</p>
+<p><code>src/app/app.config.ts</code>:</p>
+<pre><code class="language-ts">import { ApplicationConfig } from '@angular/core';
+import { provideRouter, RouteReuseStrategy, withComponentInputBinding } from '@angular/router';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
+import type { ActivateOptions } from '@yeomessagingcom/capacitor-yeofr';
+
+import { environment } from '../environments/environment';
+import { routes } from './app.routes';
+import { CapacitorFaceTransport } from './face/capacitor-face-transport';
+import { FACE_CREDENTIALS } from './face/face.service';
+import { FACE_TRANSPORT } from './face/face-transport';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideIonicAngular(),
+    provideRouter(routes, withComponentInputBinding()),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: FACE_TRANSPORT, useClass: CapacitorFaceTransport },
+    {
+      provide: FACE_CREDENTIALS,
+      useValue: (): Promise&lt;ActivateOptions&gt; =&gt;
+        Promise.resolve({ licence: environment.yeoLicence, pilotCode: environment.yeoPilotCode }),
+    },
+  ],
+};
+</code></pre>
+<p><code>src/app/app.routes.ts</code>:</p>
+<pre><code class="language-ts">import type { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  {
+    path: 'face/:customerId',
+    loadComponent: () =&gt; import('./face/face.page').then((m) =&gt; m.FacePage),
+  },
+];
+</code></pre>
+<p><code>customerId</code> is the identity the page enrols. It is stored on the phone with
+the face template and comes back as <code>matchedName</code>, so use an identifier your
+app already has rather than personal data.</p>
+<h3 id="4-the-service">4. The service</h3>
+<p><code>face.service.ts</code>:</p>
+<pre><code class="language-ts">import { computed, inject, Injectable, InjectionToken, signal } from '@angular/core';
+import type {
+  ActivateOptions,
+  CameraFailure,
+  EnrolPose,
+  EnrolProgressEvent,
+  FaceFraming,
+  ResultEvent,
+  YeofrErrorCode,
+  YeofrErrorEvent,
+} from '@yeomessagingcom/capacitor-yeofr';
+
+import { FACE_TRANSPORT } from './face-transport';
+
+export type CredentialsLoader = () =&gt; Promise&lt;ActivateOptions&gt;;
+export type SessionState = 'idle' | 'starting' | 'running';
+export type FaceProblem = YeofrErrorCode | CameraFailure | 'unexpected';
+
+export const FACE_CREDENTIALS = new InjectionToken&lt;CredentialsLoader&gt;('FACE_CREDENTIALS');
+
+const ENROL_POSES: EnrolPose[] = ['front', 'yawLeft', 'yawRight', 'pitchUp', 'pitchDown'];
+const LIVENESS_GRACE_MS = 2000;
+const ERROR_CODES: ReadonlySet&lt;string&gt; = new Set&lt;YeofrErrorCode&gt;([
+  'badInput',
+  'activationFailed',
+  'notActivated',
+  'unavailableOnSimulator',
+  'permissionDenied',
+  'cameraFailed',
+  'alreadyRunning',
+  'notRunning',
+  'enrolFailed',
+  'storageFailed',
+]);
+
+@Injectable({ providedIn: 'root' })
+export class FaceService {
+  private readonly transport = inject(FACE_TRANSPORT);
+  private readonly loadCredentials = inject(FACE_CREDENTIALS);
+
+  private readonly sessionState = signal&lt;SessionState&gt;('idle');
+  private readonly resultState = signal&lt;ResultEvent | null&gt;(null);
+  private readonly enrolmentState = signal&lt;EnrolProgressEvent | null&gt;(null);
+  private readonly enrolledState = signal&lt;boolean&gt;(false);
+  private readonly problemState = signal&lt;FaceProblem | null&gt;(null);
+  private readonly notLiveForMs = signal&lt;number&gt;(0);
+
+  private activation: Promise&lt;boolean&gt; | null = null;
+  private attempt = 0;
+  private notLiveSince: number | null = null;
+
+  readonly session = this.sessionState.asReadonly();
+  readonly result = this.resultState.asReadonly();
+  readonly enrolment = this.enrolmentState.asReadonly();
+  readonly enrolled = this.enrolledState.asReadonly();
+  readonly problem = this.problemState.asReadonly();
+
+  readonly trusted = computed&lt;boolean&gt;(() =&gt; this.resultState()?.status === 'trusted');
+
+  readonly prompt = computed&lt;string&gt;(() =&gt; {
+    const step = this.enrolmentState();
+    if (step !== null) return posePrompt(step.pose);
+    if (this.sessionState() === 'idle') return 'Camera is off';
+    const result = this.resultState();
+    if (result === null) return 'Starting the camera';
+    return statusPrompt(result, this.enrolledState(), this.notLiveForMs());
+  });
+
+  readonly enrolFraction = computed&lt;number&gt;(() =&gt; {
+    const step = this.enrolmentState();
+    return step !== null &amp;&amp; step.posesPlanned &gt; 0 ? step.posesAccepted / step.posesPlanned : 0;
+  });
+
+  readonly problemText = computed&lt;string | null&gt;(() =&gt; {
+    const problem = this.problemState();
+    return problem === null ? null : problemPrompt(problem);
+  });
+
+  async start(): Promise&lt;void&gt; {
+    if (this.sessionState() !== 'idle') return;
+    const attempt = ++this.attempt;
+    this.sessionState.set('starting');
+    this.problemState.set(null);
+
+    const ready = await this.activate();
+    if (attempt !== this.attempt) return;
+    if (!ready) {
+      this.sessionState.set('idle');
+      return;
+    }
+
+    try {
+      await this.transport.start();
+      if (attempt === this.attempt) this.sessionState.set('running');
+    } catch (error: unknown) {
+      // A stop() overtook this start; the plugin rejected it with notRunning.
+      if (attempt !== this.attempt) return;
+      this.sessionState.set('idle');
+      this.problemState.set(problemOf(error));
+    }
+  }
+
+  async stop(): Promise&lt;void&gt; {
+    this.attempt += 1;
+    this.sessionState.set('idle');
+    this.resultState.set(null);
+    this.enrolmentState.set(null);
+    await this.transport.stop();
+  }
+
+  async enrol(name: string): Promise&lt;void&gt; {
+    this.problemState.set(null);
+    try {
+      await this.transport.enrol({ name, poses: ENROL_POSES });
+    } catch (error: unknown) {
+      this.problemState.set(problemOf(error));
+    }
+  }
+
+  async forget(): Promise&lt;void&gt; {
+    try {
+      await this.transport.clearTracker();
+      this.enrolledState.set(false);
+    } catch (error: unknown) {
+      this.problemState.set(problemOf(error));
+    }
+  }
+
+  private activate(): Promise&lt;boolean&gt; {
+    this.activation ??= this.runActivation();
+    return this.activation;
+  }
+
+  private async runActivation(): Promise&lt;boolean&gt; {
+    try {
+      await Promise.all([
+        this.transport.on('result', (event: ResultEvent) =&gt; this.onResult(event)),
+        this.transport.on('enrolProgress', (event: EnrolProgressEvent) =&gt; this.onEnrolProgress(event)),
+        this.transport.on('registered', () =&gt; this.onRegistered()),
+        this.transport.on('error', (event: YeofrErrorEvent) =&gt; this.onError(event)),
+      ]);
+      await this.transport.activate(await this.loadCredentials());
+      this.enrolledState.set(await this.transport.isEnrolled());
+      return true;
+    } catch (error: unknown) {
+      this.problemState.set(problemOf(error));
+      return false;
+    }
+  }
+
+  private onResult(event: ResultEvent): void {
+    const now = performance.now();
+    if (event.status === 'notTrusted' &amp;&amp; event.matchedName !== null &amp;&amp; !event.isLive) {
+      this.notLiveSince ??= now;
+      this.notLiveForMs.set(now - this.notLiveSince);
+    } else {
+      this.notLiveSince = null;
+      this.notLiveForMs.set(0);
+    }
+    this.resultState.set(event);
+  }
+
+  private onEnrolProgress(event: EnrolProgressEvent): void {
+    this.enrolmentState.set(event.phase === 'capturing' ? event : null);
+  }
+
+  private onRegistered(): void {
+    this.enrolledState.set(true);
+    this.enrolmentState.set(null);
+  }
+
+  private onError(event: YeofrErrorEvent): void {
+    this.problemState.set(event.failure);
+    if (event.failure === 'enrolFailed') this.enrolmentState.set(null);
+    if (event.failure === 'bindFailed') {
+      this.sessionState.set('idle');
+      this.resultState.set(null);
+    }
+  }
+}
+
+function statusPrompt(result: ResultEvent, enrolled: boolean, notLiveForMs: number): string {
+  switch (result.status) {
+    case 'noFace':
+      return 'Show your face';
+    case 'badFraming':
+      return framingPrompt(result.framing);
+    case 'notTrusted':
+      if (result.matchedName !== null &amp;&amp; !result.isLive) {
+        return notLiveForMs &lt; LIVENESS_GRACE_MS ? 'Hold still and look at the camera' : 'Not a live face';
+      }
+      return enrolled ? 'Not recognised' : 'Face found';
+    case 'trusted':
+      return 'Verified';
+  }
+}
+
+function framingPrompt(framing: FaceFraming): string {
+  switch (framing) {
+    case 'tooFar':
+      return 'Move closer';
+    case 'tooClose':
+      return 'Move back';
+    case 'multipleFaces':
+      return 'One face at a time';
+    default:
+      return 'Adjust your position';
+  }
+}
+
+function posePrompt(pose: EnrolPose): string {
+  switch (pose) {
+    case 'front':
+      return 'Face the camera';
+    case 'yawLeft':
+      return 'Turn your head a little to the left';
+    case 'yawRight':
+      return 'Turn your head a little to the right';
+    case 'pitchUp':
+      return 'Tilt your head up a little';
+    case 'pitchDown':
+      return 'Tilt your head down a little';
+  }
+}
+
+function problemPrompt(problem: FaceProblem): string {
+  switch (problem) {
+    case 'permissionDenied':
+      return 'Allow camera access for this app in Settings, then try again.';
+    case 'cameraFailed':
+    case 'bindFailed':
+      return 'The camera could not start. Close other apps that use the camera and try again.';
+    case 'enrolFailed':
+      return 'Enrolment was interrupted. Keep one face in view and try again.';
+    case 'storageFailed':
+      return 'Your face could not be saved. Try again.';
+    case 'badInput':
+    case 'activationFailed':
+    case 'notActivated':
+      return 'Face check is not available in this version of the app.';
+    case 'unexpected':
+      return 'Face check is not available on this device.';
+    default:
+      return 'Face check stopped. Try again.';
+  }
+}
+
+function isErrorCode(value: unknown): value is YeofrErrorCode {
+  return typeof value === 'string' &amp;&amp; ERROR_CODES.has(value);
+}
+
+function problemOf(error: unknown): FaceProblem {
+  const code: unknown = typeof error === 'object' &amp;&amp; error !== null &amp;&amp; 'code' in error ? error.code : undefined;
+  return isErrorCode(code) ? code : 'unexpected';
+}
+</code></pre>
+<p>What it does:</p>
+<ul>
+<li><strong>Activates once, lazily.</strong> The first <code>start()</code> registers the listeners, loads
+the credentials and calls <code>activate()</code>. Later calls reuse that result.</li>
+<li><strong>Guards the session.</strong> <code>start()</code> does nothing while a session is starting or
+running, so the plugin never sees two starts. A <code>stop()</code> during a <code>start()</code>
+wins: the plugin rejects the pending <code>start()</code> with <code>notRunning</code>, and the
+service drops it silently.</li>
+<li><strong>Keeps the listeners.</strong> No event arrives after <code>stop()</code>, so the listeners stay
+registered for the life of the app.</li>
+<li><strong>Keeps per-frame work small.</strong> <code>result</code> arrives for every analysed frame, many
+times a second. The handler only sets signals; Angular re-renders only what
+changed. If you log or send analytics, sample them.</li>
+</ul>
+<h3 id="5-the-page">5. The page</h3>
+<p><code>face.page.ts</code>:</p>
+<pre><code class="language-ts">import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import {
+  IonButton,
+  IonContent,
+  IonFooter,
+  IonProgressBar,
+  IonToolbar,
+  type ViewDidEnter,
+  type ViewWillLeave,
+} from '@ionic/angular';
+
+import { FaceService } from './face.service';
+
+const CAMERA_CLASS = 'yeofr-camera';
+
+@Component({
+  selector: 'app-face-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [IonContent, IonFooter, IonToolbar, IonButton, IonProgressBar],
+  templateUrl: './face.page.html',
+  styleUrl: './face.page.scss',
+})
+export class FacePage implements ViewDidEnter, ViewWillLeave {
+  readonly customerId = input.required&lt;string&gt;();
+
+  protected readonly face = inject(FaceService);
+  private readonly body: HTMLElement = inject(DOCUMENT).body;
+
+  ionViewDidEnter(): void {
+    this.body.classList.add(CAMERA_CLASS);
+    void this.face.start();
+  }
+
+  ionViewWillLeave(): void {
+    void this.face.stop();
+    this.body.classList.remove(CAMERA_CLASS);
+  }
+
+  protected enrol(): Promise&lt;void&gt; {
+    return this.face.enrol(this.customerId());
+  }
+}
+</code></pre>
+<p><code>face.page.html</code>:</p>
+<pre><code class="language-html">&lt;ion-content&gt;
+  &lt;section class=&quot;prompt&quot; [class.trusted]=&quot;face.trusted()&quot; aria-live=&quot;polite&quot;&gt;
+    &lt;h1&gt;{{ face.prompt() }}&lt;/h1&gt;
+    @if (face.enrolment()) {
+      &lt;ion-progress-bar [value]=&quot;face.enrolFraction()&quot; /&gt;
+    }
+  &lt;/section&gt;
+
+  @if (face.problemText(); as text) {
+    &lt;p class=&quot;problem&quot; role=&quot;alert&quot;&gt;{{ text }}&lt;/p&gt;
+  }
+&lt;/ion-content&gt;
+
+&lt;ion-footer&gt;
+  &lt;ion-toolbar&gt;
+    @if (face.session() === 'running') {
+      &lt;ion-button expand=&quot;block&quot; [disabled]=&quot;face.enrolment() !== null&quot; (click)=&quot;enrol()&quot;&gt;
+        {{ face.enrolled() ? 'Enrol again' : 'Enrol my face' }}
+      &lt;/ion-button&gt;
+    }
+    @if (face.enrolled()) {
+      &lt;ion-button expand=&quot;block&quot; fill=&quot;outline&quot; (click)=&quot;face.forget()&quot;&gt;Remove my face&lt;/ion-button&gt;
+    }
+  &lt;/ion-toolbar&gt;
+&lt;/ion-footer&gt;
+</code></pre>
+<p><code>face.page.scss</code>:</p>
+<pre><code class="language-scss">.prompt {
+  margin: 16px;
+  padding: 16px 20px;
+  border-left: 6px solid #9ca3af;
+  border-radius: 16px;
+  background: rgb(0 0 0 / 60%);
+  color: #fff;
+
+  &amp;.trusted {
+    border-left-color: #22c55e;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  ion-progress-bar {
+    margin-top: 12px;
+  }
+}
+
+.problem {
+  margin: 0 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgb(254 226 226 / 95%);
+  color: #7f1d1d;
+}
+
+ion-toolbar {
+  --background: rgb(0 0 0 / 70%);
+  --color: #fff;
+  padding: 8px 16px;
+}
+</code></pre>
+<p>Notes on the page:</p>
+<ul>
+<li><strong>Start on enter, stop on leave.</strong> <code>ionViewDidEnter</code> runs after the page's
+enter animation, so the camera does not show behind a page that is still
+sliding in. <code>ionViewWillLeave</code> stops it before the next page animates in.</li>
+<li>These Ionic hooks fire only for pages inside <code>&lt;ion-router-outlet&gt;</code>. A page
+that is not routed through it uses <code>ngOnInit</code> and <code>ngOnDestroy</code> instead.</li>
+<li>Enrolment and recognition share one page here to keep the sample short. In
+your app they will usually be separate screens using the same service.</li>
+</ul>
+<h3 id="run-it">Run it</h3>
+<pre><code class="language-bash">npx ng build
+npx cap sync
+npx cap run android
+npx cap open ios
+</code></pre>
+<p>On Android, pick a phone from the list. On iOS, select your team in Xcode and
+run on an iPhone. Open <code>/face/&lt;an id&gt;</code>, allow the camera, tap <strong>Enrol my
+face</strong>, follow the prompts, and the prompt changes to <strong>Verified</strong>.</p>
+<h2 id="what-the-statuses-mean">What the statuses mean</h2>
+<p>Each <code>result</code> event carries one fused decision in <code>status</code>. It is the same four
+values on both platforms. <strong>Act on <code>trusted</code> only</strong>; the other fields explain
+it.</p>
+<table>
+<thead>
+<tr>
+<th><code>status</code></th>
+<th>Meaning</th>
+<th>What to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>noFace</code></td>
+<td>No face in view.</td>
+<td>&quot;Show your face&quot;</td>
+</tr>
+<tr>
+<td><code>badFraming</code></td>
+<td>A face is in view but cannot be used: too far, too close, more than one face, or badly placed.</td>
+<td>The <code>framing</code> hint: <code>tooFar</code> &quot;Move closer&quot;, <code>tooClose</code> &quot;Move back&quot;, <code>multipleFaces</code> &quot;One face at a time&quot;, otherwise &quot;Adjust your position&quot;.</td>
+</tr>
+<tr>
+<td><code>notTrusted</code></td>
+<td>A usable face that is not the enrolled person, or is the enrolled person but has not passed liveness.</td>
+<td>See below.</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td>The enrolled person, live. On iPhones with a TrueDepth camera, depth is part of the decision too.</td>
+<td>Your success state.</td>
+</tr>
+</tbody>
+</table>
+<p><code>notTrusted</code> covers three situations. Tell them apart like this:</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>How to tell</th>
+<th>What to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recognised, not live yet</td>
+<td><code>matchedName</code> is set and <code>isLive</code> is <code>false</code></td>
+<td>&quot;Hold still and look at the camera&quot;. Liveness takes a moment after a face appears. If it lasts more than about 2 seconds, &quot;Not a live face&quot;.</td>
+</tr>
+<tr>
+<td>Someone else</td>
+<td><code>matchedName</code> is <code>null</code> and someone is enrolled</td>
+<td>&quot;Not recognised&quot;</td>
+</tr>
+<tr>
+<td>Nobody enrolled yet</td>
+<td><code>matchedName</code> is <code>null</code> and nobody is enrolled</td>
+<td>&quot;Face found&quot;, and offer enrolment</td>
+</tr>
+</tbody>
+</table>
+<p>The other fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>matchedName</code></td>
+<td>The enrolled identity the engine recognised, or <code>null</code>.</td>
+</tr>
+<tr>
+<td><code>isLive</code></td>
+<td>The liveness decision for this frame, made natively. <code>trusted</code> already includes it.</td>
+</tr>
+<tr>
+<td><code>framing</code></td>
+<td>A hint for the user. It is never part of the decision. iOS can report <code>badFraming</code> with <code>framing: 'valid'</code>; show a general hint then.</td>
+</tr>
+<tr>
+<td><code>faceState</code>, <code>detectedCount</code></td>
+<td>How many faces the engine sees.</td>
+</tr>
+<tr>
+<td><code>confidence</code></td>
+<td>Android only (<code>null</code> on iOS). For display and debugging. <strong>Never decide liveness from it.</strong></td>
+</tr>
+<tr>
+<td><code>depthIsThreeD</code></td>
+<td>iOS only. The TrueDepth result; <code>null</code> on Android and on iPhones without the sensor.</td>
+</tr>
+</tbody>
+</table>
+<p>Do not build your own rule from these fields. <code>trusted</code> is the rule.</p>
+<h3 id="when-a-call-fails">When a call fails</h3>
+<p>Calls reject with a <code>code</code>:</p>
+<table>
+<thead>
+<tr>
+<th><code>code</code></th>
+<th>When</th>
+<th>What to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>badInput</code></td>
+<td><code>activate()</code> got no credential the platform can use, or a malformed one. <code>enrol()</code> got a blank name.</td>
+<td>A generic &quot;not available&quot; message. Log the code.</td>
+</tr>
+<tr>
+<td><code>activationFailed</code></td>
+<td>The engine refused the credential. The message carries the reason (for example <code>expired</code>).</td>
+<td>A generic &quot;not available&quot; message. Log the code and message.</td>
+</tr>
+<tr>
+<td><code>notActivated</code></td>
+<td>A call that needs the engine ran before <code>activate()</code> resolved.</td>
+<td>Fix the call order.</td>
+</tr>
+<tr>
+<td><code>permissionDenied</code></td>
+<td>The user refused the camera.</td>
+<td>Ask them to allow the camera in Settings.</td>
+</tr>
+<tr>
+<td><code>cameraFailed</code></td>
+<td>The camera could not be started. The message names the reason.</td>
+<td>&quot;The camera could not start&quot;.</td>
+</tr>
+<tr>
+<td><code>alreadyRunning</code></td>
+<td><code>start()</code> while a session runs.</td>
+<td>Nothing; see <a href="#troubleshooting">Troubleshooting</a>.</td>
+</tr>
+<tr>
+<td><code>notRunning</code></td>
+<td><code>enrol()</code> without a running camera, or a <code>start()</code> that a <code>stop()</code> overtook.</td>
+<td>Nothing.</td>
+</tr>
+<tr>
+<td><code>storageFailed</code></td>
+<td><code>clearTracker()</code> could not remove the stored face.</td>
+<td>&quot;Try again&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>Never show <code>message</code> to the user. It is native detail for your logs.</p>
+<h3 id="error-events">Error events</h3>
+<p>After <code>start()</code> has resolved, failures arrive as <code>error</code> events with a
+<code>failure</code> value:</p>
+<table>
+<thead>
+<tr>
+<th><code>failure</code></th>
+<th>Platform</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enrolFailed</code></td>
+<td>iOS</td>
+<td>An enrolment capture failed, or the app went to the background during it.</td>
+</tr>
+<tr>
+<td><code>bindFailed</code></td>
+<td>iOS</td>
+<td>The camera did not come back when the app returned to the foreground. The session is stopped.</td>
+</tr>
+<tr>
+<td><code>storageFailed</code></td>
+<td>Android</td>
+<td>A capture completed, but the face could not be saved. It follows <code>registered</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>A camera that cannot be started during <code>start()</code> rejects that call with
+<code>cameraFailed</code> and sends no <code>error</code> event.</p>
+<h2 id="enrolment-and-the-pose-walk">Enrolment and the pose walk</h2>
+<p>Enrolment stores one person's face on the phone, under a name you choose. Call
+<code>enrol()</code> while the camera runs:</p>
+<pre><code class="language-ts">await Yeofr.enrol({ name: customerId, poses: ['front', 'yawLeft', 'yawRight', 'pitchUp', 'pitchDown'] });
+</code></pre>
+<p>Or arm it with the start, which is the same as calling <code>enrol()</code> right after
+<code>start()</code> resolves:</p>
+<pre><code class="language-ts">await Yeofr.start({ enrolName: customerId, poses: ['front', 'yawLeft', 'yawRight'] });
+</code></pre>
+<p><strong>The pose walk.</strong> <code>poses</code> is the list of head positions to prompt for, in
+order. Omit it for a single front capture. More poses put more angles in the
+gallery, which helps recognition when the head moves. Neither platform can
+measure head pose, so the prompts guide the user; they do not gate the capture.</p>
+<ul>
+<li>Android spreads the capture evenly across the poses.</li>
+<li>iOS runs one capture per pose, with a short pause before each so the user can
+move.</li>
+</ul>
+<p><strong>Progress.</strong> While a capture runs, every analysed frame sends <code>enrolProgress</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phase</code></td>
+<td><code>capturing</code>, then <code>completed</code> (followed by <code>registered</code>) or <code>failed</code> (followed by an <code>error</code> with <code>enrolFailed</code>).</td>
+</tr>
+<tr>
+<td><code>pose</code></td>
+<td>What the user should be doing now. Your app owns the wording.</td>
+</tr>
+<tr>
+<td><code>posesAccepted</code>, <code>posesPlanned</code></td>
+<td>Progress through the walk, for a progress bar.</td>
+</tr>
+<tr>
+<td><code>isTargetMatched</code></td>
+<td>This frame passed the capture checks (framing and liveness). Show &quot;Hold that pose&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>When <code>registered</code> arrives, the face is stored and the next <code>result</code> events can
+be <code>trusted</code>.</p>
+<p><strong>One identity at a time.</strong> A capture replaces the enrolled identity. If a
+capture is cut short, by <code>stop()</code>, a new <code>enrol()</code>, the app going to the
+background, or a page reload, the previous enrolment is put back as it was.
+Nothing half-enrolled stays recognisable.</p>
+<p><strong>Backgrounding.</strong> On iOS, sending the app to the background ends a running
+capture (<code>enrolProgress</code> <code>failed</code>, then <code>error</code> <code>enrolFailed</code>); start it again
+when the user returns. On Android the capture stays armed and carries on when
+the camera resumes.</p>
+<p><strong>Storage.</strong> The plugin stores the enrolled face template in the app's private
+storage and keeps it out of device backups. It is restored by <code>activate()</code> the
+next time the app runs. <code>clearTracker()</code> removes it. If your security policy
+requires you to hold the template yourself (for example encrypted in your own
+store), read it with <code>getTrackerData()</code> and restore it with <code>loadTracker()</code>
+before <code>start()</code>.</p>
+<h2 id="licence-handling">Licence handling</h2>
+<p>The engine needs a credential before it does anything. There are two kinds:</p>
+<table>
+<thead>
+<tr>
+<th>Credential</th>
+<th>What it is</th>
+<th>Platforms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Licence file</td>
+<td>A signed <code>.yeolicense</code> file issued for your iOS bundle id. Pass its bytes as base64 in <code>licence</code>.</td>
+<td>iOS only</td>
+</tr>
+<tr>
+<td>Pilot code</td>
+<td>A time-limited code issued by YEO. Pass it as <code>pilotCode</code>.</td>
+<td>Android (the only credential); iOS fallback</td>
+</tr>
+</tbody>
+</table>
+<p>Pass both in one call. Each platform takes the one it uses: iOS uses the licence
+when one is given, and Android ignores the licence.</p>
+<pre><code class="language-ts">await Yeofr.activate({ licence: licenceBase64, pilotCode });
+</code></pre>
+<p><strong>Use a licence file on iOS.</strong> A licence the engine refuses rejects <code>activate()</code>
+with <code>activationFailed</code> and the reason (<code>expired</code>, <code>bundleIDMismatch</code>, and so
+on). Your app stays up and can show a message.</p>
+<blockquote>
+<p><strong>An invalid or expired pilot code closes the app on iOS.</strong> The engine ends
+the process during <code>activate()</code>. The promise does not reject, so <code>try/catch</code>
+does not help. To your users it looks like a crash when the face screen
+opens. If your iOS app closes at that moment, check the pilot code first, and
+ship iOS builds with a licence file.</p>
+</blockquote>
+<p>On Android, a pilot code the engine refuses rejects with <code>activationFailed</code>.
+A licence alone, or no credential at all, rejects with <code>badInput</code>.</p>
+<p>Pilot codes expire. Do not hard-code one in shipped source: load it from build
+configuration or from your backend, so a new code does not need a new binary.
+Ask YEO for a code that covers your whole test period, and check it on both
+platforms. Licence files and pilot codes come from YEO support.</p>
+<h2 id="app-shielding-and-hardening-products">App shielding and hardening products</h2>
+<p>Apps in regulated sectors often ship wrapped in an app shielding or hardening
+product: runtime protection, anti-tamper, anti-debugging, screen-capture
+blocking. The plugin needs nothing special from these products, but they
+change the app the camera runs in. Plan your testing around that:</p>
+<ul>
+<li><strong>Develop and measure on unshielded builds.</strong> Shielding blocks debuggers and
+log access and can change timing, so problems are hard to see and numbers are
+hard to compare.</li>
+<li><strong>Run acceptance on a shielded build, on real phones.</strong> Use a shielded build
+of the same commit, on iPhones and Android phones, before every release.
+Check activation, camera start, a full enrolment, recognition, leaving and
+re-entering the face page, and sending the app to the background and back.</li>
+<li><strong>Expect black screenshots.</strong> On a shielded build, screenshots and screen
+recordings of the face page usually come out black. That is the
+screen-capture protection working, not a camera fault. If you need a
+recording, film the phone with a second device.</li>
+<li><strong>Compare before you escalate.</strong> If something works unshielded and fails
+shielded, note the error codes from both builds of the same commit and send
+both to your shielding vendor and to YEO.</li>
+</ul>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Could not find com.yeomessaging:yeofr-android:0.2.29</code></td>
+<td>The YEO repository is missing from your root <code>android/build.gradle</code>. Add the block from <a href="#android">Android</a>.</td>
+</tr>
+<tr>
+<td><code>capacitor-yeofr: the YEO engine repository URL is not set</code></td>
+<td>Set <code>yeoRepositoryUrl</code>, <code>yeoUser</code> and <code>yeoPassword</code> in <code>~/.gradle/gradle.properties</code>, or <code>YEO_REPOSITORY_URL</code>, <code>YEO_USER</code> and <code>YEO_PASSWORD</code> in the environment.</td>
+</tr>
+<tr>
+<td><code>401</code> or <code>Unauthorized</code> from the YEO repository</td>
+<td>The URL is set but the login is missing or wrong.</td>
+</tr>
+<tr>
+<td><code>Could not find com.youreyeonly:yeofr-core</code></td>
+<td>The two <code>:yeofr-core</code> lines are missing from <code>android/settings.gradle</code>, or the path in them is wrong.</td>
+</tr>
+<tr>
+<td>A Gradle error about Java 21</td>
+<td>Capacitor 8 needs JDK 21. Install it, or let Gradle provision it (step 3 under <a href="#android">Android</a>).</td>
+</tr>
+<tr>
+<td>iOS: Swift Package Manager reports a minimum platform version conflict</td>
+<td>Set the App target's deployment target to 17.0, then <code>npx cap sync</code>.</td>
+</tr>
+<tr>
+<td>iOS on CocoaPods: the plugin is not in the build</td>
+<td><code>npx cap sync</code> has not run since the install, so the Podfile does not list the plugin yet, or the YEOFR-SPM package is missing from the Xcode project. Run <code>npx cap sync</code> and follow <a href="#capacitor-7-on-cocoapods">Capacitor 7 on CocoaPods</a>.</td>
+</tr>
+<tr>
+<td>iOS app closes when the face page opens</td>
+<td>An invalid or expired pilot code (see <a href="#licence-handling">Licence handling</a>), or <code>NSCameraUsageDescription</code> is missing from <code>Info.plist</code>. iOS ends any app that opens the camera without it.</td>
+</tr>
+<tr>
+<td>Android phone: the camera shows but results stay <code>noFace</code></td>
+<td>Check that Google Play services is installed and up to date. Phones without Google Play services are not supported.</td>
+</tr>
+<tr>
+<td><code>start()</code> rejects <code>permissionDenied</code></td>
+<td>The user refused the camera. iOS asks only once; after that the user must allow it in Settings. Android stops asking if the user chose not to be asked again. <code>checkPermissions()</code> tells you the state before you start.</td>
+</tr>
+<tr>
+<td>Simulator or emulator: results stay <code>noFace</code></td>
+<td>Expected. Neither gives the engine a real face. Test on phones.</td>
+</tr>
+<tr>
+<td><code>alreadyRunning</code></td>
+<td><code>start()</code> ran while a session was running. There is one camera session per app: two pages each starting the camera, or a start without a stop. Keep the session in one service, as <code>FaceService</code> does. On iOS, <code>activate()</code> and <code>loadTracker()</code> also reject <code>alreadyRunning</code> while a session runs.</td>
+</tr>
+<tr>
+<td>The camera stops after a page reload or live reload</td>
+<td>By design. Loading a page stops the native session, so no camera runs behind a page that no longer knows about it, and the old JavaScript listeners are gone. The new page starts the camera again when it enters. Router navigation inside the app does not reload the page; your leave hook stops the camera.</td>
+</tr>
+<tr>
+<td>The camera runs but the screen is white or your theme colour</td>
+<td>Something opaque covers the preview: the <code>yeofr-camera</code> class is not on <code>&lt;body&gt;</code>, or an element has a solid background.</td>
+</tr>
+<tr>
+<td>The preview is sideways</td>
+<td>The preview does not follow rotation in this release. Lock the face page or the app to portrait.</td>
+</tr>
+<tr>
+<td>Every call rejects <code>UNAVAILABLE</code> in the browser</td>
+<td>There is no web engine. Run on a phone.</td>
+</tr>
+<tr>
+<td><code>registered</code> never arrives</td>
+<td>The capture only counts frames that pass framing and liveness. Fill the frame, hold still, use good light.</td>
+</tr>
+</tbody>
+</table>
+<p>When you contact YEO support, include the plugin version, the output of
+<code>getVersion()</code>, the platform and phone model, the error code and message, and
+whether the build was shielded.</p>
+<h2 id="versions">Versions</h2>
+<table>
+<thead>
+<tr>
+<th>Plugin</th>
+<th>iOS engine</th>
+<th>Android engine</th>
+<th>Capacitor</th>
+<th>Verified with</th>
+<th>iPhone</th>
+<th>Android phone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5.0</td>
+<td>0.11.2</td>
+<td>0.2.29</td>
+<td>7.x and 8.x (<code>&gt;=7.0.0 &lt;9.0.0</code>)</td>
+<td>Capacitor 8.6 with Ionic 9.0 / Angular 22.2 on Swift Package Manager; Capacitor 7.6 with Ionic 8.8 / Angular 18.2 on CocoaPods</td>
+<td>to be filled</td>
+<td>to be filled</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changelog">Changelog</h2>
+<p>Every release is listed in <code>CHANGELOG.md</code>, which ships in the package at
+<code>node_modules/@yeomessagingcom/capacitor-yeofr/CHANGELOG.md</code>.</p>
+</main></div>
+<script>
+const doc = document.getElementById('doc');
+const box = document.getElementById('toclinks');
+const heads = [...doc.querySelectorAll('h2,h3')];
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+heads.forEach((h) => {
+  if (!h.id) h.id = slug(h.textContent);
+  const a = document.createElement('a');
+  a.href = '#' + h.id; a.textContent = h.textContent;
+  if (h.tagName === 'H3') a.className = 'h3';
+  box.appendChild(a);
+});
+const links = [...box.querySelectorAll('a')];
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    links.forEach((l) => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
+  });
+}, {rootMargin: '0px 0px -75% 0px'});
+heads.forEach((h) => io.observe(h));
+</script>
+</body></html>
