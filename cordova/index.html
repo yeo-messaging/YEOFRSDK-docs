@@ -684,7 +684,8 @@ your app already has rather than personal data.</p>
 order. Omit it for a single front capture. More poses put more angles in the
 gallery, which helps recognition when the head moves. The engine cannot measure
 head pose, so the prompts guide the user; they do not gate the capture. Android
-spreads the capture evenly across the poses; iOS runs one capture per pose, with
+prompts each pose for 3 s before its frames count, then spreads the capture evenly
+across the poses; iOS runs one capture per pose, with
 a short pause before each so the user can move.</p>
 <p><strong>Progress.</strong> While a capture runs, every analysed frame sends <code>enrolProgress</code>:</p>
 <table>
@@ -932,8 +933,8 @@ shielded.</p>
 <td>14 (recommended); 13 with <code>GradleVersion</code> 8.13</td>
 <td>7 and 8 (8 recommended)</td>
 <td>Android: cordova-android 14.0.1 with Cordova CLI 13, Angular 18.2 and Ionic 8.8 (<code>examples/cordova-angular18/</code> in the plugin repository); cordova-android 13.0.0 with Cordova CLI 13 in a bare app. iOS: cordova-ios 8.1.1 with the same example app, as a Swift package; cordova-ios 8.1.1 (Swift package, device and arm64 Simulator builds) and cordova-ios 7.1.1 (classic, engine fetched at plugin add, with <code>SwiftVersion</code> 5.0 and the <code>IPHONEOS_DEPLOYMENT_TARGET</code> build flag) in bare apps; all on Xcode 27 with Cordova CLI 13</td>
-<td>to be filled</td>
-<td>to be filled</td>
+<td>Samsung S21 Ultra, 2026-11-04: pass</td>
+<td>iPhone 14 Pro Max, iOS 27.0.1, 2026-11-04: pass</td>
 </tr>
 </tbody>
 </table>
