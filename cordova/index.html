@@ -202,7 +202,7 @@ instead.</p>
 <tr>
 <td>Credential</td>
 <td>Pilot code</td>
-<td>Licence file (preferred) or pilot code</td>
+<td>Pilot code (licence file also accepted on iOS)</td>
 </tr>
 </tbody>
 </table>
@@ -522,8 +522,8 @@ for <code>environment.ts</code>, <code>app.config.ts</code> and <code>app.routes
 <pre><code class="language-ts">{ provide: FACE_TRANSPORT, useClass: CordovaFaceTransport },
 </code></pre>
 <p>with <code>import { CordovaFaceTransport } from './face/cordova-face-transport';</code>.
-Android uses the pilot code and iOS the licence file; pass both, so the same
-call works on each.</p>
+The pilot code is the credential on both platforms; leave <code>yeoLicence</code> empty
+unless you use the optional iOS licence file.</p>
 <h3 id="4-the-service-and-the-page">4. The service and the page</h3>
 <p>Copy <code>face.service.ts</code> from the Capacitor guide's
 <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#4-the-service">service section</a>
@@ -725,9 +725,18 @@ was. Nothing half-enrolled stays recognisable.</p>
 capture (<code>enrolProgress</code> <code>failed</code>, then <code>error</code> <code>enrolFailed</code>); start it again
 when the user returns. On Android a capture stays armed while the app is in the
 background and carries on when the camera resumes.</p>
-<p><strong>Storage.</strong> By default the plugin keeps the enrolled face template in the app's private\nstorage, out of device backups (on iOS also under file protection), restores it when\n<code>activate()</code> runs, and removes it on <code>clearTracker()</code>. The template is stored as the\nengine writes it; the plugin does not encrypt it. We recommend storing it encrypted:\nread it with <code>getTrackerData()</code> once <code>registered</code> has arrived, keep it in a store of\nyour choosing (encrypted at rest with your own key management, or on your backend), and\nput it back with <code>loadTracker()</code> before <code>start()</code>. Where and how you keep it is your\ndecision; the plugin supports both the default storage and a host-held template.</p>
+<p><strong>Storage.</strong> By default the plugin keeps the enrolled face template in the app's
+private storage, out of device backups (on iOS also under file protection),
+restores it when <code>activate()</code> runs, and removes it on <code>clearTracker()</code>. The
+template is stored as the engine writes it; the plugin does not encrypt it. We
+recommend storing it encrypted: read it with <code>getTrackerData()</code> once
+<code>registered</code> has arrived, keep it in a store of your choosing (encrypted at rest
+with your own key management, or on your backend), and put it back with
+<code>loadTracker()</code> before <code>start()</code>. Where and how you keep it is your decision;
+the plugin supports both the default storage and a host-held template.</p>
 <h2 id="licence-handling">Licence handling</h2>
-<p>The engine needs a credential before it does anything. There are two kinds:</p>
+<p>The engine needs a credential before it does anything. For this release the
+credential is a pilot code on both platforms.</p>
 <table>
 <thead>
 <tr>
@@ -738,37 +747,41 @@ background and carries on when the camera resumes.</p>
 </thead>
 <tbody>
 <tr>
-<td>Licence file</td>
-<td>A signed <code>.yeolicense</code> file issued for your iOS bundle id. Pass its bytes as base64 in <code>licence</code>.</td>
-<td>iOS only</td>
-</tr>
-<tr>
 <td>Pilot code</td>
 <td>A time-limited code issued by YEO. Pass it as <code>pilotCode</code>.</td>
-<td>Android (the only credential); iOS fallback</td>
+<td>iOS and Android</td>
+</tr>
+<tr>
+<td>Licence file</td>
+<td>A signed <code>.yeolicense</code> file issued for your iOS bundle id. Pass its bytes as base64 in <code>licence</code>.</td>
+<td>iOS only, optional</td>
 </tr>
 </tbody>
 </table>
-<p>Pass both in one call. Each platform takes the one it uses: iOS uses the
-licence when one is given, and Android ignores the licence.</p>
-<pre><code class="language-ts">await Yeofr.activate({ licence: licenceBase64, pilotCode });
+<pre><code class="language-ts">await Yeofr.activate({ pilotCode });
 </code></pre>
-<p><strong>Use a licence file on iOS.</strong> A licence the engine refuses rejects
-<code>activate()</code> with <code>activationFailed</code> and the reason (<code>expired</code>,
-<code>bundleIDMismatch</code>, and so on). Your app stays up and can show a message.</p>
+<p>A licence file is also available on iOS for teams that prefer a rejection to a
+shutdown: a licence the engine refuses rejects <code>activate()</code> with
+<code>activationFailed</code> and the reason (<code>expired</code>, <code>bundleIDMismatch</code>, and so on).
+Both can go in one call, as <code>activate({ licence: licenceBase64, pilotCode })</code>:
+iOS uses the licence when one is given, and Android ignores it.</p>
 <blockquote>
 <p><strong>An invalid or expired pilot code closes the app on iOS.</strong> The engine ends
 the process during <code>activate()</code>. The promise does not reject, so <code>try/catch</code>
 does not help. To your users it looks like a crash when the face screen
-opens. If your iOS app closes at that moment, check the pilot code first, and
-ship iOS builds with a licence file.</p>
+opens. Pilot codes expire, so:</p>
+<ul>
+<li>load the code from build configuration or from your backend, not from
+shipped source, so a new code does not need a new binary;</li>
+<li>ask YEO for a code that covers your whole test period;</li>
+<li>check that the code is current before the face screen opens.</li>
+</ul>
+<p>If your iOS app closes when the face screen opens, check the pilot code first.</p>
 </blockquote>
 <p>On Android, a pilot code the engine refuses rejects with <code>activationFailed</code>. A
 licence alone, or no credential at all, rejects with <code>badInput</code>.</p>
-<p>Pilot codes expire. Do not hard-code one in shipped source: load it from build
-configuration or from your backend, so a new code does not need a new binary.
-Ask YEO for a code that covers your whole test period, and check it on both
-platforms. Licence files and pilot codes come from YEO support.</p>
+<p>Check the pilot code on both platforms before release. Pilot codes and licence
+files come from YEO support.</p>
 <h2 id="app-shielding-and-hardening-products">App shielding and hardening products</h2>
 <p>The plugin needs nothing special from app shielding or hardening products, but
 they change the app the camera runs in. Develop and measure on unshielded
