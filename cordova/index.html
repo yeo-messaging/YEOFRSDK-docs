@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YEOFR for Cordova — integration guide</title>
+<style>
+:root{
+  --bg:#fff;--fg:#1d1d1f;--muted:#6e6e73;--line:#d2d2d7;--accent:#0071e3;
+  --code-bg:#f5f5f7;--card:#fbfbfd;--warn-bg:#fff8e6;--warn-line:#e5a50a;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#161618;--fg:#f5f5f7;--muted:#a1a1a6;--line:#3a3a3c;--accent:#4aa3ff;
+  --code-bg:#1f1f22;--card:#1c1c1f;--warn-bg:#2a2413;--warn-line:#b8860b;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.62 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased}
+#wrap{display:grid;grid-template-columns:270px minmax(0,1fr);gap:3rem;max-width:1180px;margin:0 auto;padding:0 1.5rem}
+#toc{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:2.5rem 0 3rem;
+  border-right:1px solid var(--line);font-size:.86rem}
+#toc .t{font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 .9rem}
+#toc a{display:block;padding:.22rem 0;color:var(--muted);text-decoration:none;border-left:2px solid transparent;padding-left:.7rem}
+#toc a:hover{color:var(--fg)}
+#toc a.h3{padding-left:1.6rem;font-size:.8rem}
+#toc a.on{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+main{padding:2.5rem 0 6rem;min-width:0}
+h1{font-size:2.6rem;line-height:1.1;letter-spacing:-.02em;margin:0 0 .6rem}
+h2{font-size:1.65rem;letter-spacing:-.01em;margin:3.2rem 0 1rem;padding-bottom:.45rem;border-bottom:1px solid var(--line);scroll-margin-top:1rem}
+h3{font-size:1.18rem;margin:2.2rem 0 .7rem;scroll-margin-top:1rem}
+h4{font-size:1rem;margin:1.6rem 0 .5rem;color:var(--muted)}
+p,li{max-width:74ch}
+a{color:var(--accent)}
+code{background:var(--code-bg);padding:.16em .38em;border-radius:4px;font-size:.86em;
+  font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:1rem 1.1rem;overflow-x:auto}
+pre code{background:none;padding:0;font-size:.855em;line-height:1.55}
+table{border-collapse:collapse;width:100%;margin:1.1rem 0;font-size:.92rem;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:.55rem .75rem;text-align:left;vertical-align:top}
+th{background:var(--card);font-weight:600}
+td code{white-space:nowrap}
+blockquote{margin:1.2rem 0;padding:.85rem 1.1rem;background:var(--warn-bg);
+  border-left:3px solid var(--warn-line);border-radius:0 8px 8px 0}
+blockquote p{margin:.3rem 0}
+hr{border:0;border-top:1px solid var(--line);margin:2.5rem 0}
+@media (max-width:900px){#wrap{grid-template-columns:1fr;gap:0}#toc{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--line)}}
+</style></head><body>
+<div id="wrap"><nav id="toc"><p class="t">On this page</p><div id="toclinks"></div></nav>
+<main id="doc">
+<h1 id="yeofr-for-cordova">YEOFR for Cordova</h1>
+<p><em>This guide is for plugin 0.5.0 (iOS engine 0.11.2, Android engine 0.2.29).</em></p>
+<p>On-device face recognition with liveness for Cordova apps on iOS and Android,
+with the same TypeScript API as the Capacitor plugin.</p>
+<p>This guide takes an Ionic Angular app on Cordova from install to a working face
+screen: install, the <code>config.xml</code> settings, the transparent page, a small
+Angular transport, what each status means, enrolment, licensing and
+troubleshooting. The plugin itself has no Angular dependency; the Angular code
+here is one way to use it.</p>
+<blockquote>
+<p><strong>iOS and Android.</strong> Plugin 0.5.0 supports both. iOS needs iOS 17.0 or later
+on an iPhone, and the app's <code>deployment-target</code> must say so; see <a href="#ios">iOS</a>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Recognition needs a real phone.</strong> The app builds for the Android emulator
+and, on an Apple Silicon Mac, for the iOS Simulator, but neither gives the
+engine a real face, so results stay at <code>noFace</code>. That is expected, not a
+fault.</p>
+</blockquote>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><a href="#what-you-get">What you get</a></li>
+<li><a href="#capacitor-or-cordova">Capacitor or Cordova</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#install">Install</a></li>
+<li><a href="#make-the-page-transparent">Make the page transparent</a></li>
+<li><a href="#ionic-angular-quick-start">Ionic Angular quick start</a></li>
+<li><a href="#the-plugin-object">The plugin object</a></li>
+<li><a href="#what-the-statuses-mean">What the statuses mean</a></li>
+<li><a href="#enrolment-and-the-pose-walk">Enrolment and the pose walk</a></li>
+<li><a href="#licence-handling">Licence handling</a></li>
+<li><a href="#app-shielding-and-hardening-products">App shielding and hardening products</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#versions">Versions</a></li>
+<li><a href="#changelog">Changelog</a></li>
+</ul>
+<h2 id="what-you-get">What you get</h2>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Version</th>
+<th>Where it comes from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cordova plugin</td>
+<td><code>@yeomessagingcom/cordova-plugin-yeofr</code> <strong>0.5.0</strong></td>
+<td>npm, through <code>cordova plugin add</code></td>
+</tr>
+<tr>
+<td>Android engine</td>
+<td><code>com.yeomessaging:yeofr-android</code> <strong>0.2.29</strong></td>
+<td>Maven, from the private YEO repository, with credentials YEO gives you</td>
+</tr>
+<tr>
+<td>iOS engine</td>
+<td>YEOFR <strong>0.11.2</strong></td>
+<td>GitHub, from the public YEOFR-SPM package; see <a href="#ios">iOS</a>; native reference: <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/0.11.2/documentation/yeofr/">https://yeo-messaging.github.io/YEOFRSDK-docs/0.11.2/documentation/yeofr/</a></td>
+</tr>
+</tbody>
+</table>
+<p>The plugin pins both engine versions. <code>getVersion()</code> returns the <strong>engine</strong>
+version (<code>0.2.29</code> on Android, <code>0.11.2</code> on iOS), not the plugin version.</p>
+<p>How it works:</p>
+<ul>
+<li>The native layer owns the camera. It draws the preview in a native view
+<strong>behind</strong> the WebView.</li>
+<li>Your page is transparent where the camera should show, and draws its own
+overlay: prompts, buttons, progress.</li>
+<li>Only small JSON events reach JavaScript. Frames never do.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>result</code></td>
+<td>Every analysed frame while the camera runs: the trust status for the face in view.</td>
+</tr>
+<tr>
+<td><code>enrolProgress</code></td>
+<td>Every analysed frame while an enrolment capture is running.</td>
+</tr>
+<tr>
+<td><code>registered</code></td>
+<td>An enrolment capture finished and the face is stored.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Something failed after <code>start()</code> resolved.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Frameworks.</strong> The plugin is framework-agnostic: any web framework running in
+a Cordova app uses the same API, whether Angular, React, Vue or plain
+JavaScript, with or without Ionic. The examples are Angular because the first
+client is.</p>
+<p><strong>Limits of this release:</strong></p>
+<ul>
+<li>One camera session per app at a time.</li>
+<li>Continuous status only. There is no one-shot check call yet.</li>
+<li>Portrait only. The preview does not follow device rotation, so lock the app
+to portrait (<code>&lt;preference name=&quot;Orientation&quot; value=&quot;portrait&quot; /&gt;</code> in
+<code>config.xml</code>).</li>
+<li>No browser build. Outside the Cordova app (for example <code>ng serve</code>) there is
+no <code>cordova</code> object and no plugin, so unit tests use a fake transport.</li>
+</ul>
+<h2 id="capacitor-or-cordova">Capacitor or Cordova</h2>
+<p>Capacitor apps install the Capacitor plugin, <code>@yeomessagingcom/capacitor-yeofr</code>;
+Cordova apps, including Ionic apps still on Cordova, install this one. Both wrap
+the same native layer and the same TypeScript contract, so the Angular code is
+shared and only the transport differs.</p>
+<p>If your project has a <code>config.xml</code> and a <code>platforms/</code> folder at its root, it is
+a Cordova app and this is your guide. If it has <code>capacitor.config.ts</code> or
+<code>capacitor.config.json</code>, follow the
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/">Capacitor guide</a>
+instead.</p>
+<h2 id="requirements">Requirements</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Android</th>
+<th>iOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cordova platform</td>
+<td>cordova-android 14 (recommended); 13 with one extra preference</td>
+<td>cordova-ios 8 (recommended, Swift package) or 7 (classic, engine downloaded at plugin add)</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>Android 7.0 (API 24) or later</td>
+<td>iOS 17.0 or later, iPhone; the app's <code>deployment-target</code> must be 17.0 or higher</td>
+</tr>
+<tr>
+<td>Device</td>
+<td>A real phone with Google Play services</td>
+<td>A real iPhone</td>
+</tr>
+<tr>
+<td>Build machine</td>
+<td>JDK 17 or later; Android SDK platform 36; a <code>gradle</code> binary on the <code>PATH</code> (Homebrew <code>gradle</code>, or the one Android Studio ships)</td>
+<td>A Mac with Xcode 26 or later; network access to GitHub; an Apple Silicon Mac for Simulator builds</td>
+</tr>
+<tr>
+<td>Credential</td>
+<td>Pilot code</td>
+<td>Licence file (preferred) or pilot code</td>
+</tr>
+</tbody>
+</table>
+<p>Google Play services is required on Android because the face detector the
+engine uses is delivered through it. The Android native libraries are 16 KB page-aligned, as
+Google Play requires for apps targeting Android 15 and later. Apps that target Android 11 and later are
+well inside this range.</p>
+<p>cordova-ios 8 itself needs Xcode 16.4 or later; the plugin's Swift sources and
+the engine need Xcode 26 or later, as for the Capacitor plugin. The iOS builds
+were verified with Xcode 27 only. The engine's Simulator slice is arm64 only, so
+Simulator builds need an Apple Silicon Mac; Intel Simulators are not supported.</p>
+<p>cordova-android 12 and older are not supported; see
+<a href="#cordova-android-12-and-older">cordova-android 12 and older</a>.</p>
+<h2 id="install">Install</h2>
+<pre><code class="language-bash">cordova plugin add @yeomessagingcom/cordova-plugin-yeofr
+</code></pre>
+<p>Cordova installs the package into <code>node_modules/</code>, records it in <code>package.json</code>
+and copies it into each platform the app has. iOS is described under
+<a href="#ios">iOS</a>. On Android the plugin brings:</p>
+<ul>
+<li>two prebuilt AARs, the core and the Cordova adapter, into
+<code>platforms/android/app/libs/</code>. They are compiled for Java 17;</li>
+<li>a Gradle fragment that adds the private YEO Maven repository and the
+dependencies the AARs need: the engine <code>com.yeomessaging:yeofr-android:0.2.29</code>,
+CameraX 1.5.3, <code>androidx.core</code> 1.17.0 and the Kotlin 2.4.21 standard library.</li>
+</ul>
+<p>Your app does not need the Kotlin Gradle plugin, and you do not edit any Gradle
+file. The camera permission is declared in the core AAR's manifest; <code>start()</code>
+asks the user for it when it has not been decided yet.</p>
+<p>Android then needs three things, once per app.</p>
+<h3 id="1-credentials-for-the-yeo-repository">1. Credentials for the YEO repository</h3>
+<p>The Android engine is in a private Maven repository. The plugin's Gradle
+fragment reads its URL and login from your machine, never from the project.
+Put the URL and login YEO gave you in <code>~/.gradle/gradle.properties</code> on each
+developer machine:</p>
+<pre><code class="language-properties">yeoRepositoryUrl=&lt;the repository URL YEO gave you&gt;
+yeoUser=&lt;your user&gt;
+yeoPassword=&lt;your password&gt;
+</code></pre>
+<p>On CI, set <code>YEO_REPOSITORY_URL</code>, <code>YEO_USER</code> and <code>YEO_PASSWORD</code> as secret
+environment variables instead. <strong>Never commit any of them.</strong> The build stops
+with a message naming these settings when the URL is missing.</p>
+<h3 id="2-the-configxml-preferences">2. The config.xml preferences</h3>
+<p>The engine depends on <code>androidx.core</code> 1.17, which needs Android Gradle Plugin
+8.9.1 or later and compileSdk 36. The cordova-android templates default to older
+values, so raise them in <code>config.xml</code>.</p>
+<p><strong>cordova-android 14.</strong> Add these under <code>&lt;platform name=&quot;android&quot;&gt;</code>:</p>
+<pre><code class="language-xml">&lt;platform name=&quot;android&quot;&gt;
+    &lt;preference name=&quot;android-minSdkVersion&quot; value=&quot;24&quot; /&gt;
+    &lt;preference name=&quot;android-compileSdkVersion&quot; value=&quot;36&quot; /&gt;
+    &lt;preference name=&quot;AndroidGradlePluginVersion&quot; value=&quot;8.9.1&quot; /&gt;
+    &lt;preference name=&quot;AndroidJavaSourceCompatibility&quot; value=&quot;17&quot; /&gt;
+    &lt;preference name=&quot;AndroidJavaTargetCompatibility&quot; value=&quot;17&quot; /&gt;
+&lt;/platform&gt;
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Preference</th>
+<th>Value</th>
+<th>cordova-android 14 default</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>android-minSdkVersion</code></td>
+<td>24</td>
+<td>24</td>
+<td>The plugin's minimum; set it so a later template change cannot lower it.</td>
+</tr>
+<tr>
+<td><code>android-compileSdkVersion</code></td>
+<td>36</td>
+<td>35</td>
+<td><code>androidx.core</code> 1.17 is compiled against API 36.</td>
+</tr>
+<tr>
+<td><code>AndroidGradlePluginVersion</code></td>
+<td>8.9.1</td>
+<td>8.7.3</td>
+<td><code>androidx.core</code> 1.17 declares 8.9.1 as its minimum. Gradle 8.13, the template's default, runs it.</td>
+</tr>
+<tr>
+<td><code>AndroidJavaSourceCompatibility</code>, <code>AndroidJavaTargetCompatibility</code></td>
+<td>17</td>
+<td>11</td>
+<td>The AARs are Java 17 bytecode.</td>
+</tr>
+</tbody>
+</table>
+<p>Cordova applies the preferences when it prepares the platform, which
+<code>cordova build android</code> does first.</p>
+<p><strong>cordova-android 13.</strong> Add the same five preferences, plus the Gradle
+version:</p>
+<pre><code class="language-xml">&lt;preference name=&quot;GradleVersion&quot; value=&quot;8.13&quot; /&gt;
+</code></pre>
+<p>cordova-android 13 defaults to Android Gradle Plugin 8.3.0, compileSdk 34,
+Java 8 and Gradle 8.7. Gradle 8.7 is too old to run Android Gradle Plugin 8.9.1,
+so the build fails until <code>GradleVersion</code> is raised. Its default
+<code>android-targetSdkVersion</code> of 34 can stay; that is how it was verified.</p>
+<h4 id="cordova-android-12-and-older">cordova-android 12 and older</h4>
+<p>Not supported, and not tested. Their templates pin Gradle 7.6 and Android
+Gradle Plugin 7.4, which cannot load <code>androidx.core</code> 1.17 (it declares a minimum
+Android Gradle Plugin of 8.9.1) or compileSdk 36, so dependency resolution would
+fail before any code compiles; and <code>AndroidGradlePluginVersion</code> cannot lift the
+plugin past what their Gradle wrapper supports. That follows from the templates'
+pinned versions, not from a build we ran. Move the app to cordova-android 14
+first. The plugin declares
+<code>cordova-android &gt;=13.0.0</code> as its engine, so the Cordova CLI reports the
+mismatch when it installs the plugin.</p>
+<h3 id="3-jdk-17-or-later">3. JDK 17 or later</h3>
+<p>Run the Cordova build with a JDK 17 or later as <code>JAVA_HOME</code>. cordova-android 14
+needs it anyway, and the plugin's AARs are Java 17 class files, which an older
+JDK cannot read.</p>
+<h3 id="ios">iOS</h3>
+<p>On iOS the plugin brings its Swift sources, the core and the Cordova adapter,
+and the engine, YEOFR 0.11.2. How the engine arrives depends on the cordova-ios
+version. CocoaPods is not used with either: the plugin has no <code>&lt;podspec&gt;</code>, and
+none is planned, because the CocoaPods trunk becomes read-only on 2 December 2026.</p>
+<p>Both versions need the deployment target in <code>config.xml</code>. The plugin and the
+engine need iOS 17.0, and the cordova-ios templates default lower (13.0 on
+cordova-ios 8, 11.0 on cordova-ios 7):</p>
+<pre><code class="language-xml">&lt;platform name=&quot;ios&quot;&gt;
+    &lt;preference name=&quot;deployment-target&quot; value=&quot;17.0&quot; /&gt;
+&lt;/platform&gt;
+</code></pre>
+<p>Set it before <code>cordova platform add ios</code>. Cordova applies it when it creates
+the platform, and <code>cordova prepare</code> does not apply a preference added later, so
+an app that already has the iOS platform removes it and adds it again
+(<code>cordova platform rm ios</code>, then <code>cordova platform add ios</code>). Without it the
+build stops with a minimum platform version error; see
+<a href="#troubleshooting">Troubleshooting</a>.</p>
+<h4 id="cordova-ios-8-recommended">cordova-ios 8 (recommended)</h4>
+<p>cordova-ios 8 builds the plugin as a Swift package. <code>cordova plugin add</code> copies
+it into <code>platforms/ios/packages/</code> and registers it in
+<code>platforms/ios/packages/cordova-ios-plugins/Package.swift</code>. Swift Package
+Manager then resolves the engine from the public
+<a href="https://github.com/yeo-messaging/YEOFR-SPM">YEOFR-SPM</a> package on GitHub at
+exactly 0.11.2. No login is needed, and the plugin downloads nothing itself.</p>
+<p>Nothing else is needed beyond the <code>deployment-target</code> above and, if you want
+your own wording, the <a href="#the-camera-usage-string">camera usage string</a>. Build
+with <code>cordova build ios --device</code>, or <code>cordova build ios --emulator</code> on an
+Apple Silicon Mac.</p>
+<h4 id="cordova-ios-7">cordova-ios 7</h4>
+<p>Use cordova-ios 8 where you can; cordova-ios 7 needs two build settings on a
+current Xcode that the plugin cannot set for you (below). cordova-ios 7 has no
+Swift package support, so the plugin uses its classic entries. During <code>cordova plugin add</code>, the plugin's install hook:</p>
+<ol>
+<li>reads the engine version the plugin pins, 0.11.2;</li>
+<li>downloads <code>YEOFR.xcframework.zip</code> (138 MB) from the YEOFR-SPM release on
+GitHub into <code>~/.cache/yeofr-cordova/</code>, unless a copy with the right checksum
+is already there;</li>
+<li>checks the archive's SHA-256 against the checksum in YEOFR-SPM's
+<code>Package.swift</code>;</li>
+<li>unpacks it with <code>ditto</code>, which is part of macOS.</li>
+</ol>
+<p>Cordova then adds <code>YEOFR.xcframework</code> (embedded) and the plugin's 18 Swift
+source files to the app target. The sources compile in Swift 5 mode.</p>
+<p>The first add therefore needs a Mac with network access to GitHub: the hook
+reads the checksum from <code>raw.githubusercontent.com</code> on every add, and downloads
+the archive from GitHub's release storage when it is not cached. Later adds
+reuse the cached archive. The hook logs what it did, for example
+<code>fetch-ios-engine: YEOFR 0.11.2 downloaded to …</code> or <code>… cached at …</code>.</p>
+<p>On Xcode 27 the cordova-ios 7 template itself needs two more settings:</p>
+<ul>
+<li>
+<p>the Swift version, in <code>config.xml</code> under <code>&lt;platform name=&quot;ios&quot;&gt;</code>:</p>
+<pre><code class="language-xml">&lt;preference name=&quot;SwiftVersion&quot; value=&quot;5.0&quot; /&gt;
+</code></pre>
+</li>
+<li>
+<p>a deployment target of at least 15.0 for <code>CordovaLib</code>, which the
+<code>deployment-target</code> preference does not reach. Pass it to the build:</p>
+<pre><code class="language-bash">cordova build ios --device -- --buildFlag=&quot;IPHONEOS_DEPLOYMENT_TARGET=17.0&quot;
+</code></pre>
+</li>
+</ul>
+<h4 id="the-camera-usage-string">The camera usage string</h4>
+<p>On both cordova-ios versions the plugin writes <code>NSCameraUsageDescription</code> into
+the app's <code>Info.plist</code>. The default text is &quot;The camera is used to recognise
+your face and check that you are present.&quot; Word it for your app when you add
+the plugin:</p>
+<pre><code class="language-bash">cordova plugin add @yeomessagingcom/cordova-plugin-yeofr \
+  --variable CAMERA_USAGE_DESCRIPTION=&quot;We use the camera to check that it is you.&quot;
+</code></pre>
+<p>Cordova records the variable in <code>package.json</code>, so later installs keep it. To
+change it, remove the plugin and add it again with the new text. iOS ends any
+app that opens the camera without a usage string, so do not remove it.</p>
+<h2 id="make-the-page-transparent">Make the page transparent</h2>
+<p>The preview is a native view behind the WebView. Anything on the page with a
+solid background covers it. While the camera runs, the plugin makes the
+WebView itself transparent; your page must be transparent too.</p>
+<p>Make the page transparent only while the face page is showing, so the rest of
+your app keeps its theme. Add this to your global styles (<code>src/global.scss</code> or
+<code>src/styles.scss</code>):</p>
+<pre><code class="language-scss">body.yeofr-camera {
+  --ion-background-color: transparent;
+  background: transparent;
+
+  ion-app {
+    background: transparent;
+  }
+}
+</code></pre>
+<p>The face page adds the <code>yeofr-camera</code> class to <code>&lt;body&gt;</code> when it enters and
+removes it when it leaves, exactly as in the Capacitor guide's
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#5-the-page">page</a>.
+Give your overlays a translucent background, not a solid one. On <code>stop()</code> the
+plugin puts the WebView's own background back: on Android the <code>BackgroundColor</code>
+preference from <code>config.xml</code>, or white when none is set; on iOS the web view's
+opacity and colours as they were before <code>start()</code>.</p>
+<h2 id="ionic-angular-quick-start">Ionic Angular quick start</h2>
+<p>The Angular code is the same as in the Capacitor guide, split into three parts:</p>
+<ul>
+<li><strong><code>FaceTransport</code></strong>: a small interface over the plugin. The service depends
+only on it.</li>
+<li><strong><code>FaceService</code></strong>: owns the session and turns events into signals and plain
+words.</li>
+<li><strong><code>FacePage</code></strong>: starts the camera when the page enters and stops it when the
+page leaves.</li>
+</ul>
+<p>Only the transport is Cordova's own. This section shows it and the one provider
+line that selects it, and points at the Capacitor guide for the rest, which you
+copy unchanged apart from two import lines.</p>
+<p>The code is written for Angular 18 and Ionic 8 with standalone components,
+because that is the stack the first client uses. Angular 18 is out of long-term
+support; on a newer Angular the code is the same.</p>
+<p>The files go in <code>src/app/face/</code>.</p>
+<h3 id="1-the-transport-interface">1. The transport interface</h3>
+<p><code>face-transport.ts</code> is the file from the Capacitor guide's
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#1-the-transport">transport section</a>,
+with the types imported from this package:</p>
+<pre><code class="language-ts">import type {
+  ActivateOptions,
+  EnrolOptions,
+  StartOptions,
+  YeofrEventMap,
+  YeofrEventName,
+} from '@yeomessagingcom/cordova-plugin-yeofr';
+</code></pre>
+<p><code>cordova plugin add</code> puts the package in <code>node_modules/</code>, so TypeScript finds
+its types there. <code>import type</code> keeps it out of your bundle; Cordova loads the
+plugin's JavaScript itself.</p>
+<h3 id="2-the-cordova-transport">2. The Cordova transport</h3>
+<p><code>cordova-face-transport.ts</code>:</p>
+<pre><code class="language-ts">import { Injectable } from '@angular/core';
+import type {
+  ActivateOptions,
+  EnrolOptions,
+  StartOptions,
+  YeofrEventMap,
+  YeofrEventName,
+  YeofrPlugin,
+} from '@yeomessagingcom/cordova-plugin-yeofr';
+
+import type { FaceTransport, Unsubscribe } from './face-transport';
+
+declare const cordova: { plugins: { Yeofr: YeofrPlugin } };
+
+@Injectable()
+export class CordovaFaceTransport implements FaceTransport {
+  private plugin: Promise&lt;YeofrPlugin&gt; | null = null;
+
+  async activate(options: ActivateOptions): Promise&lt;void&gt; {
+    return (await this.yeofr()).activate(options);
+  }
+
+  async start(options?: StartOptions): Promise&lt;void&gt; {
+    return (await this.yeofr()).start(options);
+  }
+
+  async stop(): Promise&lt;void&gt; {
+    return (await this.yeofr()).stop();
+  }
+
+  async enrol(options: EnrolOptions): Promise&lt;void&gt; {
+    return (await this.yeofr()).enrol(options);
+  }
+
+  async clearTracker(): Promise&lt;void&gt; {
+    return (await this.yeofr()).clearTracker();
+  }
+
+  async isEnrolled(): Promise&lt;boolean&gt; {
+    const { tracker } = await (await this.yeofr()).getTrackerData();
+    return tracker !== '';
+  }
+
+  async on&lt;E extends YeofrEventName&gt;(
+    event: E,
+    listener: (event: YeofrEventMap[E]) =&gt; void,
+  ): Promise&lt;Unsubscribe&gt; {
+    const handle = await (await this.yeofr()).addListener(event, listener);
+    return () =&gt; handle.remove();
+  }
+
+  // Cordova sets up cordova.plugins only once deviceready has fired.
+  private yeofr(): Promise&lt;YeofrPlugin&gt; {
+    this.plugin ??= new Promise((resolve) =&gt; {
+      document.addEventListener('deviceready', () =&gt; resolve(cordova.plugins.Yeofr), {
+        once: true,
+      });
+    });
+    return this.plugin;
+  }
+}
+</code></pre>
+<p>Angular usually starts before <code>deviceready</code>, so the transport waits for it once
+and then forwards every call. A <code>deviceready</code> listener added after the event has
+fired still runs straight away, so the order does not matter.</p>
+<h3 id="3-credentials-and-providers">3. Credentials and providers</h3>
+<p>Follow the Capacitor guide's
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#3-credentials-and-providers">credentials and providers section</a>
+for <code>environment.ts</code>, <code>app.config.ts</code> and <code>app.routes.ts</code>, with two changes in
+<code>app.config.ts</code>: import <code>IonicRouteStrategy</code> and <code>provideIonicAngular</code> from
+<code>@ionic/angular/standalone</code>, and provide the Cordova transport:</p>
+<pre><code class="language-ts">{ provide: FACE_TRANSPORT, useClass: CordovaFaceTransport },
+</code></pre>
+<p>with <code>import { CordovaFaceTransport } from './face/cordova-face-transport';</code>.
+Android uses the pilot code and iOS the licence file; pass both, so the same
+call works on each.</p>
+<h3 id="4-the-service-and-the-page">4. The service and the page</h3>
+<p>Copy <code>face.service.ts</code> from the Capacitor guide's
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#4-the-service">service section</a>
+and <code>face.page.ts</code>, <code>face.page.html</code> and <code>face.page.scss</code> from its
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#5-the-page">page section</a>,
+read the notes there, and make these changes for Angular 18 and Cordova:</p>
+<ul>
+<li>In <code>face.service.ts</code>, import the types from
+<code>@yeomessagingcom/cordova-plugin-yeofr</code> instead of
+<code>@yeomessagingcom/capacitor-yeofr</code>.</li>
+<li>In <code>face.page.ts</code>, import the Ionic components and the <code>ViewDidEnter</code> and
+<code>ViewWillLeave</code> types from <code>@ionic/angular/standalone</code>, and add
+<code>standalone: true</code> to the <code>@Component</code> decorator.</li>
+</ul>
+<p>Nothing else changes. Unit tests inject a fake <code>FaceTransport</code>, as with
+Capacitor.</p>
+<h3 id="run-it">Run it</h3>
+<p><code>index.html</code> must load Cordova's script, which Cordova adds to <code>www/</code> at build
+time:</p>
+<pre><code class="language-html">&lt;script src=&quot;cordova.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>Point Angular's build output at <code>www/</code>, the folder Cordova packages: in
+<code>angular.json</code>, set <code>&quot;outputPath&quot;: { &quot;base&quot;: &quot;www&quot;, &quot;browser&quot;: &quot;&quot; }</code> and
+<code>&quot;baseHref&quot;: &quot;./&quot;</code>. Then:</p>
+<pre><code class="language-bash">npx ng build
+cordova run android --device
+</code></pre>
+<p>On iOS, set a signing team on the App target first (open the workspace in
+<code>platforms/ios/</code> in Xcode), then <code>cordova run ios --device</code>. The transport and
+the rest of the Angular code are the same on both platforms.</p>
+<p>Open <code>/face/&lt;an id&gt;</code>, allow the camera, tap <strong>Enrol my face</strong>, follow the
+prompts, and the prompt changes to <strong>Verified</strong>.</p>
+<h2 id="the-plugin-object">The plugin object</h2>
+<p>The plugin has the same methods, options, events, error codes and enums as the
+Capacitor plugin. The Capacitor guide and the API section of the plugin's
+README describe each call; this section lists only what is Cordova's own.</p>
+<ul>
+<li><strong>Access.</strong> The plugin is <code>cordova.plugins.Yeofr</code>, available after
+<code>deviceready</code>. Before that event it is <code>undefined</code>.</li>
+<li><strong>Types.</strong> <code>import type { YeofrPlugin, ResultEvent, ... } from '@yeomessagingcom/cordova-plugin-yeofr'</code>. The package also adds <code>Yeofr</code> to
+<code>CordovaPlugins</code> for apps that use <code>@types/cordova</code>.</li>
+<li><strong>Rejections.</strong> Every call returns a promise. A rejection is an <code>Error</code> with a
+<code>code</code> from <code>YeofrErrorCode</code> and a <code>message</code> with native detail for your
+logs.</li>
+<li><strong>Listeners.</strong> <code>addListener(event, listener)</code> resolves to a handle with
+<code>remove(): Promise&lt;void&gt;</code>; <code>removeAllListeners()</code> removes them all. The plugin
+opens one native event channel with the first listener and closes it when the
+last one is removed. A listener that throws is logged and does not stop the
+others.</li>
+<li><strong>Page loads.</strong> A page reload or navigation in the WebView stops the native
+session and closes the event channel, so no camera runs behind a page that no
+longer knows about it. The new page subscribes again and starts the camera
+when its face page enters. Router navigation inside an Angular app does not
+load a page.</li>
+<li><strong>Permissions.</strong> <code>requestPermissions()</code> and <code>start()</code> ask for the camera.
+On Android <code>checkPermissions()</code> reports <code>granted</code> or <code>prompt</code>, because Android
+cannot tell a refused permission from one never asked until it asks again;
+<code>requestPermissions()</code> reports <code>denied</code> when Android will not show the prompt
+again. On iOS <code>checkPermissions()</code> also reports <code>denied</code>: iOS asks once, and
+after a refusal the user must allow the camera in Settings.</li>
+</ul>
+<pre><code class="language-ts">document.addEventListener('deviceready', async () =&gt; {
+  const yeofr = cordova.plugins.Yeofr;
+  await yeofr.activate({ pilotCode });
+  const results = await yeofr.addListener('result', (r) =&gt; console.log(r.status));
+  await yeofr.start();
+  // later
+  await yeofr.stop();
+  await results.remove();
+});
+</code></pre>
+<h2 id="what-the-statuses-mean">What the statuses mean</h2>
+<p>Each <code>result</code> event carries one fused decision in <code>status</code>. <strong>Act on <code>trusted</code>
+only</strong>; the other fields explain it.</p>
+<table>
+<thead>
+<tr>
+<th><code>status</code></th>
+<th>Meaning</th>
+<th>What to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>noFace</code></td>
+<td>No face in view.</td>
+<td>&quot;Show your face&quot;</td>
+</tr>
+<tr>
+<td><code>badFraming</code></td>
+<td>A face is in view but cannot be used: too far, too close, more than one face, or badly placed.</td>
+<td>The <code>framing</code> hint: <code>tooFar</code> &quot;Move closer&quot;, <code>tooClose</code> &quot;Move back&quot;, <code>multipleFaces</code> &quot;One face at a time&quot;, otherwise &quot;Adjust your position&quot;.</td>
+</tr>
+<tr>
+<td><code>notTrusted</code></td>
+<td>A usable face that is not the enrolled person, or is the enrolled person but has not passed liveness.</td>
+<td>See below.</td>
+</tr>
+<tr>
+<td><code>trusted</code></td>
+<td>The enrolled person, live.</td>
+<td>Your success state.</td>
+</tr>
+</tbody>
+</table>
+<p><code>notTrusted</code> covers three situations. Tell them apart like this:</p>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>How to tell</th>
+<th>What to show</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recognised, not live yet</td>
+<td><code>matchedName</code> is set and <code>isLive</code> is <code>false</code></td>
+<td>&quot;Hold still and look at the camera&quot;. Liveness takes a moment after a face appears. If it lasts more than about 2 seconds, &quot;Not a live face&quot;.</td>
+</tr>
+<tr>
+<td>Someone else</td>
+<td><code>matchedName</code> is <code>null</code> and someone is enrolled</td>
+<td>&quot;Not recognised&quot;</td>
+</tr>
+<tr>
+<td>Nobody enrolled yet</td>
+<td><code>matchedName</code> is <code>null</code> and nobody is enrolled</td>
+<td>&quot;Face found&quot;, and offer enrolment</td>
+</tr>
+</tbody>
+</table>
+<p>Do not build your own rule from the other fields. <code>trusted</code> is the rule. The
+Capacitor guide describes
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#what-the-statuses-mean">the other fields</a>,
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#when-a-call-fails">the rejection codes</a>
+and <a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#error-events">the error events</a>;
+they are the same here, platform notes included. On iOS <code>confidence</code> is always
+<code>null</code>, <code>depthIsThreeD</code> carries the TrueDepth result on iPhones that have the
+sensor, and <code>badFraming</code> can come with <code>framing: 'valid'</code>, so show a general
+hint then. Never show <code>message</code> to the user.</p>
+<h2 id="enrolment-and-the-pose-walk">Enrolment and the pose walk</h2>
+<p>Enrolment stores one person's face on the phone, under a name you choose. Call
+<code>enrol()</code> while the camera runs:</p>
+<pre><code class="language-ts">await Yeofr.enrol({
+  name: customerId,
+  poses: ['front', 'yawLeft', 'yawRight', 'pitchUp', 'pitchDown'],
+});
+</code></pre>
+<p>Or arm it with the start, which is the same as calling <code>enrol()</code> right after
+<code>start()</code> resolves:</p>
+<pre><code class="language-ts">await Yeofr.start({ enrolName: customerId, poses: ['front', 'yawLeft', 'yawRight'] });
+</code></pre>
+<p>Here <code>Yeofr</code> is <code>cordova.plugins.Yeofr</code>. <code>customerId</code> is stored on the phone
+with the face template and comes back as <code>matchedName</code>, so use an identifier
+your app already has rather than personal data.</p>
+<p><strong>The pose walk.</strong> <code>poses</code> is the list of head positions to prompt for, in
+order. Omit it for a single front capture. More poses put more angles in the
+gallery, which helps recognition when the head moves. The engine cannot measure
+head pose, so the prompts guide the user; they do not gate the capture. Android
+spreads the capture evenly across the poses; iOS runs one capture per pose, with
+a short pause before each so the user can move.</p>
+<p><strong>Progress.</strong> While a capture runs, every analysed frame sends <code>enrolProgress</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>phase</code></td>
+<td><code>capturing</code>, then <code>completed</code> (followed by <code>registered</code>) or <code>failed</code>.</td>
+</tr>
+<tr>
+<td><code>pose</code></td>
+<td>What the user should be doing now. Your app owns the wording.</td>
+</tr>
+<tr>
+<td><code>posesAccepted</code>, <code>posesPlanned</code></td>
+<td>Progress through the walk, for a progress bar.</td>
+</tr>
+<tr>
+<td><code>isTargetMatched</code></td>
+<td>This frame passed the capture checks (framing and liveness). Show &quot;Hold that pose&quot;.</td>
+</tr>
+</tbody>
+</table>
+<p>When <code>registered</code> arrives, the face is stored and the next <code>result</code> events can
+be <code>trusted</code>. On Android, if the face cannot be saved, an <code>error</code> event with
+<code>storageFailed</code> follows <code>registered</code>. On iOS a failed capture sends
+<code>enrolProgress</code> with <code>failed</code>, then an <code>error</code> event with <code>enrolFailed</code>.</p>
+<p><strong>One identity at a time.</strong> A capture replaces the enrolled identity. If a
+capture is cut short, by <code>stop()</code>, a new <code>enrol()</code>, the app going to the
+background on iOS, or a page reload, the previous enrolment is put back as it
+was. Nothing half-enrolled stays recognisable.</p>
+<p><strong>Backgrounding.</strong> On iOS, sending the app to the background ends a running
+capture (<code>enrolProgress</code> <code>failed</code>, then <code>error</code> <code>enrolFailed</code>); start it again
+when the user returns. On Android a capture stays armed while the app is in the
+background and carries on when the camera resumes.</p>
+<p><strong>Storage.</strong> The plugin stores the enrolled face template in the app's private
+storage and keeps it out of device backups. It is restored by <code>activate()</code> the
+next time the app runs. <code>clearTracker()</code> removes it. If your security policy
+requires you to hold the template yourself (for example encrypted in your own
+store), read it with <code>getTrackerData()</code> and restore it with <code>loadTracker()</code>
+before <code>start()</code>.</p>
+<h2 id="licence-handling">Licence handling</h2>
+<p>The engine needs a credential before it does anything. There are two kinds:</p>
+<table>
+<thead>
+<tr>
+<th>Credential</th>
+<th>What it is</th>
+<th>Platforms</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Licence file</td>
+<td>A signed <code>.yeolicense</code> file issued for your iOS bundle id. Pass its bytes as base64 in <code>licence</code>.</td>
+<td>iOS only</td>
+</tr>
+<tr>
+<td>Pilot code</td>
+<td>A time-limited code issued by YEO. Pass it as <code>pilotCode</code>.</td>
+<td>Android (the only credential); iOS fallback</td>
+</tr>
+</tbody>
+</table>
+<p>Pass both in one call. Each platform takes the one it uses: iOS uses the
+licence when one is given, and Android ignores the licence.</p>
+<pre><code class="language-ts">await Yeofr.activate({ licence: licenceBase64, pilotCode });
+</code></pre>
+<p><strong>Use a licence file on iOS.</strong> A licence the engine refuses rejects
+<code>activate()</code> with <code>activationFailed</code> and the reason (<code>expired</code>,
+<code>bundleIDMismatch</code>, and so on). Your app stays up and can show a message.</p>
+<blockquote>
+<p><strong>An invalid or expired pilot code closes the app on iOS.</strong> The engine ends
+the process during <code>activate()</code>. The promise does not reject, so <code>try/catch</code>
+does not help. To your users it looks like a crash when the face screen
+opens. If your iOS app closes at that moment, check the pilot code first, and
+ship iOS builds with a licence file.</p>
+</blockquote>
+<p>On Android, a pilot code the engine refuses rejects with <code>activationFailed</code>. A
+licence alone, or no credential at all, rejects with <code>badInput</code>.</p>
+<p>Pilot codes expire. Do not hard-code one in shipped source: load it from build
+configuration or from your backend, so a new code does not need a new binary.
+Ask YEO for a code that covers your whole test period, and check it on both
+platforms. Licence files and pilot codes come from YEO support.</p>
+<h2 id="app-shielding-and-hardening-products">App shielding and hardening products</h2>
+<p>The plugin needs nothing special from app shielding or hardening products, but
+they change the app the camera runs in. Develop and measure on unshielded
+builds, run acceptance on a shielded build of the same commit on real phones,
+expect screenshots of the face page to come out black, and when something works
+unshielded but fails shielded, send the error codes from both builds to your
+shielding vendor and to YEO. The Capacitor guide's
+<a href="https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/#app-shielding-and-hardening-products">shielding section</a>
+has the full checklist.</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cordova-plugin-yeofr: the YEO engine repository URL is not set</code></td>
+<td>Set <code>yeoRepositoryUrl</code>, <code>yeoUser</code> and <code>yeoPassword</code> in <code>~/.gradle/gradle.properties</code>, or <code>YEO_REPOSITORY_URL</code>, <code>YEO_USER</code> and <code>YEO_PASSWORD</code> in the environment. See <a href="#1-credentials-for-the-yeo-repository">Credentials for the YEO repository</a>.</td>
+</tr>
+<tr>
+<td><code>Could not find com.yeomessaging:yeofr-android:0.2.29</code></td>
+<td>The repository URL or login is wrong, or the plugin's Gradle fragment is not applied. Check the URL YEO gave you, and that <code>platforms/android/app/build.gradle</code> applies the plugin's <code>yeofr.gradle</code> between the <code>PLUGIN GRADLE EXTENSIONS</code> markers; if it does not, remove and add the Android platform again.</td>
+</tr>
+<tr>
+<td><code>401</code> or <code>Unauthorized</code> from the YEO repository</td>
+<td>The URL is set but the login is missing or wrong.</td>
+</tr>
+<tr>
+<td><code>Dependency 'androidx.camera:camera-view:1.5.3' requires Android Gradle plugin 8.6.0 or higher. This build currently uses Android Gradle plugin 8.3.0.</code>, or a dependency that &quot;requires libraries and applications that depend on it to compile against&quot; a newer compileSdk</td>
+<td>The <code>config.xml</code> preferences are missing (this is cordova-android 13 without them; <code>androidx.core</code> 1.17 then asks for Android Gradle Plugin 8.9.1 and compileSdk 36). Add them as in <a href="#2-the-configxml-preferences">The config.xml preferences</a>.</td>
+</tr>
+<tr>
+<td>cordova-android 13: an error that Android Gradle Plugin 8.9.1 needs a newer Gradle</td>
+<td>Add <code>&lt;preference name=&quot;GradleVersion&quot; value=&quot;8.13&quot; /&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>class file has wrong version 61.0</code>, or <code>Android Gradle plugin requires Java 17 to run</code></td>
+<td>The build machine runs a JDK older than 17. Set <code>JAVA_HOME</code> to JDK 17 or later.</td>
+</tr>
+<tr>
+<td><code>Could not find an installed version of Gradle</code></td>
+<td>The Cordova CLI needs a <code>gradle</code> binary on the <code>PATH</code> to create the project's Gradle wrapper. Install it (Homebrew <code>gradle</code>) or put Android Studio's on the <code>PATH</code>.</td>
+</tr>
+<tr>
+<td><code>cordova plugin add</code> reports that the plugin's cordova-android engine is not met</td>
+<td>The platform is older than 13. See <a href="#cordova-android-12-and-older">cordova-android 12 and older</a>.</td>
+</tr>
+<tr>
+<td>iOS: <code>The package product '@yeomessagingcom/cordova-plugin-yeofr-product' requires minimum platform version 17.0 for the iOS platform, but this target supports 15.0</code>, often with <code>The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 13.0, but the range of supported deployment target versions is 15.0 to …</code></td>
+<td>The app's deployment target is below 17.0. Add <code>&lt;preference name=&quot;deployment-target&quot; value=&quot;17.0&quot; /&gt;</code> under <code>&lt;platform name=&quot;ios&quot;&gt;</code> in <code>config.xml</code>, then remove the iOS platform and add it again; <code>cordova prepare</code> does not apply the preference to an existing platform. See <a href="#ios">iOS</a>.</td>
+</tr>
+<tr>
+<td>cordova-ios 7: <code>SWIFT_VERSION '' is unsupported</code></td>
+<td>The cordova-ios 7 template sets no Swift version for the current Xcode. Add <code>&lt;preference name=&quot;SwiftVersion&quot; value=&quot;5.0&quot; /&gt;</code> under <code>&lt;platform name=&quot;ios&quot;&gt;</code>. See <a href="#cordova-ios-7">cordova-ios 7</a>.</td>
+</tr>
+<tr>
+<td>cordova-ios 7: <code>CordovaLib</code>: <code>IPHONEOS_DEPLOYMENT_TARGET</code> is set to 11.0, but the range of supported deployment target versions is 15.0 to …</td>
+<td>The <code>deployment-target</code> preference does not reach <code>CordovaLib</code>. Build with <code>cordova build ios -- --buildFlag=&quot;IPHONEOS_DEPLOYMENT_TARGET=17.0&quot;</code>, or move the app to cordova-ios 8.</td>
+</tr>
+<tr>
+<td>cordova-ios 7: <code>cordova plugin add</code> fails with <code>fetch-ios-engine: https://…: HTTP …</code>, or a network, TLS or timeout error</td>
+<td>The hook could not reach GitHub: no network, or a proxy or firewall blocks it. Allow <code>raw.githubusercontent.com</code>, <code>github.com</code> and GitHub's release download hosts, then remove the plugin and add it again. If only the large download is blocked, save <code>YEOFR.xcframework.zip</code> from the YEOFR-SPM 0.11.2 release as <code>~/.cache/yeofr-cordova/YEOFR-0.11.2.xcframework.zip</code>; the hook uses a cached archive whose checksum matches, but it still reads the checksum from <code>raw.githubusercontent.com</code>.</td>
+</tr>
+<tr>
+<td>cordova-ios 7: <code>fetch-ios-engine: …: sha256 …, expected …</code></td>
+<td>The download arrived incomplete or altered, often by a proxy that rewrites downloads. Delete <code>~/.cache/yeofr-cordova/YEOFR-0.11.2.xcframework.zip</code> if it is there, then remove the plugin and add it again. If it keeps failing, download from a network without the proxy.</td>
+</tr>
+<tr>
+<td>cordova-ios 7: <code>fetch-ios-engine: needs macOS (ditto)</code>, or <code>spawnSync ditto ENOENT</code></td>
+<td>The hook unpacks the engine with <code>ditto</code>, which is part of macOS at <code>/usr/bin/ditto</code>. Add the iOS plugin on a Mac with <code>/usr/bin</code> on the <code>PATH</code>.</td>
+</tr>
+<tr>
+<td>iOS: compile errors in the plugin's Swift files, or <code>failed to build module 'YEOFR'</code> naming a newer Swift compiler</td>
+<td>Xcode is older than 26. The plugin's sources and the engine need Xcode 26 or later on both cordova-ios versions. Install it and select it with <code>xcode-select</code>.</td>
+</tr>
+<tr>
+<td>iOS Simulator build: <code>missing architecture(s) required by this target (x86_64)</code></td>
+<td>The engine's Simulator slice is arm64 only, and the build includes the Intel Simulator. Build for the Simulator on an Apple Silicon Mac with <code>cordova build ios --emulator</code>, which builds the active architecture only. Intel Simulators are not supported; test on an iPhone.</td>
+</tr>
+<tr>
+<td><code>cordova.plugins.Yeofr</code> is <code>undefined</code></td>
+<td>The call ran before <code>deviceready</code>, or <code>index.html</code> does not load <code>cordova.js</code>. Use the transport, which waits for <code>deviceready</code>, and add the script tag from <a href="#run-it">Run it</a>.</td>
+</tr>
+<tr>
+<td>iOS app closes when the face page opens</td>
+<td>An invalid or expired pilot code (see <a href="#licence-handling">Licence handling</a>), or <code>NSCameraUsageDescription</code> is missing from the app's <code>Info.plist</code>. iOS ends any app that opens the camera without it. The plugin adds it when it is installed; if it is missing, remove the plugin and add it again, and check that no other <code>edit-config</code> in <code>config.xml</code> removes it.</td>
+</tr>
+<tr>
+<td>Android phone: the camera shows but results stay <code>noFace</code></td>
+<td>Check that Google Play services is installed and up to date. Phones without Google Play services are not supported.</td>
+</tr>
+<tr>
+<td>Simulator or emulator: results stay <code>noFace</code></td>
+<td>Expected. Neither gives the engine a real face. Test on phones.</td>
+</tr>
+<tr>
+<td><code>start()</code> rejects <code>permissionDenied</code></td>
+<td>The user refused the camera. iOS asks only once; after that the user must allow it in Settings. Android stops asking if the user chose not to be asked again; they must then allow it in Settings. <code>checkPermissions()</code> tells you the state before you start.</td>
+</tr>
+<tr>
+<td>The camera runs but the screen is white or your theme colour</td>
+<td>Something opaque covers the preview: the <code>yeofr-camera</code> class is not on <code>&lt;body&gt;</code>, or an element has a solid background. See <a href="#make-the-page-transparent">Make the page transparent</a>.</td>
+</tr>
+<tr>
+<td>The camera stops after a page reload</td>
+<td>By design. Loading a page stops the native session, so no camera runs behind a page that no longer knows about it, and the old listeners are gone. The new page subscribes and starts the camera again when it enters.</td>
+</tr>
+<tr>
+<td><code>alreadyRunning</code></td>
+<td><code>start()</code> ran while a session was running. There is one camera session per app: two pages each starting the camera, or a start without a stop. Keep the session in one service, as <code>FaceService</code> does. On iOS, <code>activate()</code> and <code>loadTracker()</code> also reject <code>alreadyRunning</code> while a session runs.</td>
+</tr>
+<tr>
+<td>The preview is sideways</td>
+<td>The preview does not follow rotation in this release. Lock the app to portrait.</td>
+</tr>
+<tr>
+<td><code>registered</code> never arrives</td>
+<td>The capture only counts frames that pass framing and liveness. Fill the frame, hold still, use good light.</td>
+</tr>
+</tbody>
+</table>
+<p>When you contact YEO support, include the plugin version, the output of
+<code>getVersion()</code>, the platform and its cordova-android or cordova-ios version,
+the phone model, the error code and message, and whether the build was
+shielded.</p>
+<h2 id="versions">Versions</h2>
+<table>
+<thead>
+<tr>
+<th>Plugin</th>
+<th>Android engine</th>
+<th>iOS engine</th>
+<th>cordova-android</th>
+<th>cordova-ios</th>
+<th>Verified with</th>
+<th>Android phone</th>
+<th>iPhone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.5.0</td>
+<td>0.2.29</td>
+<td>0.11.2</td>
+<td>14 (recommended); 13 with <code>GradleVersion</code> 8.13</td>
+<td>7 and 8 (8 recommended)</td>
+<td>Android: cordova-android 14.0.1 with Cordova CLI 13, Angular 18.2 and Ionic 8.8 (<code>examples/cordova-angular18/</code> in the plugin repository); cordova-android 13.0.0 with Cordova CLI 13 in a bare app. iOS: cordova-ios 8.1.1 with the same example app, as a Swift package; cordova-ios 8.1.1 (Swift package, device and arm64 Simulator builds) and cordova-ios 7.1.1 (classic, engine fetched at plugin add, with <code>SwiftVersion</code> 5.0 and the <code>IPHONEOS_DEPLOYMENT_TARGET</code> build flag) in bare apps; all on Xcode 27 with Cordova CLI 13</td>
+<td>to be filled</td>
+<td>to be filled</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changelog">Changelog</h2>
+<p>Every release is listed in <code>CHANGELOG.md</code> in the plugin repository, which
+covers both the Capacitor and the Cordova package.</p>
+</main></div>
+<script>
+const doc = document.getElementById('doc');
+const box = document.getElementById('toclinks');
+const heads = [...doc.querySelectorAll('h2,h3')];
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+heads.forEach((h) => {
+  if (!h.id) h.id = slug(h.textContent);
+  const a = document.createElement('a');
+  a.href = '#' + h.id; a.textContent = h.textContent;
+  if (h.tagName === 'H3') a.className = 'h3';
+  box.appendChild(a);
+});
+const links = [...box.querySelectorAll('a')];
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    links.forEach((l) => l.classList.toggle('on', l.getAttribute('href') === '#' + e.target.id));
+  });
+}, {rootMargin: '0px 0px -75% 0px'});
+heads.forEach((h) => io.observe(h));
+</script>
+</body></html>
