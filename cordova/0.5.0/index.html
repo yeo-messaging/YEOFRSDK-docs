@@ -725,12 +725,7 @@ was. Nothing half-enrolled stays recognisable.</p>
 capture (<code>enrolProgress</code> <code>failed</code>, then <code>error</code> <code>enrolFailed</code>); start it again
 when the user returns. On Android a capture stays armed while the app is in the
 background and carries on when the camera resumes.</p>
-<p><strong>Storage.</strong> The plugin stores the enrolled face template in the app's private
-storage and keeps it out of device backups. It is restored by <code>activate()</code> the
-next time the app runs. <code>clearTracker()</code> removes it. If your security policy
-requires you to hold the template yourself (for example encrypted in your own
-store), read it with <code>getTrackerData()</code> and restore it with <code>loadTracker()</code>
-before <code>start()</code>.</p>
+<p><strong>Storage.</strong> By default the plugin keeps the enrolled face template in the app's private\nstorage, out of device backups (on iOS also under file protection), restores it when\n<code>activate()</code> runs, and removes it on <code>clearTracker()</code>. The template is stored as the\nengine writes it; the plugin does not encrypt it. We recommend storing it encrypted:\nread it with <code>getTrackerData()</code> once <code>registered</code> has arrived, keep it in a store of\nyour choosing (encrypted at rest with your own key management, or on your backend), and\nput it back with <code>loadTracker()</code> before <code>start()</code>. Where and how you keep it is your\ndecision; the plugin supports both the default storage and a host-held template.</p>
 <h2 id="licence-handling">Licence handling</h2>
 <p>The engine needs a credential before it does anything. There are two kinds:</p>
 <table>
