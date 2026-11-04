@@ -310,7 +310,7 @@ Gradle Plugin 7.4, which cannot load <code>androidx.core</code> 1.17 (it declare
 Android Gradle Plugin of 8.9.1) or compileSdk 36, so dependency resolution would
 fail before any code compiles; and <code>AndroidGradlePluginVersion</code> cannot lift the
 plugin past what their Gradle wrapper supports. That follows from the templates'
-pinned versions, not from a build we ran. Move the app to cordova-android 14
+pinned versions; it was not tested. Move the app to cordova-android 14
 first. The plugin declares
 <code>cordova-android &gt;=13.0.0</code> as its engine, so the Cordova CLI reports the
 mismatch when it installs the plugin.</p>
@@ -428,9 +428,8 @@ page leaves.</li>
 <p>Only the transport is Cordova's own. This section shows it and the one provider
 line that selects it, and points at the Capacitor guide for the rest, which you
 copy unchanged apart from two import lines.</p>
-<p>The code is written for Angular 18 and Ionic 8 with standalone components,
-because that is the stack the first client uses. Angular 18 is out of long-term
-support; on a newer Angular the code is the same.</p>
+<p>The code is written for Angular 18 and Ionic 8 with standalone components. Angular 18
+is out of long-term support; on a newer Angular the code is the same.</p>
 <p>The files go in <code>src/app/face/</code>.</p>
 <h3 id="1-the-transport-interface">1. The transport interface</h3>
 <p><code>face-transport.ts</code> is the file from the Capacitor guide's
