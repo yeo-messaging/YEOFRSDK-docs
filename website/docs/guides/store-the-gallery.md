@@ -120,7 +120,7 @@ There are no photos or video.
 
 | Platform | How to remove the enrolment |
 |---|---|
-| Android | `YEOFRSDK.clearTracker()`, then delete your stored copy |
+| Android | `YEOFRSDK.clearTracker()`, then delete your stored copy. `shutdown()` alone does not clear enrolments from memory. |
 | iOS with `FaceTrustService` | `clearEnrollment()` clears memory and removes the service's file. Delete any copy you hold yourself. |
 | React Native | `clearTracker()`, then `saveTrackerToDisk()` to replace the saved copy. Confirm in your app that the next launch finds nobody enrolled. |
 | Flutter | `YeoFR.clearTracker()`, then delete your stored copy |
