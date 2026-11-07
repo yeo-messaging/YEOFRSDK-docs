@@ -160,7 +160,7 @@ Yes. The SDK needs a credential from YEO. [Contact YEO](support.md).
 
 ### What happens if the credential is refused?
 
-The SDK does not run. On Android you get an error your app can handle. On iOS the app closes during start-up. See [Before you start](get-started/before-you-start.md#get-your-credential).
+The SDK does not run. How this is reported depends on the platform and version, and is covered in [each product's docs](reference/api.md).
 
 ### Does activating the SDK send anything to YEO?
 

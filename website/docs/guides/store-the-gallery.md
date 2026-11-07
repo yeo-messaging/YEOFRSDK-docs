@@ -65,8 +65,7 @@ There are no photos or video.
     try sdk.loadTracker(from: EncryptedBlob.parse(Data(contentsOf: url)))
     ```
 
-    !!! warning "`FaceTrustService` still writes an unencrypted file"
-        Handing an encrypting SDK to `FaceTrustService(sdk:)` does not encrypt its saved file. For encrypted storage, your app must own the saving, and it must also remove the service's own file. `Examples/FRPilot` in the Swift package shows a worked example.
+    Handing an encrypting SDK to `FaceTrustService(sdk:)` does not encrypt its saved file. For encrypted storage, your app must own the saving, and it must also remove the service's own file. `Examples/FRPilot` in the Swift package shows a worked example.
 
 === "React Native"
 

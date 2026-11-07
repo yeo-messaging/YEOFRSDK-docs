@@ -10,7 +10,7 @@ Make sure your SDK credentials are configured securely and ready for production.
 
 - [ ] Load your YEO credential from your app configuration or backend, not from source code, so that a renewal does not need a new app release.
 - [ ] Confirm that the credential stays valid beyond your planned release date, and that someone is responsible for renewing it.
-- [ ] Test your release build with the credential you will ship, on both iOS and Android. [A refused credential](../get-started/before-you-start.md#get-your-credential) stops the SDK, and on iOS it closes the app.
+- [ ] Test your release build with the credential you will ship, on both iOS and Android.
 - [ ] Store your Android repository address and login securely. Do not commit them to source control.
 
 ## 2. User enrolment

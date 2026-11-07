@@ -36,8 +36,6 @@ final saved = await loadTrackerFromStorage();   // your own storage
 if (saved != null) await YeoFR.loadTracker(saved);
 ```
 
-On Android a refused credential throws a `PlatformException` with code `INIT_ERROR`. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
-
 ## 3. Read results from the camera
 
 Use the `camera` package. iOS needs `bgra8888` and Android uses `yuv420`.

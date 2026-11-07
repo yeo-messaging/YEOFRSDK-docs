@@ -4,7 +4,7 @@
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| The iOS app closes when the face screen opens | The credential was refused, or `NSCameraUsageDescription` is missing | Check the credential first, then `Info.plist`. iOS ends any app that opens the camera without the text. |
+| The SDK does not start on iOS | The credential was refused, or `NSCameraUsageDescription` is missing | Check the credential, then `Info.plist` |
 | Android `init` throws "Invalid licence code", or a call rejects with an activation error | The credential is missing, unknown or expired | Ask YEO for a current credential |
 | `Could not find com.yeomessaging:yeofr-android:0.2.29` | The YEO repository is missing from your app's build | Add the repository block for your platform. It must be in your app's build, not only in a dependency's. |
 | `401` from the repository | Wrong or missing login | Check the login from YEO in `gradle.properties` or your environment variables |

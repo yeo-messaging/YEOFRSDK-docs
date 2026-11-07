@@ -24,16 +24,11 @@ More varied samples make recognition more reliable, especially when the light ch
 
 Enrolment decides whose face is trusted later.
 
-!!! warning "On iPhone, the camera capture does not check liveness"
-    On iOS, `FaceTrustService.enroll(name:)` stores the first frame that shows exactly one face. This also applies to the React Native, Capacitor and Cordova camera captures on iOS, because they use it. A photo held up to the camera could be stored.
+1. Run enrolment only inside a session you already trust, after your own sign-in check.
+2. After the capture, require a `trusted` result with the expected name before you turn on face sign-in. `trusted` includes liveness.
+3. If that check does not pass, clear the enrolment and start again.
 
-    To protect this step:
-
-    1. Run enrolment only inside a session you already trust, after your own sign-in check.
-    2. After the capture, require a `trusted` result with the expected name before you turn on face sign-in. `trusted` includes liveness.
-    3. If that check does not pass, clear the enrolment and start again.
-
-On Android, the React Native, Capacitor and Cordova captures only count live frames. In native Android and in Flutter your app calls `enroll`, so check liveness first, as the samples below do.
+In native Android and in Flutter your app calls `enroll`, so check liveness first, as the samples below do.
 
 ## How to enrol on each platform
 

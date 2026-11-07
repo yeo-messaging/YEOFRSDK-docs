@@ -32,8 +32,6 @@ await activate({pilotUnlockCode: credentialFromYeo});
 const enrolled = await loadTrackerFromDisk();   // false if there is nothing to restore
 ```
 
-On Android a refused credential rejects the call. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
-
 ## 3. Enrol the user
 
 Set `enrolName` on the camera and wait for the `registered` event. Then save.

@@ -44,8 +44,6 @@ const results = await Yeofr.addListener('result', (r) => {
 await Yeofr.start();
 ```
 
-On Android a refused credential rejects with `activationFailed`. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
-
 ## 3. Enrol the user
 
 ```ts

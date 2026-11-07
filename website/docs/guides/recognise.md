@@ -12,8 +12,7 @@ Accept the user only when **all** of these are true:
 
 Do not accept on a single frame, and do not build your own rule from the numbers.
 
-!!! warning "Always check the name"
-    Check that the recognised name is the person you expect, even when the status already says `trusted`. On native iOS, with no enrolment in place, `.trusted` can be reported for any live face. Before you start recognition, also confirm that someone is enrolled.
+Check that the recognised name is the person you expect, even when the status already says `trusted`. Before you start recognition, also confirm that someone is enrolled.
 
 ## The rule on each platform
 

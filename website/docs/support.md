@@ -48,8 +48,7 @@ To help us answer quickly, tell us:
 - any error code or message;
 - whether it also happens on an unshielded build, if your app uses a shielding product.
 
-!!! warning "Keep sensitive data out of support requests"
-    Never send face images, gallery files, your credential or your repository login.
+Please do not send face images, gallery files, your credential or your repository login.
 
 ## More from YEO
 
