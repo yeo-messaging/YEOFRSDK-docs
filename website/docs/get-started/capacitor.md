@@ -6,7 +6,7 @@ Version 0.5.0, which uses the Android SDK 0.2.29 and the iOS SDK 0.11.2. It work
 
 The plugin works with Angular, React, Vue, Svelte and plain JavaScript, with or without Ionic. The calls on this page are the same in all of them.
 
-The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/) has an Ionic Angular quick start. In other frameworks, start the camera when the face page opens and stop it when the page closes.
+The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/) has an Ionic Angular quick start. In other frameworks, start the camera when the face page opens and stop it when the page closes.
 
 ## 1. Install
 
@@ -25,10 +25,11 @@ npx cap sync
 **Android:**
 
 - Add the address and login from YEO to `~/.gradle/gradle.properties`, or to environment variables on your build server.
-- Add the plugin's repository and core module settings, as shown in the [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/).
-- Build with `compileSdk` 36 and Android Gradle Plugin 8.9.1 or later.
+- Add the plugin's repository and core module settings, and build with `compileSdk` 36 and Android Gradle Plugin 8.9.1 or later.
 
-**Your page:** make it transparent where the camera should show. The guide shows how. Lock the page or app to portrait, because the preview does not follow device rotation.
+**Your page:** make it transparent where the camera should show, and lock it to portrait.
+
+The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/) has every step, including a full Ionic Angular example.
 
 ## 2. Activate and listen
 
@@ -72,5 +73,5 @@ By default the plugin keeps it in private app storage, out of device backups, an
 
 ## Keep going
 
-- [Capacitor guide 0.5.0](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/)
+- [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/)
 - [Go-live checklist](../guides/go-live.md)

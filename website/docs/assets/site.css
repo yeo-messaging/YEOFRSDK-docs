@@ -78,10 +78,6 @@
   font-weight: 500;
 }
 
-.md-version__list {
-  color: var(--md-default-fg-color);
-}
-
 .md-search__form,
 .md-search__form:hover {
   border-radius: 1rem;

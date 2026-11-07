@@ -21,7 +21,7 @@
 | Results stay at no face on an Android phone | Google Play services is missing or out of date, or the face model has not downloaded yet | Update Google Play services and connect to a network for the first use |
 | Camera does not start on Android | The permission is missing from your manifest, or has not been requested | Declare `CAMERA` and request it at runtime |
 | Camera refused on iOS after the first time | iOS asks only once | Ask the user to allow the camera in Settings |
-| Capacitor or Cordova: the camera runs but the screen is white or a solid colour | Something opaque covers the preview | Make the page transparent where the camera should show, as in the [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/) or [Cordova guide](https://yeo-messaging.github.io/YEOFRSDK-docs/cordova/0.5.0/) |
+| Capacitor or Cordova: the camera runs but the screen is white or a solid colour | Something opaque covers the preview | Make the page transparent where the camera should show, as in the [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/) or [Cordova guide](https://yeo-messaging.github.io/YEOFRSDK-docs/cordova/) |
 | Capacitor or Cordova: `alreadyRunning` | Two pages started the camera, or a start had no stop | Keep one camera session per app, in one shared service |
 
 ## Enrolment and recognition

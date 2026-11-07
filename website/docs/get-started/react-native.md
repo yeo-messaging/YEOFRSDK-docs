@@ -21,7 +21,7 @@ Then set these up by hand:
 !!! note "Camera view on iOS"
     The iOS camera view needs React Native's old architecture, so set `RCT_NEW_ARCH_ENABLED=0` if you use it. The other calls work with the New Architecture on, and so does the Android camera view.
 
-The [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.5.2/) covers manual setup, Xcode 26 and every option.
+The [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/) covers manual setup, Xcode 26 and every option.
 
 ## 2. Activate
 
@@ -66,6 +66,6 @@ Accept once this has held for about a second. Never compare `confidence` with a 
 
 ## Keep going
 
-- [React Native guide 0.5.2](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.5.2/)
+- [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/)
 - [Store the gallery](../guides/store-the-gallery.md)
 - [Go-live checklist](../guides/go-live.md)

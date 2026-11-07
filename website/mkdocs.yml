@@ -35,15 +35,9 @@ theme:
 
 plugins:
   - search
-  - mike:
-      alias_type: copy
-      canonical_version: latest
 
 extra:
   generator: false
-  version:
-    provider: mike
-    default: latest
   social:
     - icon: material/web
       link: https://yeo.tech/
@@ -109,6 +103,7 @@ nav:
   - Reference:
       - reference/index.md
       - Published versions: reference/versions.md
+      - What's new: reference/whats-new.md
       - API references: reference/api.md
   - Support: support.md
   - yeo.tech: https://yeo.tech/
