@@ -60,23 +60,11 @@ We recommend one person per app installation. If you need several, contact YEO f
 
 Your app decides the wording. The SDK reports when no face, several faces or a badly placed face is in view. A good capture screen shows the framing hint and a progress indicator, and shows tips after about a minute without progress.
 
-### Does the enrolment capture check liveness?
-
-It depends on the platform. On Android, the React Native, Capacitor and Cordova captures only count live frames, and native Android and Flutter samples check liveness before enrolling. On iPhone, the camera capture stores a frame with one face and does not check liveness itself. See [Protect the enrolment step](guides/enrol.md#protect-the-enrolment-step).
-
 ## Recognition
 
 ### What is the recognition threshold?
 
 A similarity of 0.35 on the SDK's 0 to 1 scale is the default bar for a match. YEO set it from internal testing, and your app does not need to choose one. Please talk to YEO before you consider changing anything related to it.
-
-### What are the false accept and false reject rates?
-
-They depend heavily on your users, devices and lighting, so we do not quote a single figure. YEO can discuss an evaluation on your target devices and conditions.
-
-### Can identical twins unlock each other's account?
-
-Face recognition, ours included, cannot reliably tell identical twins apart. For sensitive actions, use face sign-in together with your other security checks.
 
 ### What distance should the user hold the phone at?
 
@@ -110,21 +98,21 @@ Liveness is decided for one face, so the frame is not accepted until only one fa
 
 ### Can a photo or a video of the user fool it?
 
-The check is designed to refuse common attacks, such as printed photos and photos or videos shown on a screen, and your app should accept recognition only together with liveness. Like any liveness system, it lowers the risk but cannot rule out every attack. Use it with your other security measures for high-value actions.
+The check is designed to refuse common attacks, such as printed photos and photos or videos shown on a screen, and your app should accept recognition only together with liveness. For high-value actions, use it with your other security measures.
 
 ### Can we feed our own camera frames or stored photos?
 
-Yes, the plugins and native SDKs accept frames from your own pipeline. Liveness only means something on a live camera stream, because frames replayed from storage cannot prove the person is present. Still-image matching runs recognition only.
+Yes, the plugins and native SDKs accept frames from your own pipeline. For a presence check, use the live camera stream.
 
 ## Data and storage
 
 ### Where is the enrolment stored, and is it encrypted?
 
-On the device, in a place your app controls. The SDK does not encrypt it by default. For production, we recommend that your app encrypts it with a key in the iOS Keychain or Android Keystore and excludes it from cloud backup. See [Store the gallery](guides/store-the-gallery.md).
+On the device, in a place your app controls. Your app encrypts it with a key in the iOS Keychain or Android Keystore and excludes it from cloud backup. See [Store the gallery](guides/store-the-gallery.md).
 
 ### Does any data leave the phone?
 
-The SDK sends nothing. On Android, Google's ML Kit, which the SDK uses for face detection, sends Google its own usage metrics and downloads its model through Google Play services. Google states that images and detection results stay on the device. See [What leaves the device](data-and-privacy.md#what-leaves-the-device).
+The SDK sends nothing. On Android, face detection uses Google's ML Kit through Google Play services. See [What leaves the device](data-and-privacy.md#what-leaves-the-device).
 
 ### Can we back up enrolments to the cloud or move them to a new phone?
 
@@ -160,7 +148,7 @@ Yes. The SDK needs a credential from YEO. [Contact YEO](support.md).
 
 ### What happens if the credential is refused?
 
-The SDK does not run. On Android you get an error your app can handle. On iOS the app closes during start-up. See [Before you start](get-started/before-you-start.md#get-your-credential).
+The SDK does not run. How this is reported depends on the platform and version, and is covered in [each product's docs](reference/api.md).
 
 ### Does activating the SDK send anything to YEO?
 
@@ -180,17 +168,9 @@ Android 7.0 (API 24) or later, and iOS 17.0 or later. See [Before you start](get
 
 ## Security and compliance
 
-### Does the SDK detect rooted or jailbroken phones?
-
-No. The SDK does not check for rooted or jailbroken devices, emulators, hooking tools, screen capture or virtual cameras. Your app handles these, for example with Google Play Integrity or Apple App Attest. See [Device and app security](data-and-privacy.md#device-and-app-security).
-
-### Are results signed?
-
-No. Results are returned to your app as ordinary data structures. To rely on a result on your server, use your own attestation and secure channel.
-
 ### Does the SDK contain analytics or crash reporting?
 
-No. On Android, ML Kit has its own usage metrics, as described in [What leaves the device](data-and-privacy.md#what-leaves-the-device).
+No.
 
 ### Are models updated over the air?
 
@@ -198,7 +178,7 @@ YEO's recognition and liveness models are not. They are bundled in the SDK and c
 
 ### Does the SDK store face images on the device?
 
-No, on either platform. The Android option `keepFaceImagesInTracker` has no effect in these versions.
+No, on either platform.
 
 ### Can we wrap our app with a shielding or hardening product?
 

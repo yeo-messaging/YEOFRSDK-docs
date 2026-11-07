@@ -1,31 +1,26 @@
 site_name: YEO CFR SDK
 site_description: Guides, how-tos and answers for adding on-device face recognition and liveness to your app.
 site_url: https://yeo-messaging.github.io/YEOFRSDK-docs/guide/
-copyright: >
-  &copy; 2026 YEO Messaging Ltd, registered in England and Wales 10785061.
-  <a href="https://yeo.tech/policies/terms-and-conditions">Terms and Conditions</a> |
-  <a href="https://yeo.tech/policies/privacy-policy">Privacy Policy</a>
 
 theme:
   name: material
+  custom_dir: overrides
   font: false
   logo: assets/yeo-logo.svg
   favicon: assets/yeo-favicon.svg
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
+    - scheme: slate
       primary: custom
       accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
   features:
     - navigation.tabs
     - navigation.sections
@@ -40,15 +35,9 @@ theme:
 
 plugins:
   - search
-  - mike:
-      alias_type: copy
-      canonical_version: latest
 
 extra:
   generator: false
-  version:
-    provider: mike
-    default: latest
   social:
     - icon: material/web
       link: https://yeo.tech/
@@ -114,6 +103,7 @@ nav:
   - Reference:
       - reference/index.md
       - Published versions: reference/versions.md
+      - What's new: reference/whats-new.md
       - API references: reference/api.md
   - Support: support.md
   - yeo.tech: https://yeo.tech/

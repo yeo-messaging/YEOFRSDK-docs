@@ -82,5 +82,5 @@ Accept only once this has held for about a second. See [Recognise a user](../gui
 ## Keep going
 
 - Google Play's 16 KB page size requirement is met by 0.2.29. Do not add `org.tensorflow:tensorflow-lite` 2.14 or older to your app, because it brings the problem back.
-- [API reference for Android 0.2.29](https://yeo-messaging.github.io/yeofrsdk-android-docs/0.2.29/)
+- [Android API reference](https://yeo-messaging.github.io/yeofrsdk-android-docs/)
 - [Go-live checklist](../guides/go-live.md)

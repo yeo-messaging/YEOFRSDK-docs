@@ -1,0 +1,56 @@
+<div class="yeo-footer">
+  <div class="md-grid yeo-footer__top">
+    <div class="yeo-footer__brand">
+      <img src="{{ 'assets/yeo-logo-white.svg' | url }}" alt="YEO">
+      {% if config.extra.social %}
+        {% include "partials/social.html" %}
+      {% endif %}
+    </div>
+    <div>
+      <h2>Docs</h2>
+      <a href="{{ 'get-started/' | url }}">Get started</a>
+      <a href="{{ 'guides/' | url }}">Guides</a>
+      <a href="{{ 'data-and-privacy/' | url }}">Data and privacy</a>
+      <a href="{{ 'faq/' | url }}">FAQ</a>
+      <a href="{{ 'support/' | url }}">Support</a>
+    </div>
+    <div>
+      <h2>Solutions</h2>
+      <a href="https://yeo.tech/sdk">YEO CFR SDK</a>
+      <a href="https://yeo.tech/yeo-for-business">YEO for Business</a>
+    </div>
+    <div>
+      <h2>Resources</h2>
+      <a href="https://yeo.tech/blog/what-is-continuous-facial-recognition">What is CFR?</a>
+      <a href="https://yeo.tech/blog/the-continuous-facial-recognition-sdk-whitepaper">SDK whitepaper</a>
+      <a href="https://yeo.tech/press">Press &amp; Media Kit</a>
+    </div>
+    <div>
+      <h2>Company</h2>
+      <a href="https://yeo.tech/about">About</a>
+      <a href="https://yeo.tech/security">Security</a>
+      <a href="https://yeo.tech/faq">FAQ</a>
+      <a href="https://yeo.tech/contact-us">Contact us</a>
+    </div>
+  </div>
+  <div class="md-grid yeo-footer__bottom">
+    <div>
+      <p>&copy; 2026 YEO Messaging Ltd is registered in England and Wales 10785061.</p>
+      <p>
+        <a href="https://yeo.tech/policies/terms-and-conditions">Terms and Conditions</a>
+        &nbsp;|&nbsp;
+        <a href="https://yeo.tech/policies/privacy-policy">Privacy Policy</a>
+      </p>
+      <p class="yeo-footer__notice">
+        The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.
+        Other product names and logos belong to their owners and do not imply endorsement.
+      </p>
+    </div>
+    <div class="yeo-footer__patents">
+      <p>US Patent No: 10,607,035 (Granted March 31, 2020)</p>
+      <p>GB patent No: 1713943.7 (Granted February 2022)</p>
+      <p>Chinese patent 201880071020.4 (Granted April 2nd 2024)</p>
+      <p>EU patent No: PCT/EP2018/073464 (Granted July 2026)</p>
+    </div>
+  </div>
+</div>

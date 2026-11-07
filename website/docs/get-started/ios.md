@@ -29,9 +29,6 @@ let service = FaceTrustService(pilotUnlockCode: credentialFromYeo)
 try await service.start()
 ```
 
-!!! warning "A refused credential closes the app"
-    You cannot catch this. See [Before you start](before-you-start.md#get-your-credential).
-
 ## 3. Enrol the user
 
 ```swift
@@ -42,8 +39,7 @@ for await step in service.enroll(name: "user-id") {
 
 One call captures one sample from the first frame that shows exactly one face. Call it again under other angles and lighting to add samples, up to 25.
 
-!!! warning "This capture does not check liveness"
-    Only start enrolment after you have confirmed who the user is by another means. Before you turn on face sign-in, require one `.trusted` result. See [Enrol a user](../guides/enrol.md#protect-the-enrolment-step).
+Only start enrolment after you have confirmed who the user is by another means, and require one `.trusted` result before you turn on face sign-in. See [Enrol a user](../guides/enrol.md#protect-the-enrolment-step).
 
 ## 4. Recognise the user
 
@@ -54,14 +50,14 @@ for await update in service.updates() {
 }
 ```
 
-Accept when `update.status == .trusted` **and** `update.matchedName` is the person you expect. With no enrolment in place, `.trusted` can be reported for any live face, so always check the name. See [Recognise a user](../guides/recognise.md).
+Accept when `update.status == .trusted` **and** `update.matchedName` is the person you expect. See [Recognise a user](../guides/recognise.md).
 
 ## 5. Decide where the enrolment is saved
 
-`FaceTrustService` saves the enrolment for you and restores it at the next launch. By default the file is unencrypted, sits in the app's Documents folder and is included in device backups. For production, move it and encrypt it. See [Store the gallery](../guides/store-the-gallery.md).
+`FaceTrustService` saves the enrolment for you and restores it at the next launch. For production, your app encrypts it and chooses where it lives. See [Store the gallery](../guides/store-the-gallery.md).
 
 ## Keep going
 
-- The simulator builds and runs your app, but every frame reports no face. Use a real iPhone.
+- The simulator builds and runs your app, but every frame reports no face.
 - [API reference for iOS 0.11.2](https://yeo-messaging.github.io/YEOFRSDK-docs/0.11.2/documentation/yeofr/)
 - [Go-live checklist](../guides/go-live.md)

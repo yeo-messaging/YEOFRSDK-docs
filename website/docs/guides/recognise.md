@@ -1,6 +1,6 @@
 # Recognise a user
 
-There is no "recognise" button to press. The SDK reports on every analysed frame, and your app decides when it has seen enough.
+The SDK reports on every analysed frame, and your app decides when it has seen enough.
 
 ## The rule we recommend
 
@@ -12,8 +12,7 @@ Accept the user only when **all** of these are true:
 
 Do not accept on a single frame, and do not build your own rule from the numbers.
 
-!!! warning "Always check the name"
-    Check that the recognised name is the person you expect, even when the status already says `trusted`. On native iOS, with no enrolment in place, `.trusted` can be reported for any live face. Before you start recognition, also confirm that someone is enrolled.
+Check that the recognised name is the person you expect, even when the status already says `trusted`. Before you start recognition, also confirm that someone is enrolled.
 
 ## The rule on each platform
 
@@ -94,13 +93,7 @@ iOS, React Native, Capacitor and Cordova report one of four statuses.
 
 Within about a second of looking at the camera, a real enrolled user is normally recognised and confirmed as live. In backlight or dim light it can take longer. Allow 5 to 10 seconds per attempt. See [Coach your users](coach-users.md).
 
-## The limits of face recognition
+## For sensitive actions
 
-- **Very similar faces.** Face recognition can confuse identical twins and sometimes close relatives. No face recognition system rules this out.
 - **High-value actions.** Use face sign-in as one factor, together with your other security checks.
 - **One device, one person.** Keep each installation to the person who enrolled on it.
-- **Error rates.** They depend heavily on your users, devices and lighting, so we do not quote a single figure. YEO can discuss an evaluation on your target devices.
-
-## Recognition without the camera
-
-You can compare a still image with the gallery using calls such as `matchImage` in React Native or `imageMatchScore` on iOS. These run recognition only, with no liveness check, so they do not prove that the person is present.

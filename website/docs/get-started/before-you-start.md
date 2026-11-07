@@ -10,17 +10,7 @@ Handle it like this:
 
 - **Keep it out of your source code.** Load it from your build configuration or your backend, so that a new credential does not need a new app release.
 - **Cover your whole test period.** Credentials have an expiry date. Ask YEO for the next one before the current one runs out.
-- **Check it before every release, on both platforms.** A refused credential does not behave the same everywhere:
-
-| Platform | What happens when the credential is refused |
-|---|---|
-| Android | `YEOFRSDK.init` throws an exception. |
-| iOS | The app closes during start-up. You cannot catch this, and it looks like a crash. |
-| React Native, Capacitor, Cordova | On Android the call rejects with an error. On iOS the app closes, as above. |
-| Flutter | On Android `YeoFR.init` throws a `PlatformException` with code `INIT_ERROR`. On iOS the app closes, as above. |
-
-!!! warning "If your iOS app closes when the face screen opens"
-    Check the credential first.
+- **Check it before every release, on both platforms.** How a refused credential is reported depends on the platform and version, and is covered in [each product's docs](../reference/api.md).
 
 ## Get access to the Android package
 
@@ -40,7 +30,7 @@ The iOS SDK is distributed from a public Swift package, so it needs no login.
 | **Permission** | Camera | Camera (`NSCameraUsageDescription`) |
 
 !!! info "Test on real phones"
-    Recognition needs a real device and a real face. Apps build and run in the simulator or emulator, but you will not get a real recognition result there. This is expected.
+    Apps build and run in the simulator or emulator, but recognition needs a real device and a real face.
 
 !!! info "Google Play services on Android"
     Face detection on Android is delivered through Google Play services, and the face model downloads on first use. Phones without Google Play services are not supported, and the first use needs a network connection.

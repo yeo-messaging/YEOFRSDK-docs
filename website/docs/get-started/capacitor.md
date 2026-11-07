@@ -6,7 +6,7 @@ Version 0.5.0, which uses the Android SDK 0.2.29 and the iOS SDK 0.11.2. It work
 
 The plugin works with Angular, React, Vue, Svelte and plain JavaScript, with or without Ionic. The calls on this page are the same in all of them.
 
-The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/) has an Ionic Angular quick start. In other frameworks, start the camera when the face page opens and stop it when the page closes.
+The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/) has an Ionic Angular quick start. In other frameworks, start the camera when the face page opens and stop it when the page closes.
 
 ## 1. Install
 
@@ -25,10 +25,11 @@ npx cap sync
 **Android:**
 
 - Add the address and login from YEO to `~/.gradle/gradle.properties`, or to environment variables on your build server.
-- Add the plugin's repository and core module settings, as shown in the [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/).
-- Build with `compileSdk` 36 and Android Gradle Plugin 8.9.1 or later.
+- Add the plugin's repository and core module settings, and build with `compileSdk` 36 and Android Gradle Plugin 8.9.1 or later.
 
-**Your page:** make it transparent where the camera should show. The guide shows how. Lock the page or app to portrait, because the preview does not follow device rotation.
+**Your page:** make it transparent where the camera should show, and lock it to portrait.
+
+The [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/) has every step, including a full Ionic Angular example.
 
 ## 2. Activate and listen
 
@@ -42,8 +43,6 @@ const results = await Yeofr.addListener('result', (r) => {
 });
 await Yeofr.start();
 ```
-
-On Android a refused credential rejects with `activationFailed`. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
 
 ## 3. Enrol the user
 
@@ -68,9 +67,9 @@ await results.remove();
 
 ## 5. Decide where the template is kept
 
-By default the plugin keeps it in private app storage, out of device backups, and does not encrypt it. We recommend storing it encrypted: read it with `getTrackerData()` and put it back with `loadTracker()`. See [Store the gallery](../guides/store-the-gallery.md).
+By default the plugin keeps it in private app storage, out of device backups. Your app then stores it encrypted: read it with `getTrackerData()` and put it back with `loadTracker()`. See [Store the gallery](../guides/store-the-gallery.md).
 
 ## Keep going
 
-- [Capacitor guide 0.5.0](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/0.5.0/)
+- [Capacitor guide](https://yeo-messaging.github.io/YEOFRSDK-docs/capacitor/)
 - [Go-live checklist](../guides/go-live.md)

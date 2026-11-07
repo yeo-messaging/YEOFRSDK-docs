@@ -14,14 +14,14 @@ The setup command adds the iOS Swift package and the Android repository block, t
 
 Then set these up by hand:
 
-- **Android repository access.** Put the address and login from YEO in `~/.gradle/gradle.properties`, or in environment variables on your build server. Never commit them.
+- **Android repository access.** Put the address and login from YEO in `~/.gradle/gradle.properties`, or in environment variables on your build server.
 - **Android camera permission.** The package declares no permissions. Add `android.permission.CAMERA` to your manifest and request it at runtime before you show the camera.
 - **iOS deployment target.** Set `platform :ios` to `'17.0'` in your `Podfile`, and add `NSCameraUsageDescription` to `Info.plist`.
 
 !!! note "Camera view on iOS"
     The iOS camera view needs React Native's old architecture, so set `RCT_NEW_ARCH_ENABLED=0` if you use it. The other calls work with the New Architecture on, and so does the Android camera view.
 
-The [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.5.2/) covers manual setup, Xcode 26 and every option.
+The [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/) covers manual setup, Xcode 26 and every option.
 
 ## 2. Activate
 
@@ -31,8 +31,6 @@ import {activate, loadTrackerFromDisk} from '@yeomessagingcom/react-native-yeofr
 await activate({pilotUnlockCode: credentialFromYeo});
 const enrolled = await loadTrackerFromDisk();   // false if there is nothing to restore
 ```
-
-On Android a refused credential rejects the call. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
 
 ## 3. Enrol the user
 
@@ -66,6 +64,6 @@ Accept once this has held for about a second. Never compare `confidence` with a 
 
 ## Keep going
 
-- [React Native guide 0.5.2](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/0.5.2/)
+- [React Native guide](https://yeo-messaging.github.io/YEOFRSDK-docs/rn/)
 - [Store the gallery](../guides/store-the-gallery.md)
 - [Go-live checklist](../guides/go-live.md)

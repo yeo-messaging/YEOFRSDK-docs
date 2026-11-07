@@ -1,11 +1,11 @@
 # Store the gallery
 
-The gallery holds your user's face samples. Treat it as biometric data. The SDK produces it, and **protecting it is your app's job**: the SDK does not encrypt it for you in any default setup.
+The gallery holds your user's face samples, which are biometric data. It is your data, so your app holds it and encrypts it with keys you control.
 
 ## What we recommend
 
 1. **Keep it on the device.** Keep it in the app's private storage and do not sync it.
-2. **Encrypt it yourself.** Use a key held in the iOS Keychain or the Android Keystore.
+2. **Encrypt it.** Use a key held in the iOS Keychain or the Android Keystore.
 3. **Exclude it from cloud backup and device-to-device transfer.**
 4. **Delete it when the user turns off face sign-in.** Delete your own copies as well as the SDK's.
 5. **Use an opaque ID as the enrolled name,** so the file holds no real name.
@@ -24,15 +24,15 @@ There are no photos or video.
 | One person with all 25 enrolment samples | 90 KB |
 | One person with both sets full | 185 KB |
 
-## What happens by default
+## How your app holds it
 
-| Platform | Where it goes by default | Encrypted | In device backups |
-|---|---|---|---|
-| Android | Nowhere. The SDK gives your app the bytes. | Your choice | Your choice |
-| iOS with `FaceTrustService` | A file in the app's Documents folder, saved after enrolment. You can pass another location as `trackerURL`. | No | Yes, unless you exclude it |
-| React Native | A private file when you call `saveTrackerToDisk()`: Android files folder, iOS Application Support | No | Unless you exclude it, it follows your app's backup rules |
-| Flutter | Nowhere. `saveTracker()` gives your app the bytes. | Your choice | Your choice |
-| Capacitor, Cordova | A private file, saved automatically: Android no-backup folder, iOS Application Support with file protection | No | No |
+| Platform | Read it with | Restore it with |
+|---|---|---|
+| Android | `faceRecognitionTrackerData()` | `loadTracker()` |
+| iOS | `encryptedFaceRecognitionTrackerData()` | `loadTracker(from:)` |
+| React Native | `getTrackerData()` | `loadTracker()` |
+| Flutter | `saveTracker()` | `loadTracker()` |
+| Capacitor, Cordova | `getTrackerData()` | `loadTracker()` |
 
 ## How to encrypt it
 
@@ -65,8 +65,7 @@ There are no photos or video.
     try sdk.loadTracker(from: EncryptedBlob.parse(Data(contentsOf: url)))
     ```
 
-    !!! warning "`FaceTrustService` still writes an unencrypted file"
-        Handing an encrypting SDK to `FaceTrustService(sdk:)` does not encrypt its saved file. For encrypted storage, your app must own the saving, and it must also remove the service's own file. `Examples/FRPilot` in the Swift package shows a worked example.
+    Your app owns the saving through these calls, and removes any file `FaceTrustService` saved. `Examples/FRPilot` in the Swift package shows a worked example.
 
 === "React Native"
 
@@ -96,7 +95,7 @@ There are no photos or video.
     await Yeofr.loadTracker(decrypted);
     ```
 
-    The plugin's default store still keeps a copy until you call `clearTracker()`.
+    Call `clearTracker()` to remove the plugin's stored copy.
 
 === "Cordova"
 
@@ -108,7 +107,7 @@ There are no photos or video.
     await cordova.plugins.Yeofr.loadTracker(decrypted);
     ```
 
-    The plugin's default store still keeps a copy until you call `clearTracker()`.
+    Call `clearTracker()` to remove the plugin's stored copy.
 
 ## How to keep it out of backups
 
@@ -120,7 +119,7 @@ There are no photos or video.
 
 | Platform | How to remove the enrolment |
 |---|---|
-| Android | `YEOFRSDK.clearTracker()`, then delete your stored copy. `shutdown()` alone does not clear enrolments from memory. |
+| Android | `YEOFRSDK.clearTracker()`, then delete your stored copy. |
 | iOS with `FaceTrustService` | `clearEnrollment()` clears memory and removes the service's file. Delete any copy you hold yourself. |
 | React Native | `clearTracker()`, then `saveTrackerToDisk()` to replace the saved copy. Confirm in your app that the next launch finds nobody enrolled. |
 | Flutter | `YeoFR.clearTracker()`, then delete your stored copy |

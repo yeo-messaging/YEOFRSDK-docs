@@ -26,19 +26,14 @@ The liveness check judges whether the camera sees a real, present person rather 
 1. **Use the SDK's answer.** Read `isLive`, or `status` where the plugin provides it. In native Android, use `faceState == Detected && isConfident()`.
 2. **Never compare `confidence` with a number.** It is for display and debugging only, and its scale can change between SDK versions. Older versions used a bar of 0.71, which no longer applies.
 3. **Combine it with recognition.** See [Recognise a user](recognise.md).
-4. **Use the framing hint to guide, not to decide.** It says "move closer", not "fail".
+4. **Use the framing hint to guide the user.** It is not part of the liveness decision.
 
 ## Use the live camera
 
-The check is designed for a live camera stream.
+The check is designed for a live camera stream, so use the live camera for presence checks.
 
-- **Frames your app supplies** cannot prove the person is present. A recording fed in through your own pipeline defeats any liveness check.
-- **Still-image matching** (`matchImage`, `enrollImage`, `imageMatchScore`) runs no liveness at all.
+## What it is designed for
 
-## What it does and does not promise
-
-The check is designed to refuse common presentation attacks, such as printed photos and photos or videos shown on phone, tablet and laptop screens. Like every liveness system, it lowers the risk and does not remove it.
-
-It looks at what is in front of the camera. It does not check where the frames come from, so it cannot tell a real camera from a virtual one. See [Device and app security](../data-and-privacy.md#device-and-app-security).
+The check is designed to refuse common presentation attacks, such as printed photos and photos or videos shown on phone, tablet and laptop screens.
 
 For high-value actions, use it together with your app's other security measures.

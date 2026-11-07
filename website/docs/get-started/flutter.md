@@ -36,8 +36,6 @@ final saved = await loadTrackerFromStorage();   // your own storage
 if (saved != null) await YeoFR.loadTracker(saved);
 ```
 
-On Android a refused credential throws a `PlatformException` with code `INIT_ERROR`. On iOS it closes the app. See [Before you start](before-you-start.md#get-your-credential).
-
 ## 3. Read results from the camera
 
 Use the `camera` package. iOS needs `bgra8888` and Android uses `yuv420`.
@@ -74,9 +72,6 @@ final recognised = result.isLive && result.faceIDs.firstOrNull?.id == expectedUs
 ```
 
 Accept once this has held for about a second. Never compare `confidence` with a number. See [Recognise a user](../guides/recognise.md).
-
-!!! note "No depth check in Flutter"
-    The plugin passes your camera frames to the SDK, so the iPhone's TrueDepth sensor is not part of the decision.
 
 ## Keep going
 

@@ -73,6 +73,4 @@ This example uses the React Native, Capacitor and Cordova result fields. On othe
 - **Tell your users.** Explain that the camera stays on during the session and why. Cover it in your privacy notice.
 - **Battery and heat.** Camera use and face processing draw power. Test sessions as long as your real ones, on the oldest phones you support.
 - **Lighting changes.** A long session can cross poor light, so make sure your response to a failed check is not harsh. See [Coach your users](coach-users.md).
-- **No built-in history.** These SDK versions do not keep a record of presence over time. If you need an audit trail, have your app record the events you care about.
-- **Results stay local.** The SDK does not sign its results. See [Device and app security](../data-and-privacy.md#device-and-app-security).
 - **Capacitor and Cordova.** The native camera preview sits behind your page, there is one camera session per app, and the screen stays in portrait. Plan your screens around this.
