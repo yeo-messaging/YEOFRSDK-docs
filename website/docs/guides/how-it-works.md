@@ -29,7 +29,7 @@ Your app accepts the user only when recognition and liveness agree.
 | **Screens** | Reports progress and hints | Owns all wording, prompts and layout |
 | **Gallery** | Produces it and reads it back | Decides where it is kept and encrypts it |
 | **Identity** | Compares faces | Decides who the user is before enrolment |
-| **Device trust** | Does not check it | Checks for rooted or tampered devices if you need that |
+| **Device trust** | | Applies your own device checks |
 
 ## How recognition decides
 
@@ -41,11 +41,7 @@ Your app uses the SDK's result, so it has no threshold to set. See [Recognise a 
 
 Each person can hold up to 25 enrolment samples and up to 25 recent samples. Enrolment samples never change. Recent samples can be refreshed by successful recognitions, at most one per second, and the oldest is replaced first. Recognition can then follow gradual changes in lighting or appearance while staying anchored to the enrolment.
 
-| Platform | How recent samples behave |
-|---|---|
-| Android, on every plugin | Learned while recognising. Kept only if your app saves the gallery after the session. |
-| iOS camera (`FaceTrustService`, React Native, Capacitor, Cordova) | Learned while the app runs. The built-in service saves its file only at enrolment and deletion, so they are lost at the next launch unless your app saves the gallery itself. |
-| Flutter on iOS, and any custom frame input on iOS | Not learned. |
+Your app keeps them by saving the gallery after the session.
 
 **Our advice:** plan for a good enrolment, and treat learning as a bonus.
 
@@ -54,7 +50,6 @@ Each person can hold up to 25 enrolment samples and up to 25 recent samples. Enr
 | | Android | iPhone |
 |---|---|---|
 | **Face detection** | Google ML Kit, through Google Play services | Apple Vision, part of iOS |
-| **Depth sensor** | Not used | Part of the decision on the iOS camera path, when the phone has TrueDepth. Not used in Flutter. |
 | **Too close or too far** | A hint only in native code. Bridges report `badFraming`. | The built-in camera path reports `badFraming` and does not judge the face until it is well placed. |
 
 These differences are why we recommend testing on both platforms, with your own screens.

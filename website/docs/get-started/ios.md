@@ -50,11 +50,11 @@ for await update in service.updates() {
 }
 ```
 
-Accept when `update.status == .trusted` **and** `update.matchedName` is the person you expect. With no enrolment in place, `.trusted` can be reported for any live face, so always check the name. See [Recognise a user](../guides/recognise.md).
+Accept when `update.status == .trusted` **and** `update.matchedName` is the person you expect. See [Recognise a user](../guides/recognise.md).
 
 ## 5. Decide where the enrolment is saved
 
-`FaceTrustService` saves the enrolment for you and restores it at the next launch. By default the file is unencrypted, sits in the app's Documents folder and is included in device backups. For production, move it and encrypt it. See [Store the gallery](../guides/store-the-gallery.md).
+`FaceTrustService` saves the enrolment for you and restores it at the next launch. For production, your app encrypts it and chooses where it lives. See [Store the gallery](../guides/store-the-gallery.md).
 
 ## Keep going
 

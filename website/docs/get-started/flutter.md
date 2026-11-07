@@ -73,9 +73,6 @@ final recognised = result.isLive && result.faceIDs.firstOrNull?.id == expectedUs
 
 Accept once this has held for about a second. Never compare `confidence` with a number. See [Recognise a user](../guides/recognise.md).
 
-!!! note "No depth check in Flutter"
-    The plugin passes your camera frames to the SDK, so the iPhone's TrueDepth sensor is not part of the decision.
-
 ## Keep going
 
 - Exclude your saved gallery from Android backup and device transfer. See [Store the gallery](../guides/store-the-gallery.md).

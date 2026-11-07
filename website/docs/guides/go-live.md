@@ -17,7 +17,7 @@ Make sure your SDK credentials are configured securely and ready for production.
 
 A reliable face sign-in starts with a properly completed enrolment.
 
-- [ ] Users sign in through an existing method before they enrol their face. [Here is why this matters](enrol.md#protect-the-enrolment-step).
+- [ ] Users sign in through an existing method before they enrol their face. See [Protect the enrolment step](enrol.md#protect-the-enrolment-step).
 - [ ] Use a guided capture with multiple samples rather than a single frame.
 - [ ] Turn on face sign-in only after enrolment and a successful recognition check.
 - [ ] Enrol each face under an opaque identifier rather than the user's real name or other personal information.
@@ -53,15 +53,15 @@ Face data needs protection throughout its lifecycle. Consider these recommendati
 - [ ] Exclude the gallery from cloud backups and device-to-device transfers.
 - [ ] When a user turns off face sign-in, delete the gallery, including any copies your app manages.
 - [ ] Make sure your privacy notice explains how biometric data is processed and stored on the device.
-- [ ] On Android, make sure your privacy notice and your Google Play Data safety form cover Google ML Kit's usage metrics. See [What leaves the device](../data-and-privacy.md#what-leaves-the-device).
+- [ ] On Android, make sure your privacy notice and your Google Play Data safety form reflect Google's ML Kit data disclosure. See [What leaves the device](../data-and-privacy.md#what-leaves-the-device).
 
 ## 6. Application and device security
 
 The SDK provides face recognition and liveness. The overall security of your sign-in also depends on how your app and backend handle the results. Consider these points as part of your security assessment. See [Device and app security](../data-and-privacy.md#device-and-app-security).
 
-- [ ] Decide how your app handles rooted, jailbroken or otherwise tampered devices. The SDK does not check device integrity.
-- [ ] Decide whether to restrict screen capture and recording on the face recognition screen. The SDK does not do this.
-- [ ] Make sure your backend does not rely on a result from the app as its only proof of authentication. The SDK does not sign its results.
+- [ ] Decide how your app handles rooted, jailbroken or otherwise tampered devices.
+- [ ] Decide whether to restrict screen capture and recording on the face recognition screen.
+- [ ] Make sure your backend does not rely on a result from the app as its only proof of authentication.
 - [ ] Apply suitable authentication, authorisation and further verification to sensitive operations.
 
 ## 7. Device compatibility and testing { #testing }

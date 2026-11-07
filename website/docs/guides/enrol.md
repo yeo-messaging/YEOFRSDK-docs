@@ -75,7 +75,7 @@ In native Android and in Flutter your app calls `enroll`, so check liveness firs
 
     - **Android:** the poses make a paced walk of at least five seconds.
     - **iOS:** the capture is a single front capture, and `enrolProgress` reports one `front` pose.
-    - **Cancelling:** on iOS, clearing `enrolName` stops the events but not the capture, so a face can still be stored afterwards. To abandon a capture on either platform, reload the saved gallery or clear it.
+    - **Cancelling:** to abandon a capture, reload the saved gallery or clear it.
 
 === "Flutter"
 

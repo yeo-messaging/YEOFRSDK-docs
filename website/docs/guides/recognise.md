@@ -93,13 +93,7 @@ iOS, React Native, Capacitor and Cordova report one of four statuses.
 
 Within about a second of looking at the camera, a real enrolled user is normally recognised and confirmed as live. In backlight or dim light it can take longer. Allow 5 to 10 seconds per attempt. See [Coach your users](coach-users.md).
 
-## The limits of face recognition
+## For sensitive actions
 
-- **Very similar faces.** Face recognition can confuse identical twins and sometimes close relatives. No face recognition system rules this out.
 - **High-value actions.** Use face sign-in as one factor, together with your other security checks.
 - **One device, one person.** Keep each installation to the person who enrolled on it.
-- **Error rates.** They depend heavily on your users, devices and lighting, so we do not quote a single figure. YEO can discuss an evaluation on your target devices.
-
-## Recognition without the camera
-
-You can compare a still image with the gallery using calls such as `matchImage` in React Native or `imageMatchScore` on iOS. These run recognition only, with no liveness check, so they do not prove that the person is present.

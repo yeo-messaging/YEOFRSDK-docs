@@ -6,9 +6,9 @@ Written for your security, privacy and compliance teams. It describes the publis
 
 - Face processing happens on the phone. The SDK makes no network connection of its own.
 - The SDK saves numeric face samples, never photos or video.
-- Your app controls the saved enrolment, including where it is kept and how it is encrypted. The SDK does not encrypt it by default.
-- On Android, Google components used for face detection have their own network activity. [See below](#what-leaves-the-device).
-- Device trust and proof of a result to your backend are your app's responsibility. [See below](#device-and-app-security).
+- Your app holds the saved enrolment and encrypts it with keys you control.
+- On Android, face detection uses Google's ML Kit. [See below](#what-leaves-the-device).
+- Your app applies your device trust and backend checks. [See below](#device-and-app-security).
 
 ## What the SDK stores
 
@@ -20,10 +20,7 @@ Written for your security, privacy and compliance teams. It describes the publis
 
 **The SDK does not store** photos, video or camera frames. Frames are processed in memory and are not saved.
 
-!!! note "`keepFaceImagesInTracker` on Android"
-    The Android API reference lists this option and describes storing images. That wording comes from an earlier engine. In Android 0.2.29 the option has no effect, and no image is stored with either value.
-
-For where the enrolment goes by default on each platform, see [Store the gallery](guides/store-the-gallery.md#what-happens-by-default).
+For how your app holds and protects the enrolment, see [Store the gallery](guides/store-the-gallery.md).
 
 ## What leaves the device
 
@@ -39,13 +36,7 @@ Nothing beyond the SDK statement above. Face detection uses Apple's Vision frame
 
 ### On Android
 
-Face detection uses Google's ML Kit, through Google Play services. This is separate from the SDK:
-
-- **Model download.** The face detection model is not inside your app. Google Play services downloads and updates it, starting on first use.
-- **Usage metrics.** ML Kit sends Google its own diagnostics and usage metrics, such as device and app information, performance and error codes. Google states that images and detection results stay on the device. The SDK does not turn this logging off.
-- **Permissions.** ML Kit adds `INTERNET` and `ACCESS_NETWORK_STATE` to your app's merged manifest.
-
-Google's terms make the app developer responsible for telling users about this and for the Google Play Data safety form. Read [Google's ML Kit data disclosure](https://developers.google.com/ml-kit/android-data-disclosure) and the [ML Kit terms](https://developers.google.com/ml-kit/terms).
+Face detection uses Google's ML Kit, through Google Play services, which also downloads and updates the face detection model. Google's own terms cover ML Kit. Read [Google's ML Kit data disclosure](https://developers.google.com/ml-kit/android-data-disclosure) and the [ML Kit terms](https://developers.google.com/ml-kit/terms) when you prepare your privacy notice and your Google Play Data safety form.
 
 ### At build time
 
@@ -60,9 +51,9 @@ YEO's recognition and liveness models are bundled inside the SDK. They change on
 | Topic | The SDK | Your app |
 |---|---|---|
 | Processing of faces | Happens on the phone | |
-| Encryption of the saved enrolment | Not encrypted by default. iOS offers a hook for your own cipher. | Encrypts it, with keys in the Keychain or Keystore |
-| Location of the saved enrolment | Private storage, where a built-in store is used | Chooses it, or takes over storage |
-| Backup and device transfer | Excluded by Capacitor and Cordova only | Excludes it everywhere else |
+| Encryption of the saved enrolment | Gives your app the data. iOS offers a hook for your own cipher. | Encrypts it, with keys in the Keychain or Keystore |
+| Location of the saved enrolment | Provides calls to read and restore it | Chooses where it lives |
+| Backup and device transfer | | Excludes it |
 | Deletion | Provides the calls | Calls them, and removes its own copies |
 | Network transfer | Does none | Protects anything it sends |
 | Privacy notices and consent | | Yours to provide |
@@ -72,22 +63,19 @@ See [Store the gallery](guides/store-the-gallery.md) for how to do each of these
 
 ## Device and app security
 
-The SDK's liveness check looks at what is shown to the camera. The SDK does not assess the device or app it runs on, so these are for your app to handle.
+Your app is the right place for these controls, because they follow your own policy.
 
-| Threat | In the SDK? | What we suggest |
-|---|---|---|
-| Rooted or jailbroken device | Not detected | Google Play Integrity or Apple App Attest in your app, and your own policy to block or step up |
-| Emulator | Not detected | The same device checks |
-| Hooking or tampering tools | Not detected | Runtime protection or app shielding, if your policy requires it |
-| Screen sharing or capture | Not detected or blocked | `FLAG_SECURE` on the Android face screen, and screen-capture checks on iOS |
-| Virtual camera | No check on where frames come from | Rely on the device checks above. On Android, make sure your app opens the device's front camera. |
+| Area | What we suggest |
+|---|---|
+| Rooted or jailbroken devices | Google Play Integrity or Apple App Attest in your app, and your own policy to block or step up |
+| Emulators | The same device checks |
+| Hooking or tampering tools | Runtime protection or app shielding, if your policy requires it |
+| Screen sharing or capture | `FLAG_SECURE` on the Android face screen, and screen-capture checks on iOS |
+| Camera source | The device checks above. On Android, have your app open the device's front camera. |
 
-### Results are not signed
+### Relying on a result on your server
 
-The SDK returns results to your app as ordinary data structures. It does not sign them, and it does not use a hardware-backed key to do so. To rely on a result on your server, use your own protections, such as App Attest or Play Integrity and your existing secure channel.
-
-!!! tip "Think of the result as local"
-    A result proves something to your app on that device. Design your backend so that a decision is bound to your own session and device checks.
+The SDK returns results to your app. To rely on one on your server, use App Attest or Play Integrity and your existing secure channel, and bind the decision to your own session and device checks.
 
 ## Biometric data
 

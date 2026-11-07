@@ -85,7 +85,7 @@ guides:
 
 -   **Your app holds the data**
 
-    Encryption, backup rules and deletion of the saved enrolment are your app's decisions. [We explain how](guides/store-the-gallery.md).
+    Your app encrypts the saved enrolment with keys you control, and sets its backup and deletion rules. [We explain how](guides/store-the-gallery.md).
 
 -   **Nothing for the user to perform**
 

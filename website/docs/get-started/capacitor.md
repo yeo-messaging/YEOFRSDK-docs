@@ -67,7 +67,7 @@ await results.remove();
 
 ## 5. Decide where the template is kept
 
-By default the plugin keeps it in private app storage, out of device backups, and does not encrypt it. We recommend storing it encrypted: read it with `getTrackerData()` and put it back with `loadTracker()`. See [Store the gallery](../guides/store-the-gallery.md).
+By default the plugin keeps it in private app storage, out of device backups. Your app then stores it encrypted: read it with `getTrackerData()` and put it back with `loadTracker()`. See [Store the gallery](../guides/store-the-gallery.md).
 
 ## Keep going
 

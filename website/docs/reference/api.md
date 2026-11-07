@@ -14,10 +14,5 @@ The guides on this site explain how to build and what we recommend. For every ca
 
 ## Reading the references
 
-!!! note "Android options with no effect in 0.2.29"
-    The Android reference lists these `YEOFRConfiguration` options, which come from an earlier engine and do not change anything in 0.2.29. You can leave them unset.
-
-    `keepFaceImagesInTracker`, `faceRecognitionTrackerMemoryLimit`, `faceDetectionThreshold`, `internalResizeWidth`, `arbitraryRotation`, `numberOfThreads`
-
 !!! note "If a reference and these guides disagree"
     Follow these guides, and please [tell YEO](../support.md). They were checked against the published versions, and they cover what those versions do, including where older wording remains in a reference.
