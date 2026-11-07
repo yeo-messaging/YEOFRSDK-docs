@@ -2,6 +2,17 @@
 
 Version 0.5.0, which uses the Android SDK 0.2.29 and the iOS SDK 0.11.2. It works with any web framework on Cordova, including Ionic Angular apps. The calls, events and statuses are the same as in the Capacitor plugin.
 
+## Web frameworks
+
+The plugin does not depend on a web framework, so the calls on this page are the same in all of them.
+
+| Framework | Status |
+|---|---|
+| **Angular with Ionic** | Verified by YEO: Ionic 8 and Angular 18 on `cordova-android` 14 and `cordova-ios` 8 |
+| **React, Vue, plain JavaScript, or no Ionic** | Same API, but no YEO example app. Test your setup on real phones. |
+
+The [Cordova guide](https://yeo-messaging.github.io/YEOFRSDK-docs/cordova/0.5.0/) has an Ionic Angular quick start. In other frameworks, start the camera when the face page opens and stop it when the page closes.
+
 ## 1. Install
 
 ```bash
