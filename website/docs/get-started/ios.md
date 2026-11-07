@@ -62,6 +62,6 @@ Accept when `update.status == .trusted` **and** `update.matchedName` is the pers
 
 ## Keep going
 
-- The simulator builds and runs your app, but every frame reports no face. Use a real iPhone.
+- The simulator builds and runs your app, but every frame reports no face.
 - [API reference for iOS 0.11.2](https://yeo-messaging.github.io/YEOFRSDK-docs/0.11.2/documentation/yeofr/)
 - [Go-live checklist](../guides/go-live.md)

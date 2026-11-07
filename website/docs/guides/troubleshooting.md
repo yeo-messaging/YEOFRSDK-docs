@@ -17,7 +17,7 @@
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| Results always say no face on a simulator or emulator | Expected | Test on a real phone |
+| Results always say no face on a simulator or emulator | Neither provides a real face | Test on a real phone |
 | Results stay at no face on an Android phone | Google Play services is missing or out of date, or the face model has not downloaded yet | Update Google Play services and connect to a network for the first use |
 | Camera does not start on Android | The permission is missing from your manifest, or has not been requested | Declare `CAMERA` and request it at runtime |
 | Camera refused on iOS after the first time | iOS asks only once | Ask the user to allow the camera in Settings |
@@ -28,13 +28,13 @@
 
 | Symptom | Likely cause | What to do |
 |---|---|---|
-| "Not live" for the first moment | The check is warming up | Show "Checking…". This is normal. |
+| "Not live" for the first moment | The check is warming up | Show "Checking…" |
 | Liveness flickers near a window | Strong light behind the user | Turn to face the light |
 | The right person is not recognised | Different light from enrolment, or a single-frame enrolment | See [Coach your users](coach-users.md), or re-enrol with a guided capture |
 | Recognition does not improve over time | Recent samples were not saved | Save the gallery after sign-in sessions. See [How it works](how-it-works.md#getting-better-over-time). |
 | The enrolment is gone after an update | The app moved to a new recognition model | [Plan a one-time re-enrolment](upgrade.md) |
 | `loadTracker` returns a negative code or a failure | The gallery came from an older version, or the bytes are damaged | Discard it and ask the user to enrol again |
 
-## Still stuck?
+## More help
 
 [Contact YEO support](../support.md). Tell us the SDK version, the platform and phone model, what you expected and what happened, and any error code. See [what to include](../support.md#what-to-include).

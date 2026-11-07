@@ -1,6 +1,6 @@
 # Recognise a user
 
-There is no "recognise" button to press. The SDK reports on every analysed frame, and your app decides when it has seen enough.
+The SDK reports on every analysed frame, and your app decides when it has seen enough.
 
 ## The rule we recommend
 

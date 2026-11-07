@@ -1,6 +1,6 @@
 # Store the gallery
 
-The gallery holds your user's face samples. Treat it as biometric data. The SDK produces it, and **protecting it is your app's job**: the SDK does not encrypt it for you in any default setup.
+The gallery holds your user's face samples, which are biometric data. The SDK produces it and does not encrypt it in any default setup, so your app is responsible for protecting it.
 
 ## What we recommend
 

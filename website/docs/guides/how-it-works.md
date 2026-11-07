@@ -35,7 +35,7 @@ Your app accepts the user only when recognition and liveness agree.
 
 Each face becomes a sample, and the SDK compares it with every sample stored for each enrolled person. The best similarity counts, and higher means more alike. A match needs a similarity of at least **0.35**, the default set by YEO from internal testing.
 
-You do not need to pick a threshold. Use the result the SDK gives you. See [Recognise a user](recognise.md).
+Your app uses the SDK's result, so it has no threshold to set. See [Recognise a user](recognise.md).
 
 ## Getting better over time
 

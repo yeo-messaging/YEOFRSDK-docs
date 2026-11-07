@@ -22,7 +22,7 @@ More varied samples make recognition more reliable, especially when the light ch
 
 ## Protect the enrolment step
 
-Enrolment decides whose face is trusted later, so it deserves the same care as setting a password.
+Enrolment decides whose face is trusted later.
 
 !!! warning "On iPhone, the camera capture does not check liveness"
     On iOS, `FaceTrustService.enroll(name:)` stores the first frame that shows exactly one face. This also applies to the React Native, Capacitor and Cordova camera captures on iOS, because they use it. A photo held up to the camera could be stored.

@@ -40,7 +40,7 @@ The iOS SDK is distributed from a public Swift package, so it needs no login.
 | **Permission** | Camera | Camera (`NSCameraUsageDescription`) |
 
 !!! info "Test on real phones"
-    Recognition needs a real device and a real face. Apps build and run in the simulator or emulator, but you will not get a real recognition result there. This is expected.
+    Apps build and run in the simulator or emulator, but recognition needs a real device and a real face.
 
 !!! info "Google Play services on Android"
     Face detection on Android is delivered through Google Play services, and the face model downloads on first use. Phones without Google Play services are not supported, and the first use needs a network connection.

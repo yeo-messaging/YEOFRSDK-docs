@@ -14,7 +14,7 @@ The setup command adds the iOS Swift package and the Android repository block, t
 
 Then set these up by hand:
 
-- **Android repository access.** Put the address and login from YEO in `~/.gradle/gradle.properties`, or in environment variables on your build server. Never commit them.
+- **Android repository access.** Put the address and login from YEO in `~/.gradle/gradle.properties`, or in environment variables on your build server.
 - **Android camera permission.** The package declares no permissions. Add `android.permission.CAMERA` to your manifest and request it at runtime before you show the camera.
 - **iOS deployment target.** Set `platform :ios` to `'17.0'` in your `Podfile`, and add `NSCameraUsageDescription` to `Info.plist`.
 

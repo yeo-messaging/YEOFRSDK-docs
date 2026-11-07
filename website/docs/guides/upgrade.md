@@ -1,6 +1,6 @@
 # Upgrade and re-enrol
 
-If your app is on an older version of the SDK, moving to the current one needs a one-time re-enrolment. This guide shows how to plan it so that your users hardly notice.
+Moving from an older version of the SDK to the current one needs a one-time re-enrolment.
 
 ## Do users need to enrol again?
 
@@ -15,9 +15,9 @@ If your app is on an older version of the SDK, moving to the current one needs a
 | React Native 0.5.0 or 0.5.1 | React Native 0.5.2 | No |
 | Flutter 0.5.0 | Flutter 0.5.1 | No |
 
-The current versions use a new on-device recognition model, and the SDK refuses a gallery made by an older model. This is safe: nothing crashes, and the app simply has no enrolment until the user enrols again.
+The current versions use a new on-device recognition model, and the SDK refuses a gallery made by an older model. The refusal does not crash the app. The app has no enrolment until the user enrols again.
 
-## What changes for your developers
+## What changes in your code and build
 
 - **Liveness rule.** Use `isLive` or `status`, or `faceState == Detected && isConfident()` in native Android. Remove any comparison with `0.71`. In native Android, recompile every module that reads `ANTI_SPOOF_THRESHOLD`.
 - **Android repository.** The Android SDK moved to a new private repository with a new login from YEO. Update your `maven { }` block.

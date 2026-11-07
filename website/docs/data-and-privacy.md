@@ -31,7 +31,7 @@ For where the enrolment goes by default on each platform, see [Store the gallery
 
 Nothing. The SDK sends no faces, samples, names, results or usage data to YEO or anyone else. It contains no analytics or crash-reporting product, and the SDK itself declares no internet permission. Starting the SDK with your credential does not contact YEO either.
 
-Your app can of course send data itself. For example, it may upload an encrypted gallery if you choose to keep one on your server.
+Anything your app sends is under your control, such as an encrypted gallery if you keep one on your server.
 
 ### On iOS
 
