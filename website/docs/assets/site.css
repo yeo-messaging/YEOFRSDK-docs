@@ -216,7 +216,7 @@
   color: #fff;
 }
 
-/* Brand colours, on a white tile so they read in both themes */
+/* Brand colours */
 .yeo-c-ios { color: #1a73e8; }
 .yeo-c-android { color: #3ddc84; }
 .yeo-c-react { color: #149eca; }
@@ -224,12 +224,10 @@
 .yeo-c-capacitor { color: #119eff; }
 .yeo-c-cordova { color: #35434f; }
 
-.md-typeset .yeo-i {
-  box-sizing: content-box;
-  padding: 0.15rem;
-  border-radius: 0.25rem;
-  background: #fff;
-}
+[data-md-color-scheme="slate"] .yeo-c-ios { color: #5aa2ff; }
+[data-md-color-scheme="slate"] .yeo-c-react { color: #61dafb; }
+[data-md-color-scheme="slate"] .yeo-c-flutter { color: #54c5f8; }
+[data-md-color-scheme="slate"] .yeo-c-cordova { color: #e8e8e8; }
 
 /* Home */
 .md-typeset .yeo-eyebrow {
@@ -364,18 +362,15 @@
 .yeo-platform__icon {
   display: grid;
   flex: none;
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   place-items: center;
-  border: 1px solid var(--yeo-line);
-  border-radius: 0.8rem;
-  background: #fff;
 }
 
 .yeo-platform__icon svg {
   display: block;
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2.6rem;
+  height: 2.6rem;
   fill: currentcolor;
 }
 
