@@ -1,0 +1,96 @@
+site_name: YEO CFR SDK
+site_description: Guides, how-tos and answers for adding on-device face recognition and liveness to your app.
+site_url: https://yeo-messaging.github.io/YEOFRSDK-docs/guide/
+copyright: Copyright YEO Messaging Ltd
+
+theme:
+  name: material
+  font: false
+  icon:
+    logo: material/face-recognition
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.copy
+    - toc.follow
+
+plugins:
+  - search
+  - mike:
+      alias_type: copy
+      canonical_version: latest
+
+extra:
+  version:
+    provider: mike
+    default: latest
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - assets/site.css
+
+nav:
+  - Home: index.md
+  - Get started:
+      - get-started/index.md
+      - Before you start: get-started/before-you-start.md
+      - Android: get-started/android.md
+      - iOS: get-started/ios.md
+      - React Native: get-started/react-native.md
+      - Flutter: get-started/flutter.md
+      - Capacitor: get-started/capacitor.md
+      - Cordova: get-started/cordova.md
+  - Guides:
+      - guides/index.md
+      - How it works: guides/how-it-works.md
+      - Enrol a user: guides/enrol.md
+      - Recognise a user: guides/recognise.md
+      - Liveness: guides/liveness.md
+      - Coach your users: guides/coach-users.md
+      - Store the gallery: guides/store-the-gallery.md
+      - Upgrade and re-enrol: guides/upgrade.md
+      - Go-live checklist: guides/go-live.md
+      - Troubleshooting: guides/troubleshooting.md
+  - Data and privacy: data-and-privacy.md
+  - FAQ: faq.md
+  - Reference:
+      - reference/index.md
+      - Published versions: reference/versions.md
+      - API references: reference/api.md
