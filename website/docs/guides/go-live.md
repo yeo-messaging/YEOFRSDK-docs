@@ -1,62 +1,96 @@
-# Go-live checklist
+# Go-live readiness checklist
 
-Work through this list before you release face sign-in to your users.
+**Get your face sign-in integration ready for production.**
 
-## Access and credential
+This checklist helps you confirm that your YEO CFR SDK integration is configured correctly, thoroughly tested and ready for your users. Use it whether you are integrating for the first time or preparing an existing integration for release, and work through the sections that apply to you before you go live.
 
-- [ ] The credential from YEO is loaded from configuration or your backend, not hard-coded.
-- [ ] The credential's expiry date is beyond your release date, and someone owns its renewal.
-- [ ] You have tested the release build with the real credential on both platforms.
-- [ ] Android repository details are in secret storage, not in source control.
+## 1. Access and credentials
 
-## Enrolment
+Make sure your SDK credentials are configured securely and ready for production.
 
-- [ ] Enrolment runs only after the user has signed in by another means.
-- [ ] You use a guided capture with several samples, not one frame.
-- [ ] A successful recognition is required before face sign-in is turned on.
-- [ ] The enrolled name is an opaque ID, not a real name.
-- [ ] The gallery is saved as soon as the capture finishes, and a failed save is handled.
+- [ ] Load your YEO credential from your app configuration or backend, not from source code, so that a renewal does not need a new app release.
+- [ ] Confirm that the credential stays valid beyond your planned release date, and that someone is responsible for renewing it.
+- [ ] Test your release build with the credential you will ship, on both iOS and Android. [A refused credential](../get-started/before-you-start.md#get-your-credential) stops the SDK, and on iOS it closes the app.
+- [ ] Store your Android repository address and login securely. Do not commit them to source control.
 
-## Recognition
+## 2. User enrolment
 
-- [ ] Your app accepts only when the face is live and has the expected name.
-- [ ] The result must hold for about a second, not one frame.
-- [ ] No code compares `confidence` with a number.
-- [ ] A fallback sign-in is always available.
-- [ ] High-value actions use more than face sign-in.
+A reliable face sign-in starts with a properly completed enrolment.
 
-## Screens
+- [ ] Users sign in through an existing method before they enrol their face. [Here is why this matters](enrol.md#protect-the-enrolment-step).
+- [ ] Use a guided capture with multiple samples rather than a single frame.
+- [ ] Turn on face sign-in only after enrolment and a successful recognition check.
+- [ ] Enrol each face under an opaque identifier rather than the user's real name or other personal information.
+- [ ] Save the gallery as soon as the capture finishes, and handle a failed save.
 
-- [ ] You show "Checking…" during the first seconds, never a failure.
-- [ ] Framing hints reach the user.
-- [ ] Each attempt allows 5 to 10 seconds, then shows tips and a retry.
-- [ ] The camera permission text is written for your users, and refusal is handled.
-- [ ] The face screen is locked to portrait, as Capacitor and Cordova require.
+## 3. Face recognition
 
-## Data and privacy
+Make sure your app handles recognition results correctly and consistently.
 
-- [ ] The gallery is encrypted by your app, with a Keychain or Keystore key.
-- [ ] The gallery is excluded from cloud backup and device transfer.
-- [ ] Turning off face sign-in deletes the gallery, including your own copies.
-- [ ] Your privacy notice covers biometric processing on the device.
-- [ ] On Android, your privacy notice and your Google Play Data safety form cover Google's ML Kit usage metrics. See [What leaves the device](../data-and-privacy.md#what-leaves-the-device).
+- [ ] Accept a result only when the face is confirmed as live and matches the expected person. See [Recognise a user](recognise.md).
+- [ ] Require the result to hold for about a second, rather than relying on a single frame.
+- [ ] Use the SDK's own decision: `status` or `isLive`, or `faceState == Detected && isConfident()` in native Android. Never compare `confidence` with a number.
+- [ ] Always provide another way to sign in if face recognition cannot be completed.
+- [ ] For sensitive or high-value actions, add further authentication suited to your security requirements.
 
-## Device and app security
+## 4. User experience
 
-- [ ] You have decided how your app handles rooted, jailbroken or tampered devices. The SDK does not check this.
-- [ ] You have decided whether to block screen capture on the face screen. The SDK does not do this.
-- [ ] Your backend does not treat a result from the app as proof on its own. Results are not signed by the SDK.
+Clear guidance helps users complete face sign-in successfully.
 
-## Testing
+- [ ] Show a status such as "Checking…" during the first seconds. Do not show a failure while the SDK is still confirming liveness.
+- [ ] Make sure framing hints reach the user. See [Coach your users](coach-users.md).
+- [ ] Allow 5 to 10 seconds for each attempt, then show helpful tips and an option to retry.
+- [ ] Write a clear camera permission message that explains why your app needs the camera.
+- [ ] Handle a refused camera permission gracefully, including offering another way to sign in.
+- [ ] Lock the face recognition screen to portrait. Capacitor and Cordova require this.
 
-- [ ] You have tested on real iPhones and real Android phones, not simulators.
-- [ ] You have tested in backlight, dim light, with glasses, and with two faces in view.
-- [ ] You have tested leaving the face screen, sending the app to the background and coming back.
-- [ ] If your app is wrapped in a shielding or hardening product, you have run acceptance on a shielded build of the same commit. Develop and measure on unshielded builds, and expect screenshots of the face screen to come out black.
-- [ ] Android: Google Play's 16 KB page size check passes. Use APK Analyzer or `zipalign -c -P 16 -v 4 app-release.apk`.
-- [ ] Android: you have tested on a phone with Google Play services and a network connection for the first use.
+## 5. Data protection and privacy
 
-## Support
+Face data needs protection throughout its lifecycle. Consider these recommendations alongside your organisation's data protection and privacy requirements. See [Store the gallery](store-the-gallery.md) for how to do each one.
+
+- [ ] Encrypt the gallery with keys held in the iOS Keychain or Android Keystore.
+- [ ] Exclude the gallery from cloud backups and device-to-device transfers.
+- [ ] When a user turns off face sign-in, delete the gallery, including any copies your app manages.
+- [ ] Make sure your privacy notice explains how biometric data is processed and stored on the device.
+- [ ] On Android, make sure your privacy notice and your Google Play Data safety form cover Google ML Kit's usage metrics. See [What leaves the device](../data-and-privacy.md#what-leaves-the-device).
+
+## 6. Application and device security
+
+The SDK provides face recognition and liveness. The overall security of your sign-in also depends on how your app and backend handle the results. Consider these points as part of your security assessment. See [Device and app security](../data-and-privacy.md#device-and-app-security).
+
+- [ ] Decide how your app handles rooted, jailbroken or otherwise tampered devices. The SDK does not check device integrity.
+- [ ] Decide whether to restrict screen capture and recording on the face recognition screen. The SDK does not do this.
+- [ ] Make sure your backend does not rely on a result from the app as its only proof of authentication. The SDK does not sign its results.
+- [ ] Apply suitable authentication, authorisation and further verification to sensitive operations.
+
+## 7. Device compatibility and testing { #testing }
+
+Before you release to users, check your integration under realistic conditions.
+
+- [ ] Test on real iPhones and Android phones, not only on simulators or emulators.
+- [ ] Test in different lighting, including backlight and dim rooms.
+- [ ] Test with users wearing glasses, and with more than one face in view.
+- [ ] Test leaving the face recognition screen, sending the app to the background and coming back.
+- [ ] If your app uses a shielding or hardening product, run acceptance tests on a shielded build of the same commit. Develop and measure recognition on unshielded builds first, and expect screenshots of the face recognition screen to come out black when shielding is on.
+- [ ] Android: check that your release build meets Google Play's 16 KB memory page size requirement, using APK Analyzer or this command:
+
+    ```bash
+    zipalign -c -P 16 -v 4 app-release.apk
+    ```
+
+- [ ] Android: test the first use on a real phone with Google Play services and a network connection, because the face detection model downloads at that point.
+
+## 8. Support and upgrades
+
+Prepare your own team for launch day.
 
 - [ ] Your support team has the [coaching tips](coach-users.md).
-- [ ] If this is an upgrade, you have a [re-enrolment plan](upgrade.md).
+- [ ] If this is an upgrade from an older SDK version, you have a [re-enrolment plan](upgrade.md).
+
+## Ready for production?
+
+Once you have completed the checks that apply to you, your integration is ready for your own production release assessment.
+
+YEO provides the SDK and its face recognition and liveness capabilities. Your app remains responsible for the surrounding sign-in flow, credential management, data storage, privacy notices, backend validation and overall application security.
+
+**Need help?** If you have questions about integration, configuration or production readiness before you go live, contact the YEO team at [info@yeomessaging.com](mailto:info@yeomessaging.com).
