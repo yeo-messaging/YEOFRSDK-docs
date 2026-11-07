@@ -1,25 +1,28 @@
 site_name: YEO CFR SDK
 site_description: Guides, how-tos and answers for adding on-device face recognition and liveness to your app.
 site_url: https://yeo-messaging.github.io/YEOFRSDK-docs/guide/
-copyright: Copyright YEO Messaging Ltd
+copyright: >
+  &copy; 2026 YEO Messaging Ltd, registered in England and Wales 10785061.
+  <a href="https://yeo.tech/policies/terms-and-conditions">Terms and Conditions</a> |
+  <a href="https://yeo.tech/policies/privacy-policy">Privacy Policy</a>
 
 theme:
   name: material
   font: false
-  icon:
-    logo: material/face-recognition
+  logo: assets/yeo-logo.svg
+  favicon: assets/yeo-favicon.svg
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
-      accent: indigo
+      primary: custom
+      accent: custom
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
@@ -42,9 +45,23 @@ plugins:
       canonical_version: latest
 
 extra:
+  generator: false
   version:
     provider: mike
     default: latest
+  social:
+    - icon: material/web
+      link: https://yeo.tech/
+      name: yeo.tech
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/yeomessaging/
+      name: YEO on LinkedIn
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/@yeo-messaging
+      name: YEO on YouTube
+    - icon: fontawesome/brands/instagram
+      link: https://www.instagram.com/yeomessaging
+      name: YEO on Instagram
 
 markdown_extensions:
   - admonition
@@ -85,6 +102,7 @@ nav:
       - How it works: guides/how-it-works.md
       - Enrol a user: guides/enrol.md
       - Recognise a user: guides/recognise.md
+      - Verify throughout a session: guides/continuous.md
       - Liveness: guides/liveness.md
       - Coach your users: guides/coach-users.md
       - Store the gallery: guides/store-the-gallery.md
@@ -97,3 +115,5 @@ nav:
       - reference/index.md
       - Published versions: reference/versions.md
       - API references: reference/api.md
+  - Support: support.md
+  - yeo.tech: https://yeo.tech/

@@ -95,4 +95,4 @@ The gallery is biometric data. Check your obligations under the rules that apply
 
 ## Questions from your compliance team
 
-Common questions are answered in the [FAQ](faq.md#security-and-compliance). For anything else, contact YEO at [info@yeomessaging.com](mailto:info@yeomessaging.com).
+Common questions are answered in the [FAQ](faq.md#security-and-compliance). For anything else, [contact YEO](support.md).

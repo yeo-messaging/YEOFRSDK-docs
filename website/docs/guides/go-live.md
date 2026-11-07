@@ -31,6 +31,7 @@ Make sure your app handles recognition results correctly and consistently.
 - [ ] Require the result to hold for about a second, rather than relying on a single frame.
 - [ ] Use the SDK's own decision: `status` or `isLive`, or `faceState == Detected && isConfident()` in native Android. Never compare `confidence` with a number.
 - [ ] Always provide another way to sign in if face recognition cannot be completed.
+- [ ] If you verify during a session, decide when it runs and what your app does when the person is no longer present. See [Verify throughout a session](continuous.md).
 - [ ] For sensitive or high-value actions, add further authentication suited to your security requirements.
 
 ## 4. User experience
@@ -93,4 +94,4 @@ Once you have completed the checks that apply to you, your integration is ready 
 
 YEO provides the SDK and its face recognition and liveness capabilities. Your app remains responsible for the surrounding sign-in flow, credential management, data storage, privacy notices, backend validation and overall application security.
 
-**Need help?** If you have questions about integration, configuration or production readiness before you go live, contact the YEO team at [info@yeomessaging.com](mailto:info@yeomessaging.com).
+**Need help?** If you have questions about integration, configuration or production readiness before you go live, [contact the YEO team](../support.md).

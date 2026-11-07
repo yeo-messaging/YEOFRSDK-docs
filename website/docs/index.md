@@ -7,12 +7,13 @@ hide:
 
 <div class="yeo-hero" markdown>
 
-# Face recognition and liveness, on the phone
+# Continuous facial recognition, built into your app
 
-The YEO CFR SDK lets your app enrol a user's face, recognise that user later, and check that a real person is in front of the camera. All of this runs on the phone. These pages show you how to build it, what we recommend, and what your security and compliance teams will want to know.
+The YEO CFR SDK lets your app enrol a user's face and confirm that the right person is present, at sign-in and throughout the session. It runs on the phone. These pages show you how to build it, what we recommend, and what your security and compliance teams will want to know.
 
 [Get started](get-started/index.md){ .md-button .md-button--primary }
 [Read the FAQ](faq.md){ .md-button }
+[Request a trial](https://yeo.tech/contact-us){ .md-button }
 
 </div>
 
@@ -20,7 +21,7 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
 <div class="grid cards" markdown>
 
--   :material-android: **Android**
+-   :material-cellphone: **Android**
 
     ---
 
@@ -28,7 +29,7 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Get started on Android](get-started/android.md)
 
--   :material-apple: **iOS**
+-   :material-cellphone: **iOS**
 
     ---
 
@@ -36,7 +37,7 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Get started on iOS](get-started/ios.md)
 
--   :material-react: **React Native**
+-   :material-atom: **React Native**
 
     ---
 
@@ -44,7 +45,7 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Get started with React Native](get-started/react-native.md)
 
--   :simple-flutter: **Flutter**
+-   :material-layers-triple: **Flutter**
 
     ---
 
@@ -60,7 +61,7 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Get started with Capacitor](get-started/capacitor.md)
 
--   :material-cellphone-link: **Cordova**
+-   :material-power-plug: **Cordova**
 
     ---
 
@@ -90,6 +91,14 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Recognition guide](guides/recognise.md)
 
+-   :material-account-clock: **Verify throughout a session**
+
+    ---
+
+    Keep confirming who is present, and decide what happens when they leave.
+
+    [Continuous verification](guides/continuous.md)
+
 -   :material-shield-lock: **Data and privacy**
 
     ---
@@ -106,15 +115,24 @@ The YEO CFR SDK lets your app enrol a user's face, recognise that user later, an
 
     [Go-live checklist](guides/go-live.md)
 
+-   :material-lifebuoy: **Support**
+
+    ---
+
+    How to reach the YEO team, and more resources.
+
+    [Get support](support.md)
+
 </div>
 
 ## The short version
 
+- **Continuous.** The SDK reports on every analysed camera frame, so your app can check who is present at any point in a session, not only at login.
 - **On the device.** Enrolment, recognition and liveness run on the phone. The SDK does not send faces, face samples or results anywhere.
 - **No photos kept.** The SDK saves numeric face samples, not images.
 - **Your app holds the data.** Encryption, backup rules and deletion of the saved enrolment are your app's decisions. [We explain how](guides/store-the-gallery.md).
 - **Nothing for the user to perform.** The liveness check is passive. The user just looks at the camera.
-- **A credential is required.** The SDK needs a credential from YEO. [Contact YEO](get-started/before-you-start.md#get-your-credential) to get one.
+- **A credential is required.** The SDK needs a credential from YEO. [Contact YEO](support.md) to get one.
 
 !!! note "Which versions these pages describe"
     Android 0.2.29, iOS 0.11.2, React Native 0.5.2, Flutter 0.5.1, Capacitor 0.5.0 and Cordova 0.5.0. See [Published versions](reference/versions.md).

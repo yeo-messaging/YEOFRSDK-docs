@@ -20,4 +20,4 @@ The guides on this site explain how to build and what we recommend. For every ca
     `keepFaceImagesInTracker`, `faceRecognitionTrackerMemoryLimit`, `faceDetectionThreshold`, `internalResizeWidth`, `arbitraryRotation`, `numberOfThreads`
 
 !!! note "If a reference and these guides disagree"
-    Follow these guides, and please tell YEO at [info@yeomessaging.com](mailto:info@yeomessaging.com). They were checked against the published versions, and they cover what those versions do, including where older wording remains in a reference.
+    Follow these guides, and please [tell YEO](../support.md). They were checked against the published versions, and they cover what those versions do, including where older wording remains in a reference.

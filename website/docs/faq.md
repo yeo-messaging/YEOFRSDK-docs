@@ -1,5 +1,35 @@
 # Frequently asked questions
 
+## Continuous verification
+
+### What does "continuous" mean?
+
+The SDK reports on every analysed camera frame, so your app can confirm that the right person is present throughout a period you choose, not only at login. See [Verify throughout a session](guides/continuous.md).
+
+### Do users get prompted during a session?
+
+The SDK does not prompt anyone. The check is passive, and your app decides whether and when to show a message.
+
+### What happens if the check fails during a session?
+
+Your app decides. It might ask the user to verify again, hide sensitive content, block a risky action, flag the session or end it. The SDK provides the signal, and your app controls the response.
+
+### Does it replace our login or identity checks?
+
+No. It runs alongside your existing login and onboarding, without changes to that infrastructure.
+
+### Do we need servers to run it?
+
+No. Processing happens on each phone, so there is no YEO server for you to run or call.
+
+### Does it work in a web browser?
+
+No. The SDK runs in iOS and Android apps. Web apps can use it through a Capacitor or Cordova shell, but not in a browser on its own.
+
+### Can it match our brand?
+
+Yes. The SDK has no YEO-branded screens in your app. Your app owns the layout, wording and prompts.
+
 ## Enrolment
 
 ### How long does enrolment take?
@@ -126,7 +156,7 @@ The SDK refuses it safely. Your app sees that nobody is enrolled and should ask 
 
 ### Do we need a licence?
 
-Yes. The SDK needs a credential from YEO. Contact [info@yeomessaging.com](mailto:info@yeomessaging.com).
+Yes. The SDK needs a credential from YEO. [Contact YEO](support.md).
 
 ### What happens if the credential is refused?
 

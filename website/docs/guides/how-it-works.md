@@ -1,11 +1,11 @@
 # How it works
 
-A face sign-in has four parts. All four run on the phone.
+The YEO CFR SDK (Continuous Facial Recognition) confirms that the right person is present, at sign-in and, if you choose, [throughout the session](continuous.md). It has four parts, and all four run on the phone.
 
 1. **Enrolment.** The user looks at the camera once. The SDK turns the face into numeric samples.
 2. **Saving.** Your app saves the samples, called the gallery, and restores them at each launch.
-3. **Recognition.** At sign-in, the SDK compares the face in view with the gallery.
-4. **Liveness.** At the same time, the SDK checks that a real person is in front of the camera, not a photo or a screen.
+3. **Recognition.** While the camera runs, the SDK compares the face in view with the gallery.
+4. **Liveness.** At the same time, the SDK checks that a real person is in front of the camera, not a photo or a screen. On iPhones with a TrueDepth camera, the iOS camera path also checks depth.
 
 Your app accepts the user only when recognition and liveness agree.
 

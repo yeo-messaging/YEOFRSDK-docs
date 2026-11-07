@@ -4,7 +4,7 @@ Three things save the most time: get your access from YEO early, test on real ph
 
 ## Get your credential
 
-The SDK needs a credential from YEO, and it will not run without one. Contact YEO support at [info@yeomessaging.com](mailto:info@yeomessaging.com) to get one.
+The SDK needs a credential from YEO, and it will not run without one. [Contact YEO support](../support.md) to get one.
 
 Handle it like this:
 

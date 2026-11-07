@@ -37,4 +37,4 @@
 
 ## Still stuck?
 
-Contact YEO support at [info@yeomessaging.com](mailto:info@yeomessaging.com). Tell us the SDK version, the platform and phone model, what you expected and what happened, and any error code. Never send face images or gallery files by email.
+[Contact YEO support](../support.md). Tell us the SDK version, the platform and phone model, what you expected and what happened, and any error code. See [what to include](../support.md#what-to-include).
