@@ -1,21 +1,47 @@
-/* YEO palette, taken from yeo.tech */
+/* YEO look, taken from yeo.tech */
+@font-face {
+  font-family: "Poppins";
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/poppins-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/poppins-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("fonts/poppins-latin-600-normal.woff2") format("woff2");
+}
+
 :root,
 [data-md-color-scheme="default"] {
+  --md-text-font: "Poppins";
   --yeo-navy: #08171f;
   --yeo-teal: #2f7c83;
   --yeo-teal-bright: #6fc8c8;
+  --yeo-card: #f1f6f7;
+  --yeo-line: #dfe7e9;
   --md-primary-fg-color: var(--yeo-navy);
   --md-primary-fg-color--light: #1d3a45;
   --md-primary-fg-color--dark: #050f15;
   --md-primary-bg-color: #fff;
   --md-accent-fg-color: var(--yeo-teal);
   --md-typeset-a-color: #256a71;
-  --md-footer-bg-color: var(--yeo-navy);
-  --md-footer-bg-color--dark: #050f15;
+  --md-footer-bg-color: #10262f;
+  --md-footer-bg-color--dark: var(--yeo-navy);
 }
 
 [data-md-color-scheme="slate"] {
   --md-hue: 197;
+  --yeo-card: #10262f;
+  --yeo-line: #1d3a45;
   --md-default-bg-color: var(--yeo-navy);
   --md-code-bg-color: #10262f;
   --md-accent-fg-color: var(--yeo-teal-bright);
@@ -23,24 +49,158 @@
   --md-primary-fg-color: #050f15;
 }
 
+.md-typeset {
+  font-size: 0.75rem;
+}
+
+/* Floating header */
+.md-header {
+  background: transparent;
+  box-shadow: none;
+  color: var(--yeo-navy);
+}
+
+.md-header__inner {
+  width: calc(100% - 1.2rem);
+  margin-top: 0.5rem;
+  padding: 0 0.5rem;
+  border-radius: 2.5rem;
+  background: #fff;
+  box-shadow: 0 0.2rem 1rem rgb(0 0 0 / 25%);
+}
+
 .md-header__button.md-logo img {
   width: auto;
   height: 1.3rem;
 }
 
-.md-tabs {
-  background-color: var(--md-primary-fg-color);
+.md-header__title {
+  font-weight: 500;
 }
 
-.md-typeset h1,
-.md-typeset h2 {
+.md-version__list {
+  color: var(--md-default-fg-color);
+}
+
+.md-search__form,
+.md-search__form:hover {
+  border-radius: 1rem;
+  background-color: #eef3f4;
+}
+
+[data-md-toggle="search"]:checked ~ .md-header .md-search__form {
+  border-radius: 1rem 1rem 0 0;
+}
+
+.md-search__input,
+.md-search__input::placeholder,
+.md-search__input + .md-search__icon,
+.md-search__icon {
+  color: var(--yeo-navy);
+}
+
+.yeo-header-cta {
+  flex: none;
+  margin: 0 0.3rem 0 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 2rem;
+  background: var(--yeo-teal);
+  color: #fff;
+  font-size: 0.65rem;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.yeo-header-cta:hover {
+  background: #256a71;
+  color: #fff;
+}
+
+@media screen and (max-width: 59.984375em) {
+  .yeo-header-cta {
+    display: none;
+  }
+}
+
+/* Logo left, menu right, as on the website */
+@media screen and (max-width: 76.234375em) {
+  .md-header__button.md-logo {
+    display: inline-block;
+  }
+
+  .md-header__button[for="__drawer"] {
+    order: 99;
+  }
+
+  .md-header__topic:first-child .md-ellipsis {
+    display: none;
+  }
+}
+
+.md-tabs {
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+}
+
+/* Content pages */
+.md-typeset h1 {
+  margin-bottom: 1rem;
+  color: var(--md-default-fg-color);
+  font-size: 1.9rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.md-typeset h2 {
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.md-typeset h3 {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 0.8rem;
+  font-size: 0.7rem;
+}
+
+.md-typeset table:not([class]) {
+  overflow: hidden;
+  border: 1px solid var(--yeo-line);
+  border-radius: 0.8rem;
+  font-size: 0.7rem;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--yeo-card);
+  font-weight: 500;
+}
+
+.md-typeset pre > code,
+.highlight .md-clipboard {
+  border-radius: 0.6rem;
+}
+
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > ol > li {
+  border: 0;
+  border-radius: 1rem;
+  background: var(--yeo-card);
+  padding: 1rem;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  box-shadow: none;
 }
 
 .md-typeset .md-button {
   border-radius: 2rem;
   color: var(--md-typeset-a-color);
   border-color: currentColor;
+  font-weight: 500;
 }
 
 .md-typeset .md-button--primary {
@@ -56,46 +216,369 @@
   color: #fff;
 }
 
-.md-typeset .yeo-hero {
-  margin: 0 0 1.5rem;
-  padding: 2.5rem 2rem;
-  border-radius: 1rem;
-  background: linear-gradient(180deg, #08171f 0%, #16404b 60%, #2f7c83 100%);
-  color: #fff;
+/* Brand colours, on a white tile so they read in both themes */
+.yeo-c-ios { color: #1a73e8; }
+.yeo-c-android { color: #3ddc84; }
+.yeo-c-react { color: #149eca; }
+.yeo-c-flutter { color: #027dfd; }
+.yeo-c-capacitor { color: #119eff; }
+.yeo-c-cordova { color: #35434f; }
+
+.md-typeset .yeo-i {
+  box-sizing: content-box;
+  padding: 0.15rem;
+  border-radius: 0.25rem;
+  background: #fff;
 }
 
-.md-typeset .yeo-hero h1 {
-  margin: 0 0 0.75rem;
+/* Home */
+.md-typeset .yeo-eyebrow {
+  margin: 0 0 0.6rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.yeo-hero {
+  padding: 6rem 1rem 5.5rem;
+  background:
+    linear-gradient(transparent 75%, var(--yeo-navy)),
+    radial-gradient(55% 70% at 50% 95%, rgb(111 200 200 / 55%), transparent),
+    radial-gradient(30% 45% at 88% 20%, rgb(47 124 131 / 35%), transparent),
+    var(--yeo-navy);
   color: #fff;
+  text-align: center;
+}
+
+.yeo-hero .yeo-eyebrow {
+  margin: 0 0 0.8rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.yeo-hero h1 {
+  max-width: 40rem;
+  margin: 0 auto 1rem;
+  color: #fff;
+  font-size: 2.6rem;
   font-weight: 600;
+  line-height: 1.2;
 }
 
-.md-typeset .yeo-hero p {
-  max-width: 44rem;
-  font-size: 0.95rem;
+.yeo-hero__text {
+  max-width: 36rem;
+  margin: 0 auto 1.6rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
-.md-typeset .yeo-hero .md-button {
-  margin: 0.25rem 0.25rem 0.25rem 0;
+.yeo-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.yeo-pill,
+.md-typeset .yeo-pill {
+  display: inline-block;
+  padding: 0.6rem 1.3rem;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 2rem;
   color: #fff;
-  border-color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
-.md-typeset .yeo-hero .md-button--primary {
-  background-color: #fff;
+.yeo-pill--teal,
+.md-typeset .yeo-pill--teal {
+  background: linear-gradient(90deg, #2f7c83, #3f8c93);
+}
+
+.yeo-pill--dark,
+.md-typeset .yeo-pill--dark {
+  background: #2a3238;
+}
+
+.yeo-pill--light,
+.md-typeset .yeo-pill--light {
   border-color: #fff;
+  background: #fff;
   color: var(--yeo-navy);
 }
 
-.md-typeset .yeo-hero .md-button:focus,
-.md-typeset .yeo-hero .md-button:hover {
-  background-color: var(--yeo-teal-bright);
-  border-color: var(--yeo-teal-bright);
+.yeo-pill:hover,
+.md-typeset .yeo-pill:hover {
+  filter: brightness(1.15);
+  color: #fff;
+}
+
+.md-typeset .yeo-pill--light:hover {
   color: var(--yeo-navy);
 }
 
-@media screen and (max-width: 44.984375em) {
-  .md-typeset .yeo-hero {
-    padding: 1.5rem 1rem;
+.md-typeset .yeo-section {
+  margin: 4rem 0;
+}
+
+.md-typeset .yeo-section > h2,
+.md-typeset .yeo-section--body > h2 {
+  margin: 0 0 2rem;
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.md-typeset .yeo-section > .headerlink,
+.md-typeset .yeo-section--body h2 .headerlink {
+  display: none;
+}
+
+.yeo-platforms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.md-typeset .yeo-platform {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 1.2rem;
+  background: var(--yeo-card);
+  color: var(--md-default-fg-color);
+  transition: transform 125ms;
+}
+
+.md-typeset .yeo-platform:hover,
+.md-typeset .yeo-guide:hover {
+  transform: translateY(-0.1rem);
+  color: var(--md-default-fg-color);
+}
+
+.yeo-platform__icon {
+  display: grid;
+  flex: none;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border: 1px solid var(--yeo-line);
+  border-radius: 0.8rem;
+  background: #fff;
+}
+
+.yeo-platform__icon svg {
+  display: block;
+  width: 2.2rem;
+  height: 2.2rem;
+  fill: currentcolor;
+}
+
+.yeo-platform strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.yeo-platform span span {
+  opacity: 0.75;
+}
+
+.yeo-guides {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.md-typeset .yeo-guide {
+  display: block;
+  padding: 1.2rem;
+  border-radius: 1.2rem;
+  background: var(--yeo-card);
+  color: var(--md-default-fg-color);
+  transition: transform 125ms;
+}
+
+.yeo-guide__icon {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 0.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--yeo-teal);
+  color: #fff;
+}
+
+.yeo-guide__icon svg {
+  display: block;
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentcolor;
+}
+
+.yeo-guide strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.yeo-guide > span:last-child {
+  opacity: 0.75;
+}
+
+.md-typeset .yeo-section--body .grid.cards strong {
+  font-weight: 500;
+}
+
+.md-typeset .yeo-cta {
+  margin: 4rem 0 2rem;
+  padding: 3.5rem 1.5rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(180deg, #16404b, #3f8c93);
+  color: #fff;
+  text-align: center;
+}
+
+.md-typeset .yeo-cta h2 {
+  margin: 0 auto 0.6rem;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.md-typeset .yeo-cta p {
+  margin: 0 0 1.4rem;
+}
+
+/* Footer */
+.yeo-footer {
+  padding: 3rem 0 2rem;
+  background: var(--yeo-navy);
+  color: rgb(255 255 255 / 80%);
+  font-size: 0.65rem;
+}
+
+[data-md-color-scheme="slate"] .yeo-footer {
+  border-top: 1px solid var(--yeo-line);
+}
+
+.yeo-footer .md-grid {
+  padding: 0 0.8rem;
+}
+
+.yeo-footer__top {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.yeo-footer__brand img {
+  display: block;
+  height: 2rem;
+  margin-bottom: 1rem;
+}
+
+.yeo-footer .md-social {
+  margin: 0;
+  padding: 0;
+}
+
+.yeo-footer h2 {
+  margin: 0 0 0.8rem;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.yeo-footer a {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: rgb(255 255 255 / 85%);
+}
+
+.yeo-footer a:hover {
+  color: var(--yeo-teal-bright);
+}
+
+.yeo-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem !important;
+  border-top: 1px solid rgb(255 255 255 / 15%);
+}
+
+.yeo-footer__bottom p {
+  margin: 0 0 0.35rem;
+}
+
+.yeo-footer__bottom a {
+  display: inline;
+  text-decoration: underline;
+}
+
+.yeo-footer__notice {
+  max-width: 34rem;
+  margin-top: 0.8rem !important;
+  opacity: 0.65;
+  font-size: 0.55rem;
+}
+
+.yeo-footer__patents {
+  flex: none;
+  text-align: right;
+  opacity: 0.8;
+}
+
+@media screen and (max-width: 59.984375em) {
+  .yeo-hero {
+    padding: 3.5rem 1rem;
+  }
+
+  .yeo-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .md-typeset h1 {
+    font-size: 1.5rem;
+  }
+
+  .md-typeset .yeo-section {
+    margin: 2.5rem 0;
+  }
+
+  .md-typeset .yeo-section > h2,
+  .md-typeset .yeo-section--body > h2 {
+    font-size: 1.4rem;
+  }
+
+  .yeo-platforms,
+  .yeo-guides {
+    grid-template-columns: 1fr;
+  }
+
+  .yeo-footer__top {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .yeo-footer__brand {
+    grid-column: 1 / -1;
+  }
+
+  .yeo-footer__bottom {
+    flex-direction: column;
+  }
+
+  .yeo-footer__patents {
+    text-align: left;
   }
 }

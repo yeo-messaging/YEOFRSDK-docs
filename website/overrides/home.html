@@ -1,0 +1,57 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+  {{ super() }}
+  <section class="yeo-hero">
+    <p class="yeo-eyebrow">{{ page.meta.hero.eyebrow }}</p>
+    <h1>{{ page.meta.hero.title }}</h1>
+    <p class="yeo-hero__text">{{ page.meta.hero.text }}</p>
+    <div class="yeo-hero__actions">
+      <a class="yeo-pill yeo-pill--teal" href="{{ 'get-started/' | url }}">Get started</a>
+      <a class="yeo-pill yeo-pill--dark" href="{{ 'faq/' | url }}">Read the FAQ</a>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+  <section class="yeo-section">
+    <p class="yeo-eyebrow">Platforms</p>
+    <h2>Choose your platform</h2>
+    <div class="yeo-platforms">
+      {% for item in page.meta.platforms %}
+        <a class="yeo-platform" href="{{ item.url | url }}">
+          <span class="yeo-platform__icon yeo-c-{{ item.key }}">{% include ".icons/" ~ item.icon ~ ".svg" %}</span>
+          <span>
+            <strong>{{ item.name }}</strong>
+            <span>{{ item.text }}</span>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="yeo-section">
+    <p class="yeo-eyebrow">Guides</p>
+    <h2>Find what you need</h2>
+    <div class="yeo-guides">
+      {% for item in page.meta.guides %}
+        <a class="yeo-guide" href="{{ item.url | url }}">
+          <span class="yeo-guide__icon">{% include ".icons/" ~ item.icon ~ ".svg" %}</span>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.text }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="yeo-section yeo-section--body">
+    <p class="yeo-eyebrow">At a glance</p>
+    {{ page.content }}
+  </section>
+
+  <section class="yeo-cta">
+    <h2>See continuous identity verification in action</h2>
+    <p>Talk to the YEO team about a trial, your platform or your integration.</p>
+    <a class="yeo-pill yeo-pill--light" href="https://yeo.tech/contact-us">Request a Trial</a>
+  </section>
+{% endblock %}
