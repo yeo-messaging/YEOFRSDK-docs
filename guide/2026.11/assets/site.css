@@ -1,0 +1,101 @@
+/* YEO palette, taken from yeo.tech */
+:root,
+[data-md-color-scheme="default"] {
+  --yeo-navy: #08171f;
+  --yeo-teal: #2f7c83;
+  --yeo-teal-bright: #6fc8c8;
+  --md-primary-fg-color: var(--yeo-navy);
+  --md-primary-fg-color--light: #1d3a45;
+  --md-primary-fg-color--dark: #050f15;
+  --md-primary-bg-color: #fff;
+  --md-accent-fg-color: var(--yeo-teal);
+  --md-typeset-a-color: #256a71;
+  --md-footer-bg-color: var(--yeo-navy);
+  --md-footer-bg-color--dark: #050f15;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-hue: 197;
+  --md-default-bg-color: var(--yeo-navy);
+  --md-code-bg-color: #10262f;
+  --md-accent-fg-color: var(--yeo-teal-bright);
+  --md-typeset-a-color: var(--yeo-teal-bright);
+  --md-primary-fg-color: #050f15;
+}
+
+.md-header__button.md-logo img {
+  width: auto;
+  height: 1.3rem;
+}
+
+.md-tabs {
+  background-color: var(--md-primary-fg-color);
+}
+
+.md-typeset h1,
+.md-typeset h2 {
+  font-weight: 500;
+}
+
+.md-typeset .md-button {
+  border-radius: 2rem;
+  color: var(--md-typeset-a-color);
+  border-color: currentColor;
+}
+
+.md-typeset .md-button--primary {
+  background-color: var(--yeo-teal);
+  border-color: var(--yeo-teal);
+  color: #fff;
+}
+
+.md-typeset .md-button:focus,
+.md-typeset .md-button:hover {
+  background-color: var(--yeo-teal);
+  border-color: var(--yeo-teal);
+  color: #fff;
+}
+
+.md-typeset .yeo-hero {
+  margin: 0 0 1.5rem;
+  padding: 2.5rem 2rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #08171f 0%, #16404b 60%, #2f7c83 100%);
+  color: #fff;
+}
+
+.md-typeset .yeo-hero h1 {
+  margin: 0 0 0.75rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.md-typeset .yeo-hero p {
+  max-width: 44rem;
+  font-size: 0.95rem;
+}
+
+.md-typeset .yeo-hero .md-button {
+  margin: 0.25rem 0.25rem 0.25rem 0;
+  color: #fff;
+  border-color: #fff;
+}
+
+.md-typeset .yeo-hero .md-button--primary {
+  background-color: #fff;
+  border-color: #fff;
+  color: var(--yeo-navy);
+}
+
+.md-typeset .yeo-hero .md-button:focus,
+.md-typeset .yeo-hero .md-button:hover {
+  background-color: var(--yeo-teal-bright);
+  border-color: var(--yeo-teal-bright);
+  color: var(--yeo-navy);
+}
+
+@media screen and (max-width: 44.984375em) {
+  .md-typeset .yeo-hero {
+    padding: 1.5rem 1rem;
+  }
+}
